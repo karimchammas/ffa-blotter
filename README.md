@@ -1,13 +1,7 @@
-# django-zipline [![Build Status](https://travis-ci.org/shadiakiki1986/django-zipline.svg?branch=master)](https://travis-ci.org/shadiakiki1986/django-zipline)
-(WIP)  A Django app that wraps the Zipline library
+# ffa-blotter [![Build Status](https://travis-ci.org/shadiakiki1986/ffa-blotter.svg?branch=master)](https://travis-ci.org/shadiakiki1986/ffa-blotter)
+Blotter web application using django used in [FFA Private Bank](https://www.ffaprivatebank.com)
 
-At the time of this writing (2017-02-16),
-I'm focusing on wrapping the blotter object for usage in trading in finance.
-The app's structure is similar to the zipline library structure,
-so that this library can easily be extended to include more zipline objects along the line.
-
-If there are lingering references to `blotter-finance` in the code or docs,
-it's because that's what I named the project at first.
+For the older blotter that wrapped the zipline engine, check [django-zipline-2](https://www.github.com/shadiakiki1986/django-zipline-2)
 
 ## Features
 Version 0.0.1
@@ -22,7 +16,7 @@ Also check [CHANGELOG](CHANGELOG.md)
 ## Installation
 ```bash
 sudo apt-get install g++ freetds-dev
-pew new DJANGO_ZIPLINE
+pew new FFA_BLOTTER
 pip3 install -r requirements.txt # Django datetime zipline
 ```
 
@@ -67,7 +61,7 @@ For sending email through a SMTP server with NTLM authentication
 
 ## Testing
 ```bash
-pew workon DJANGO_ZIPLINE
+pew workon FFA_BLOTTER
 POLLS_LOG_LEVEL=DEBUG python manage.py test zipline_app.tests
 ```
 where the `POLLS_LOG_LEVEL` env variable is the django log level desired
@@ -98,9 +92,9 @@ To access deeper namespace, use
 ### Django
 Following the [django tutorial](https://docs.djangoproject.com/en/1.10/intro/tutorial01/)
 ```bash
-pew workon DJANGO_ZIPLINE
-mkdir django-zipline
-cd django-zipline
+pew workon FFA_BLOTTER
+mkdir ffa-blotter
+cd ffa-blotter
 git init
 django-admin startproject project
 mv project/* .
