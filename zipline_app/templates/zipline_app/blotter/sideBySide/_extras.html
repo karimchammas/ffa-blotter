@@ -11,16 +11,4 @@
     </div>
     {% endif %}
   </div>
-  <div class="col-xs-6">
-    {% if zl_unused|length > 0 %}
-    <div class="alert alert-danger">
-      Assets with extra fills:
-      <ul>
-      {% for asset,qty in zl_unused %}
-        <li>{{asset.symbol}}: {{qty}}</li>
-      {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
-  </div>
 </div>

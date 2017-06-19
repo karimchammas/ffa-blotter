@@ -158,15 +158,17 @@ LOGIN_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/1.10/topics/email/
 DEFAULT_FROM_EMAIL  = os.getenv("DEFAULT_FROM_EMAIL", None)
 EMAIL_SUBJECT_PREFIX= "[Blotter] "
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND       = 'django_smtp_ntlm_backend.NTLMEmail'
-EMAIL_HOST          = os.getenv("EMAIL_HOST", None)
-EMAIL_PORT          = os.getenv("EMAIL_PORT", None)
-EMAIL_HOST_USER     = os.getenv("EMAIL_HOST_USER", None)
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", None)
-EMAIL_USE_TLS       = False
-EMAIL_USE_SSL       = False
+if False:
+  EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+  # EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
+  EMAIL_BACKEND       = 'django_smtp_ntlm_backend.NTLMEmail'
+  EMAIL_HOST          = os.getenv("EMAIL_HOST", None)
+  EMAIL_PORT          = os.getenv("EMAIL_PORT", None)
+  EMAIL_HOST_USER     = os.getenv("EMAIL_HOST_USER", None)
+  EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", None)
+  EMAIL_USE_TLS       = False
+  EMAIL_USE_SSL       = False
 
 #
 BASE_URL = os.getenv("BASE_URL", "")

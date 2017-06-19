@@ -7,8 +7,12 @@ from django.urls import reverse
 
 from .asset import Asset
 from .account import Account
-from .zlmodel import ZlModel
-from .side import BUY, FILL_SIDE_CHOICES, validate_nonzero, MARKET, ORDER_TYPE_CHOICES, PositiveFloatFieldModel, ORDER_STATUS_CHOICES, OPEN, CANCELLED, ORDER_VALIDITY_CHOICES, GTC
+from .side import BUY, FILL_SIDE_CHOICES, \
+  validate_nonzero, \
+  MARKET, ORDER_TYPE_CHOICES, \
+  PositiveFloatFieldModel, \
+  ORDER_STATUS_CHOICES, OPEN, CANCELLED, FILLED, \
+  ORDER_VALIDITY_CHOICES, GTC, GTD, DAY
 
 from numpy import average
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -98,35 +102,24 @@ class Order(AbstractOrder):
         return now >= self.pub_date >= now - datetime.timedelta(days=1)
 
     def filled(self):
-      if self.dedicated_fill() is not None:
-        return self.dedicated_fill().fill_qty_signed()
-
-      if self.id in ZlModel.zl_closed_keyed:
-        return self.order_qty_signed()
-      if self.id in ZlModel.zl_open_keyed:
-        return ZlModel.zl_open_keyed[self.id].filled
-
-      # get from the fills function
-      # This works for cancelled orders with partial fills
-      # and for orders that are completely unfilled
-      sub = [txn["amount"] for txn in self.fills()]
-      return sum(sub)
+      fill = self.dedicated_fill()
+      if fill is None: return 0
+      return fill.fill_qty_signed()
 
     def fills(self):
-      if self.dedicated_fill() is not None:
-        fill = self.dedicated_fill()
-        txn = {
-          'order_id':self.id,
-          'price': fill.fill_price,
-          'amount': fill.fill_qty_signed(),
-          'dt': fill.pub_date,
-          'sid': {
-            'symbol': fill.asset.asset_symbol,
-          },
-        }
-        return [txn]
+      if self.filled()==0: return []
 
-      return [txn for txn in ZlModel.zl_txns if txn["order_id"]==self.id]
+      fill = self.dedicated_fill()
+      txn = {
+        'order_id':self.id,
+        'price': fill.fill_price,
+        'amount': fill.fill_qty_signed(),
+        'dt': fill.pub_date,
+        'sid': {
+          'symbol': fill.asset.asset_symbol,
+        },
+      }
+      return [txn]
 
     def avgPrice(self):
       if self.filled()==0:
@@ -188,6 +181,14 @@ class Order(AbstractOrder):
       self.order_status = CANCELLED
       self.save()
 
+    def setFilled(self):
+      self.order_status = FILLED
+      self.save()
+
+    def setOpen(self):
+      self.order_status = OPEN
+      self.save()
+
 #####################
 # Model History in Django
 # http://stackoverflow.com/a/14282776/4126114
@@ -201,3 +202,29 @@ class OrderHistory(AbstractOrder):
 
   def diffPrevious(self):
     return self.diff(self.previous)
+
+################
+# Class that cancels day orders opened in the past 
+#
+# https://stackoverflow.com/a/37635851/4126114
+# from django.db.models import F
+class OrderManager:
+  def process(self):
+    # set status for filled orders
+    #qs = Order.objects.filter(order_status=OPEN)
+    #for order in qs:
+    #  if order.filled() == order.order_qty_signed():
+    #    raise Exception("Found filled order with status=OPEN")
+    #    # order.setFilled()
+
+    # cancel DAY orders from the past
+    midnight = timezone.now().replace(hour=0, minute=0, second=0)
+    qs = Order.objects.filter(order_validity=DAY, pub_date__lt=midnight, order_status=OPEN)
+    for order in qs:
+      order.cancel()
+
+    # cancel GTD orders not filled yet and which expired
+    now = timezone.now()
+    qs = Order.objects.filter(order_validity=GTD, validity_date__lt=now, order_status=OPEN)
+    for order in qs:
+      order.cancel()

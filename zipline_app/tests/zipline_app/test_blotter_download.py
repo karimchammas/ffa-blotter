@@ -2,7 +2,6 @@ from django.test import TestCase
 from .test_zipline_app import create_account, create_asset, create_order, a1, create_fill
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
-from ...models.zipline_app.zipline_app import ZlModel
 from ...models.zipline_app.side import BUY, SELL
 from .test_fill import create_fill_from_order
 from io import BytesIO
@@ -11,7 +10,6 @@ from ...utils import myTestLogin
 
 class BlotterDownloadViewsTests(TestCase):
   def setUp(self):
-    ZlModel.clear()
     self.acc = create_account("test acc")
     self.ass = create_asset(a1["symbol"],a1["exchange"],a1["name"])
     myTestLogin(self.client)

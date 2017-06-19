@@ -9,7 +9,6 @@ from numpy import concatenate
 from ...models.zipline_app.order import Order
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.asset import Asset
-from ...models.zipline_app.zipline_app import ZlModel
 from ...models.zipline_app.account import Account
 from ...models.zipline_app.side import OPEN
 
@@ -47,7 +46,6 @@ class BlotterBaseView(generic.ListView):
         context["source"]=self.source
 
         # alerts
-        context["zl_unused"] = ZlModel.zl_unused.items()
         context["fills_required_per_asset"]=self.fills_required_per_asset()
 
         return context
@@ -105,10 +103,13 @@ class BlotterSideBySideView(BlotterBaseView):
     source="blotter-sideBySide"
 
     def get_combined(self):
-        all_min_zl  = ZlModel.all_minutes
-        all_min_ded = self.get_fills().exclude(dedicated_to_order=None)
-        all_min_ded = [x.pub_date for x in all_min_ded]
-        all_min_zl.extend(all_min_ded)
+        all_min_zl = []
+        all_min_orders = self.get_orders().all()
+        all_min_orders = [x.pub_date for x in all_min_orders]
+        all_min_zl.extend(all_min_orders)
+        all_min_fills = self.get_fills().exclude(dedicated_to_order=None)
+        all_min_fills = [x.pub_date for x in all_min_fills]
+        all_min_zl.extend(all_min_fills)
         all_min_zl = list(set(all_min_zl))
 
         combined = []
@@ -171,33 +172,6 @@ class BlotterConcealedView(BlotterBaseView):
 
     def anyFilterOrSort(self):
       return ( sort is not None and sort != '-pub_date' ) or filter_account is not None or filter_asset is not None
-
-class BlotterEngineView(BlotterBaseView):
-    template_name = 'zipline_app/blotter/engine.html'
-    source="blotter-engine"
-
-    # Can I have multiple lists in a Django generic.ListView?
-    # http://stackoverflow.com/a/18813102/4126114
-    def get_context_data(self, *args, **kwargs):
-        context = super(BlotterEngineView, self).get_context_data(*args, **kwargs)
-
-        if any(ZlModel.zl_unused):
-          #print("add to messages")
-          messages.add_message(self.request, messages.ERROR, "You have unused fills.")
-
-        # get matching engine model
-        context["zl_open"]=ZlModel.zl_open
-        context["zl_closed"]=ZlModel.zl_closed
-        context["zl_txns"]=ZlModel.zl_txns
-        context["zl_open_keyed"]=ZlModel.zl_open_keyed
-
-        # drop the dedicated fills/orders
-        drop_fill = context['latest_fill_list'].exclude(dedicated_to_order=None)
-        drop_order_id = drop_fill.values_list('dedicated_to_order__id',flat=True)
-        context['latest_fill_list'] = context['latest_fill_list'].filter(dedicated_to_order=None)
-        context['latest_order_list'] = context['latest_order_list'].exclude(id__in=drop_order_id).filter(order_status=OPEN)
-
-        return context
 
 class BlotterDownloadView(BlotterBaseView):
   def get(self, *args, **kwargs):

@@ -1,6 +1,5 @@
 from django.test import TestCase
 from .test_zipline_app import create_account, create_asset, create_order, a1, create_fill
-from ...models.zipline_app.zipline_app import ZlModel
 from ...models.zipline_app.side import BUY
 from ...views.zipline_app._download_builder import DownloadBuilder
 from pandas import DataFrame
@@ -10,7 +9,6 @@ from django.http import FileResponse
 
 class DownloadBuilderTests(TestCase):
   def setUp(self):
-    ZlModel.clear()
     self.acc = create_account("test acc")
     self.ass = create_asset(a1["symbol"],a1["exchange"],a1["name"])
     self.builder = DownloadBuilder()

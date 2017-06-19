@@ -2,8 +2,7 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from ...models.zipline_app.zipline_app import ZlModel
-from ...models.zipline_app.order import Order
+from ...models.zipline_app.order import Order, OrderManager
 from .test_zipline_app import create_asset, create_order, create_account, a1
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL, MARKET, GTC, GTD, DAY, OPEN, CANCELLED
@@ -14,7 +13,6 @@ from django.core import mail
 
 class OrderModelTests(TestCase):
     def setUp(self):
-      ZlModel.clear()
       self.acc1 = create_account(symbol="TEST01")
       self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
 
@@ -93,6 +91,8 @@ class OrderModelTests(TestCase):
       user = myTestLogin(self.client)
       o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=user)
       o2 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now() + datetime.timedelta(days=-1), user=user)
+      om = OrderManager()
+      om.process()
       o1.refresh_from_db()
       o2.refresh_from_db()
       self.assertEqual(o2.order_status,CANCELLED)
@@ -107,7 +107,6 @@ class OrderModelTests(TestCase):
 
 class OrderGeneralViewsTests(TestCase):
     def setUp(self):
-      ZlModel.clear()
       self.acc1 = create_account(symbol="TEST01")
       self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
       self.user = myTestLogin(self.client)

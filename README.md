@@ -4,17 +4,19 @@ Blotter web application using django used in [FFA Private Bank](https://www.ffap
 For the older blotter that wrapped the zipline engine, check [django-zipline-2](https://www.github.com/shadiakiki1986/django-zipline-2)
 
 ## Features
-Version 0.0.1
-- add/del order/fill
-- zipline as matching engine between orders/fills
-- fill can match order before/after it
+- add/del account/asset/order/fill
+- fills match orders exactly
 - side-by-side view, consecutive view
-- matching engine matches long trades separately from short trades
+- order/fill edit history
 
-Also check [CHANGELOG](CHANGELOG.md)
+Also check
+- [CHANGELOG](CHANGELOG.md)
+- [TODO](TODO.md)
+- github issues
 
 ## Installation
 ```bash
+sudo pip3 install pew
 sudo apt-get install g++ freetds-dev
 pew new FFA_BLOTTER
 pip3 install -r requirements.txt # Django datetime zipline
@@ -79,8 +81,6 @@ To access deeper namespace, use
 
 > python manage.py test zipline_app.tests.zipline_app.test_asset # will test only asset
 > python manage.py test zipline_app.tests.zipline_app.test_zipline_app
-> python manage.py test zipline_app.tests.zipline_app.test_matcher
-> python manage.py test zipline_app.tests.zipline_app.test_zlmodel
 > python manage.py test ...
 ```
 ## Under the hood

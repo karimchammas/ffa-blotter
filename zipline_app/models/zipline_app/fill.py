@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from .asset import Asset
-from .zlmodel import ZlModel
 from .order import Order
 from .side import BUY, FILL_SIDE_CHOICES, validate_nonzero, PositiveFloatFieldForm, PositiveFloatFieldModel
 from django.core.exceptions import ValidationError
@@ -52,11 +51,6 @@ class Fill(models.Model):
           self.asset.asset_symbol, self.fill_side, self.fill_qty_unsigned, self.fill_price, self.tt_order_key, self.fill_text,
           "" if self.dedicated_to_order is None else " - dedicated to %s"%self.dedicated_to_order
         )
-
-    def has_unused(self):
-      if self.dedicated_to_order is not None:
-        return False
-      return self.asset.id in ZlModel.zl_unused
 
     # validating a model
     # https://docs.djangoproject.com/en/1.10/ref/models/instances/#django.db.models.Model.clean

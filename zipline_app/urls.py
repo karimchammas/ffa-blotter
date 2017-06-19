@@ -12,8 +12,6 @@ urlpatterns = [
 
     # ex: /<root>/blotter/sideBySide
     url(r'^blotter/sideBySide/$', blotter.BlotterSideBySideView.as_view(), name='blotter-sideBySide'),
-    # ex: /<root>/blotter/engine/
-    url(r'^blotter/engine/$', blotter.BlotterEngineView.as_view(), name='blotter-engine'),
     # ex: /<root>/blotter/concealed/
     url(r'^blotter/concealed/$', blotter.BlotterConcealedView.as_view(), name='blotter-concealed'),
     # ex: /<root>/blotter/download/

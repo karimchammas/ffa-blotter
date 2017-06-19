@@ -5,7 +5,6 @@ from django.db import models
 # connecting signals
 #from django.db.backends.signals import connection_created
 from django.core.signals import request_started
-from .signals import order_cancelled
 
 class ZiplineAppConfig(AppConfig):
     name = 'zipline_app'
@@ -19,10 +18,3 @@ class ZiplineAppConfig(AppConfig):
         models.signals.post_save.connect(SignalProcessor.post_save, sender=sender)
         models.signals.post_delete.connect(SignalProcessor.post_delete, sender=sender)
 
-      # This runs at every page reload. Instead, just run it directly here once
-      # eventhough this is supposed to run only once, I am seeing it run twice,
-      # but twice is still better than at each reload
-      request_started.connect(SignalProcessor.ready)
-
-      #
-      order_cancelled.connect(SignalProcessor.order_cancelled)

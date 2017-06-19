@@ -1,33 +1,20 @@
 from django.test import TestCase
-from .test_zipline_app import create_fill, create_asset, a1, create_order, create_account, a2
+from .test_zipline_app import create_fill, create_asset, a1, create_order, create_account, a2, create_fill_from_order
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL
-from ...models.zipline_app.zipline_app import ZlModel
 from django.core.exceptions import ValidationError
 from ...utils import myTestLogin
 from django.contrib.auth.models import User
 from django.utils.timezone import get_current_timezone
 from django.core import mail
-
-def create_fill_from_order(order, fill_text, fill_price, tt_order_key="", user=None):
-    return Fill.objects.create(
-      fill_text=fill_text,
-      pub_date=order.pub_date,
-      asset=order.asset,
-      fill_side=order.order_side,
-      fill_qty_unsigned=order.order_qty_unsigned,
-      fill_price=fill_price,
-      tt_order_key=tt_order_key,
-      dedicated_to_order=order,
-      user=user
-    )
+from ...models.zipline_app.order import Order
 
 class FillModelTests(TestCase):
   def setUp(self):
-    ZlModel.clear()
     self.acc = create_account("test acc")
     self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+    self.o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc)
 
   def test_clean_invalid_dedicated_order_qty(self):
     order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc                          )
@@ -58,6 +45,8 @@ class FillModelTests(TestCase):
   # cause an error: ZeroDivisionError: Weights sum to zero, can't be normalized
   # zipline_app/matcher.py", line 146, in <lambda>
   # grouped_close = grouped.apply(lambda g: numpy.average(g['close'],weights=g['volume']))
+  # EDIT: matcher was removed from the repository of ffa-blotter (kept in django-zipline-2)
+  #       but the test below is kept just for the sake of being nice to tests :D
   def test_two_opposite_fills_same_minute(self):
     qty = 10
     o_l = create_order(order_text="buy order",  days=-1,  asset=self.a1a, order_side=BUY,  order_qty_unsigned=qty,   account=self.acc)
@@ -74,12 +63,12 @@ class FillModelTests(TestCase):
     self.assertEqual(o1.order_qty_signed(), o1.filled())
     self.assertEqual(o3.filled(),0)
 
-    # check that o1 is not in the open orders of ZlModel
-    self.assertTrue(o1.id not in ZlModel.zl_open_keyed)
-
-    # deleting the fill shoul make the order show up agin in ZlModel
+    # deleting the fill should make the order unfilled again
     f1.delete()
-    self.assertTrue(o1.id in ZlModel.zl_open_keyed)
+    # for some reason, o1.refresh_from_db() was not sufficient
+    # so get the order again with a queryset
+    o4 = Order.objects.filter(order_text="random order 1")
+    self.assertEqual(o4.first().filled(),0)
 
   def test_dedicated_fill_delete(self):
     o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc)
@@ -89,12 +78,12 @@ class FillModelTests(TestCase):
   def test_fill_with_user(self):
     password='bla'
     user = User.objects.create_user(username='john', email='jlennon@beatles.com', password=password)
-    f1 = create_fill(days=-1, asset=self.a1a, fill_side=BUY, fill_qty_unsigned=1, fill_price=1, fill_text="fill 1", user=user)
+    f1 = create_fill_from_order(order=self.o1, fill_price=1, fill_text="fill 1", user=user)
 
   # https://docs.djangoproject.com/en/1.10/topics/testing/tools/#email-services
   def test_create_fill_sends_email(self):
     user = myTestLogin(self.client)
-    f1 = create_fill(days=-1, asset=self.a1a, fill_side=BUY, fill_qty_unsigned=1, fill_price=1, fill_text="fill 1", user=user)
+    f1 = create_fill_from_order(order=self.o1, fill_price=1, fill_text="fill 1", user=user)
     self.assertEqual(len(mail.outbox), 1)
     self.assertTrue("New fill" in mail.outbox[0].subject)
 
@@ -103,6 +92,8 @@ class FillGeneralViewsTests(TestCase):
     def setUp(self):
         self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
         self.user = myTestLogin(self.client)
+        self.acc = create_account("test acc")
+        self.o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc, user=self.user)
 
     def test_list(self):
         url = reverse('zipline_app:fills-list')
@@ -115,7 +106,7 @@ class FillGeneralViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_delete(self):
-        f1 = create_fill(fill_text="test?",days=-30, asset=self.a1a, fill_side=BUY, fill_qty_unsigned=20, fill_price=2, user=self.user)
+        f1 = create_fill_from_order(order=self.o1, fill_text="test?", fill_price=2, user=self.user)
         url = reverse('zipline_app:fills-delete', args=(f1.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -130,20 +121,20 @@ class FillGeneralViewsTests(TestCase):
         self.assertContains(response,"Ensure this value is less than or equal to")
 
     def test_update_get(self):
-        f1 = create_fill(fill_text="test?",days=-30, asset=self.a1a, fill_side=BUY, fill_qty_unsigned=20, fill_price=2, user=self.user)
+        f1 = create_fill_from_order(order=self.o1, fill_text="test?",fill_price=2, user=self.user)
         url = reverse('zipline_app:fills-update', args=(f1.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_update_post_wo_tt_order_key(self):
-        f1 = create_fill(fill_text="test?",days=-30, asset=self.a1a, fill_side=BUY, fill_qty_unsigned=20, fill_price=2, user=self.user)
+        f1 = create_fill_from_order(order=self.o1, fill_text="test?", fill_price=2, user=self.user)
         url = reverse('zipline_app:fills-update', args=(f1.id,))
         f2={'pub_date':f1.pub_date, 'asset':f1.asset.id, 'fill_side': f1.fill_side, 'fill_qty_unsigned':4444, 'fill_price':f1.fill_price}
         response = self.client.post(url,f2)
         self.assertContains(response,"4444")
 
     def test_update_post_wi_tt_order_key(self):
-        f1 = create_fill(fill_text="test?",days=-30, asset=self.a1a, fill_side=BUY, fill_qty_unsigned=20, fill_price=2, tt_order_key='bla key', user=self.user)
+        f1 = create_fill_from_order(order=self.o1, fill_text="test?", fill_price=2, tt_order_key='bla key', user=self.user)
         url = reverse('zipline_app:fills-update', args=(f1.id,))
         f1={'pub_date':f1.pub_date, 'asset':f1.asset.id, 'fill_side': f1.fill_side, 'fill_qty_unsigned':f1.fill_qty_unsigned, 'fill_price':f1.fill_price, 'tt_order_key':'foo key'}
         response = self.client.post(url,f1)
@@ -164,23 +155,18 @@ class FillGeneralViewsTests(TestCase):
         self.assertContains(response,"Enter a positive number.")
 
     def test_new_fill_dedicated_to_order(self):
-        acc = create_account("test acc")
-        o1 = create_order(order_text="test", days=-10, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=acc)
-        o1.clean()
-        o1.save()
-
         url = reverse('zipline_app:fills-new')
         f1={
-          'pub_date':o1.pub_date.astimezone(get_current_timezone()).strftime('%Y-%m-%d %H:%M'),
-          'asset':o1.asset.id,
-          'fill_side': o1.order_side,
-          'fill_qty_unsigned':o1.order_qty_unsigned,
+          'pub_date':self.o1.pub_date.astimezone(get_current_timezone()).strftime('%Y-%m-%d %H:%M'),
+          'asset':self.o1.asset.id,
+          'fill_side': self.o1.order_side,
+          'fill_qty_unsigned':self.o1.order_qty_unsigned,
           'fill_price':1,
-          'dedicated_to_order':o1.id
+          'dedicated_to_order':self.o1.id
         }
         response = self.client.post(url,f1,follow=True)
 
-        expected = reverse('zipline_app:orders-detail', args=(o1.id,))
+        expected = reverse('zipline_app:orders-detail', args=(self.o1.id,))
         self.assertNotContains(response, "has-error")
         self.assertContains(response, expected)
 
@@ -217,9 +203,11 @@ class FillDetailViewsTests(TestCase):
   def setUp(self):
     self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
     self.user = myTestLogin(self.client)
+    self.acc = create_account("test acc")
+    self.o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc, user=self.user)
 
   def test_detail_edit_del_only_for_owner(self):
-    f1 = create_fill(fill_text="test fill", days=-1, asset=self.a1a, fill_side=SELL,  fill_qty_unsigned=10, fill_price=2, user=self.user)
+    f1 = create_fill_from_order(order=self.o1, fill_text="test fill", fill_price=2, user=self.user)
 
     url = reverse('zipline_app:fills-detail', args=(f1.id,))
 
@@ -238,9 +226,9 @@ class FillDetailViewsTests(TestCase):
     self.assertNotContains(response, "Delete")
 
   def test_edit_only_for_owner(self):
-    f1 = create_fill(fill_text="test fill", days=-1, asset=self.a1a, fill_side=SELL,  fill_qty_unsigned=10, fill_price=2, user=self.user)
+    f1 = create_fill_from_order(order=self.o1, fill_text="test fill", fill_price=2, user=self.user)
     url_permission(self, 'zipline_app:fills-update', f1.id)
 
   def test_del_only_for_owner(self):
-    f1 = create_fill(fill_text="test fill", days=-1, asset=self.a1a, fill_side=SELL,  fill_qty_unsigned=10, fill_price=2, user=self.user)
+    f1 = create_fill_from_order(order=self.o1, fill_text="test fill", fill_price=2, user=self.user)
     url_permission(self, 'zipline_app:fills-delete', f1.id)
