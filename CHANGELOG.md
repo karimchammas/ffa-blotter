@@ -1,19 +1,24 @@
 ## Changelog
 See also [TODO](TODO.md)
 
-## [x] Version 1.0
+## [ ] Version 1.1
 - [ ] run the `OrderManager.process` function at each page load? (or cron it? or use django's cellery to schedule it as a repeated job?)
 - [ ] simplify the side-by-side view `get_combined` function since now only dedicated fills are supported
+
+## [x] Version 1.0
 - [x] Removed the zipline engine altogether from the `ffa-blotter` repository
   - in FFA, there was no need at all for automatic matching of orders with fills
   - also, the zipline engine integration was challenging to maintain
   - Only keeping a one-to-one relationship between orders and fills
   - i.e. there are no partial fills, nor extra fills, only exact fills
   - i.e. the dedicated fills
-- [x] spin off repository `ffa-blotter` from the original `django-zipline` and rename the original to `django-zipline-2` to maintain the redirection on github to `ffa-blotter`
+- [x] spin off repository `ffa-blotter` from the original `django-zipline`
+  - rename the original to `django-zipline-2` to maintain the redirection on github to `ffa-blotter`
 
 ## [x] Version 0.3
 I didn't maintain the changelogs very well for a while
+
+- [x] send emails using NTLM backend
 
 ## [x] Version 0.2
 I didn't maintain the changelogs very well for a while
