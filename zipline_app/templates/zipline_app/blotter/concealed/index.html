@@ -103,13 +103,13 @@
         <a href="#" id="search-asset-btn"><span class="glyphicon glyphicon-search"></span></a>
         <div id="search-asset-div">{% bootstrap_field field=order_form.asset layout='inline' %}</div>
         <script type="text/javascript">
-          function setSearchEvents(type) {
-            $("#search-"+type+"-div").hide();
-            $("#search-"+type+"-btn").click(function() {
-              $("#search-"+type+"-div").toggle();
+          function setSearchEvents(type, divId, btnId) {
+            $(divId).hide();
+            $(btnId).click(function() {
+              $(divId).toggle();
               return false;
             });
-            $("#search-"+type+"-div select").on("select2:select", function() {
+            $(divId+" select").on("select2:select", function() {
               // Change URL parameters
               // http://stackoverflow.com/a/41662783/4126114
               // Mozilla URLSearchParams
@@ -119,8 +119,8 @@
               window.location.search = searchParams.toString();
             });
           }
-          setSearchEvents("asset");
-          setSearchEvents("account");
+          setSearchEvents("asset",  "#search-asset-div",   "#search-asset-btn"  );
+          setSearchEvents("account","#search-account-div", "#search-account-btn");
         </script>
       </div>
       <div class="col-xs-1"><em>Price</em></div>
