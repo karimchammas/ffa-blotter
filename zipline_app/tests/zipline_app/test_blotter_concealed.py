@@ -63,3 +63,14 @@ class BlotterConcealedViewsTests(TestCase):
     response = self.client.get(url, follow=True)
     self.assertContains(response, "test order")
     self.assertContains(response, "Cancelled")
+
+  def test_sorting_filtering_shows_note_on_top(self):
+    o_l = create_order(order_text="buy order",  days=-1,  asset=self.ass, order_side=BUY,  order_qty_unsigned=10,   account=self.acc)
+
+    url = reverse('zipline_app:blotter-concealed')
+    response = self.client.get(url, follow=True)
+    self.assertNotContains(response, "Sorted by")
+
+    url = reverse('zipline_app:blotter-concealed')+'?sort=account__account_name'
+    response = self.client.get(url, follow=True)
+    self.assertContains(response, "Sorted by")

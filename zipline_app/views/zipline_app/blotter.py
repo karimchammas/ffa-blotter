@@ -168,10 +168,10 @@ class BlotterConcealedView(BlotterBaseView):
         if filter_asset is not None:
           context["filter_asset"] = Asset.objects.get(id=self.get_filter_asset())
 
-        return context
+        c1 = ( context['sort'] is not None and context['sort'] != '-pub_date' )
+        context['anyFilterOrSort'] = c1 or filter_account is not None or filter_asset is not None
 
-    def anyFilterOrSort(self):
-      return ( sort is not None and sort != '-pub_date' ) or filter_account is not None or filter_asset is not None
+        return context
 
 class BlotterDownloadView(BlotterBaseView):
   def get(self, *args, **kwargs):
