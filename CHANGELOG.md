@@ -2,7 +2,7 @@
 See also [TODO](TODO.md)
 
 ## [ ] Version 1.2
-- 
+- [x] asset has isin (closes [#54](https://github.com/shadiakiki1986/ffa-blotter/issues/54))
 
 ## [x] Version 1.1
 - [x] missing environment variables `EMAIL_*` do not cause server exception, but display message in django logs that email not sent
