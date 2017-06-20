@@ -101,9 +101,10 @@ class OrderModelTests(TestCase):
     # https://docs.djangoproject.com/en/1.10/topics/testing/tools/#email-services
     def test_create_order_sends_email(self):
       user = myTestLogin(self.client)
-      o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=user)
-      self.assertEqual(len(mail.outbox), 1)
-      self.assertTrue("New order" in mail.outbox[0].subject)
+      with self.settings(EMAIL_HOST="bla", EMAIL_PORT="dummy", EMAIL_HOST_USER="dummy", EMAIL_HOST_PASSWORD="dummy"):
+        o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=user)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertTrue("New order" in mail.outbox[0].subject)
 
 class OrderGeneralViewsTests(TestCase):
     def setUp(self):

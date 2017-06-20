@@ -45,6 +45,7 @@ from  django.core.mail import send_mail
 from django.template.loader import render_to_string, get_template
 from django.template import Context
 from django.conf import settings
+from django.contrib import messages
 
 def email_ctx(ctx, template_txt, template_html, subject, logger):
   ctx['domain'] = settings.BASE_URL
@@ -55,6 +56,12 @@ def email_ctx(ctx, template_txt, template_html, subject, logger):
   if len(recipients)==0:
     logger.debug("No users with emails to receive")
     return
+  
+  envVars = ("EMAIL_HOST", "EMAIL_PORT", "EMAIL_HOST_USER", "EMAIL_HOST_PASSWORD")
+  for ev in envVars:
+    if not getattr(settings, ev):
+      logger.debug("Email not sent because of missing env var: %s" % (ev))
+      return
   res = send_mail(
     subject = settings.EMAIL_SUBJECT_PREFIX + subject,
     message = message_plain,

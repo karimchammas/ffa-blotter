@@ -1,3 +1,5 @@
+## [ ] Version 9.1
+- [ ] simplify the side-by-side view `get_combined` function since now only dedicated fills are supported
 
 ## [ ] Version 0.1.1
 - [ ] move the matching engine to use redis backend
