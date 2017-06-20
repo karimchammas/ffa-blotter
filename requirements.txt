@@ -15,6 +15,7 @@ django-appconf==1.0.2
 django-bootstrap3==8.1.0
 django-pagination-bootstrap==1.2
 Django-Select2==5.8.10
+django-smtp-ntlm-backend==0.0.3
 empyrical==0.2.2
 et-xmlfile==1.0.1
 intervaltree==2.1.0
@@ -54,10 +55,7 @@ tables==3.3.0
 testfixtures==4.13.4
 toolz==0.8.2
 xlrd==1.0.0
-git+git://github.com/quantopian/zipline@5fd20e1
 zope.interface==4.3.3
 
 # until https://github.com/trustrachel/python-ntlm3/pull/24 is closed
 git+https://github.com/shadiakiki1986/python-ntlm3.git@feature_smtp
-
-django-smtp-ntlm-backend >= 0.0.3
