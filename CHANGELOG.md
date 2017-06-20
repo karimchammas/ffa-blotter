@@ -2,8 +2,9 @@
 See also [TODO](TODO.md)
 
 ## [ ] Version 1.1
-- [ ] run the `OrderManager.process` function at each page load? (or cron it? or use django's cellery to schedule it as a repeated job?)
 - [ ] simplify the side-by-side view `get_combined` function since now only dedicated fills are supported
+- [x] run the `OrderManager.process` function at each page load
+  - alternatives could have been: cron it; use django's cellery to schedule it as a repeated job
 
 ## [x] Version 1.0
 - [x] Removed the zipline engine altogether from the `ffa-blotter` repository

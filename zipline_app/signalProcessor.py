@@ -7,7 +7,7 @@ logger = logging.getLogger("zipline_app") #__name__)
 
 from .models.zipline_app.asset import Asset
 from .models.zipline_app.account import Account
-from .models.zipline_app.order import Order
+from .models.zipline_app.order import Order, OrderManager
 from .models.zipline_app.fill import Fill
 from .utils import email_ctx
 
@@ -61,3 +61,7 @@ class SignalProcessor:
         order.setOpen()
     # if sender.__name__=="Order": ZlModel.delete_order(instance)
 
+  def request_started(sender, **kwargs):
+    logger.debug("Signal: %s, %s" % ("request_started", sender))
+    om = OrderManager()
+    om.process()

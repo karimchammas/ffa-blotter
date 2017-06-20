@@ -12,9 +12,9 @@ class ZiplineAppConfig(AppConfig):
     # https://chriskief.com/2014/02/28/django-1-7-signals-appconfig/
     def ready(self):
       from .signalProcessor import SignalProcessor
+      request_started.connect(SignalProcessor.request_started)
       senders=("zipline_app.Order", "zipline_app.Fill", "zipline_app.Asset")
       for sender in senders:
         #models.signals.post_init.connect(SignalProcessor.post_init, sender=sender)
         models.signals.post_save.connect(SignalProcessor.post_save, sender=sender)
         models.signals.post_delete.connect(SignalProcessor.post_delete, sender=sender)
-

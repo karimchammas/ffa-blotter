@@ -2,9 +2,12 @@ from django.test import TestCase
 from .test_zipline_app import create_account, create_asset, create_order, a1, create_fill
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
-from ...models.zipline_app.side import BUY, SELL
+from ...models.zipline_app.side import BUY, SELL, DAY
 from .test_fill import create_fill_from_order
-from ...utils import myTestLogin
+from ...utils import myTestLogin, chopSeconds
+from django.utils import timezone
+import datetime
+from ...models.zipline_app.order import Order, OrderManager
 
 class BlotterConcealedViewsTests(TestCase):
   def setUp(self):
@@ -40,3 +43,23 @@ class BlotterConcealedViewsTests(TestCase):
     url = reverse('zipline_app:blotter-concealed')
     response = self.client.get(url, follow=True)
     self.assertNotContains(response, 'data-target="#fills-new"')
+
+  def test_day_order_expires(self):
+    past = timezone.now() + datetime.timedelta(days=-1)
+    past = chopSeconds(past)
+    order = Order.objects.create(
+      order_text='test order',
+      pub_date=past,
+      asset=self.ass,
+      order_side=BUY,
+      order_qty_unsigned=10,
+      account=self.acc,
+      order_validity=DAY
+    )
+    order.clean()
+    order.save()
+
+    url = reverse('zipline_app:blotter-concealed')
+    response = self.client.get(url, follow=True)
+    self.assertContains(response, "test order")
+    self.assertContains(response, "Cancelled")
