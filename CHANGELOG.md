@@ -2,7 +2,8 @@
 See also [TODO](TODO.md)
 
 ## [ ] Version 1.2
-- [x] asset has isin (closes [#54](https://github.com/shadiakiki1986/ffa-blotter/issues/54))
+- [x] add to order field "AM type" (vs the older type which was really "execution") (closes [#56](https://github.com/shadiakiki1986/ffa-blotter/issues/56))
+- [x] add to asset field ISIN (closes [#54](https://github.com/shadiakiki1986/ffa-blotter/issues/54))
 
 ## [x] Version 1.1
 - [x] missing environment variables `EMAIL_*` do not cause server exception, but display message in django logs that email not sent

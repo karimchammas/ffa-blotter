@@ -21,15 +21,15 @@
       <div class="col-xs-1 text-right">ID</div>
       <div class="col-xs-2">Time</div>
       <div class="col-xs-1">Asset</div>
-      <div class="col-xs-1">Limit price</div>
+      <div class="col-xs-1">Account</div>
+      <div class="col-xs-2">Types</div>
+      <div class="col-xs-1">Validity</div>
       <div class="col-xs-1">Side</div>
       <div class="col-xs-1 text-right">Qty</div>
-      <div class="col-xs-1">Account</div>
-      <div class="col-xs-1">Comments</div>
       <div class="col-xs-1">User</div>
       <div class="col-xs-1">Status</div>
-      <div class="col-xs-1">Validity</div>
     </div>
+    <br>
 
     {% for order in order_list %}
     <div class="row">
@@ -41,21 +41,19 @@
         <a href="{% url 'zipline_app:assets-detail' order.asset.id %}">{{ order.asset.asset_symbol }}</a>
       </div>
       <div class="col-xs-1">
-        {% if order.order_type == "L" %}
-        {{ order.limit_price }}
-        {% else %}
-        &nbsp;
-        {% endif %}
-      </div>
-      <div class="col-xs-1">{{ order.get_order_side_display }}</div>
-      <div class="col-xs-1 text-right">{{ order.order_qty_unsigned }}</div>
-      <div class="col-xs-1">
         <a href="{% url 'zipline_app:accounts-detail' order.account.id %}">{{ order.account.account_symbol }}</a>
       </div>
-      <div class="col-xs-1">{{ order.order_text }}</div>
-      <div class="col-xs-1">{{ order.user.username }}</div>
-      <div class="col-xs-1">
-        {{ order.get_order_status_display }}
+      <div class="col-xs-2">
+        {% if order.get_am_type_display != "N" %}
+        <div class='row'>AM Type: {{order.get_am_type_display}}</div>
+        {% endif %}
+        {% if order.order_text != "" %}
+        <div class='row'>Comment: {{ order.order_text }}</div>
+        {% endif %}
+        <div class='row'>Execution: {{order.get_order_type_display}}</div>
+        {% if order.order_type == "L" %}
+        <div class='row'>Limit price: {{ order.limit_price }}</div>
+        {% endif %}
       </div>
       <div class="col-xs-1">
         {{ order.get_order_validity_display }}
@@ -63,7 +61,14 @@
         ({{order.validity_date.date|date:'Y-m-d'}})
         {% endif %}
       </div>
+      <div class="col-xs-1">{{ order.get_order_side_display }}</div>
+      <div class="col-xs-1 text-right">{{ order.order_qty_unsigned }}</div>
+      <div class="col-xs-1">{{ order.user.username }}</div>
+      <div class="col-xs-1">
+        {{ order.get_order_status_display }}
+      </div>
     </div>
+    <br>
 {% empty %}
     <div class="alert alert-info">No orders yet.</div>
 {% endfor %}

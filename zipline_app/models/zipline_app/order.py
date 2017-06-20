@@ -19,8 +19,15 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from ...utils import now_minute, chopSeconds
 from django.contrib.auth.models import User
 
-# Create your models here.
-
+# types that are specific to FFA AM
+NONE = 'N'
+UNSOLICITED = 'U'
+DISCRETIONARY = 'D'
+AM_TYPE_CHOICES = (
+  (NONE, 'None'),
+  (UNSOLICITED, 'Unsolicited'),
+  (DISCRETIONARY, 'Discretionary'),
+)
 class AbstractOrder(models.Model):
     order_text = models.CharField(max_length=200, blank=True)
     pub_date = models.DateTimeField('date published',default=now_minute)
@@ -42,7 +49,7 @@ class AbstractOrder(models.Model):
       max_length=1,
       choices=ORDER_TYPE_CHOICES,
       default=MARKET,
-      verbose_name="Type"
+      verbose_name="Execution"
     )
     limit_price = PositiveFloatFieldModel(
       default=None,
@@ -68,12 +75,18 @@ class AbstractOrder(models.Model):
       blank=True,
       help_text='YYYY-MM-DD'
     )
+    am_type = models.CharField(
+      max_length=1,
+      choices=AM_TYPE_CHOICES,
+      default=NONE,
+      verbose_name="AM Type"
+    )
 
     def diff(self, other):
       if other is None:
         return []
       messages = []
-      attrs = ['order_text', 'pub_date', 'asset', 'order_qty_unsigned', 'account', 'order_side', 'order_type', 'limit_price', 'order_status', 'order_validity', 'validity_date']
+      attrs = ['order_text', 'pub_date', 'asset', 'order_qty_unsigned', 'account', 'order_side', 'order_type', 'limit_price', 'order_status', 'order_validity', 'validity_date', 'am_type']
       for attr in attrs:
         if getattr(self, attr) != getattr(other, attr):
           messages.append(
@@ -170,7 +183,8 @@ class Order(AbstractOrder):
         limit_price = self.limit_price,
         order_status = self.order_status,
         order_validity = self.order_validity,
-        validity_date = self.validity_date
+        validity_date = self.validity_date,
+        am_type = self.am_type
       )
 
     # excluding the first entry with previous=None since this is available regardless of edits made
