@@ -10,6 +10,7 @@ class Asset(models.Model):
     asset_symbol = models.CharField(max_length=20, unique=True)
     asset_exchange = models.CharField(max_length=200)
     asset_name = models.CharField(max_length=200)
+    asset_isin = models.CharField(max_length=20, null=True)
 
     def __str__(self):
         return "%s: %s" % (self.asset_symbol, self.asset_name)
@@ -21,7 +22,8 @@ class Asset(models.Model):
         return {
           "symbol": self.asset_symbol,
           "exchange": self.asset_exchange,
-          "name": self.asset_name
+          "name": self.asset_name,
+          "isin": self.asset_isin
         }
 
     def delete(self):

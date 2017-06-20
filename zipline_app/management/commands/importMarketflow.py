@@ -39,21 +39,19 @@ class Command(BaseCommand):
   
         # get/create entity/row/case
         #logger.debug("get or create: %s"%asset['TIT_COD'])
-        assetDj = Asset.objects.filter(
-          asset_symbol=assetMf['TIT_COD']
-        ).first()
-        if assetDj is None:
-          assetDj = Asset.objects.create(
-            asset_symbol=assetMf['TIT_COD'],
-            asset_name=assetMf['TIT_NOM'],
-            asset_exchange='N/A'
-          )
+        assetDj, created = Asset.objects.update_or_create(
+          asset_symbol=assetMf['TIT_COD'],
+          defaults={
+            'asset_name': assetMf['TIT_NOM'],
+            'asset_isin': assetMf['TIT_ISIN_COD'],
+            'asset_exchange': 'N/A'
+          }
+        )
+        if created:
           logger.debug("Created asset: %s"%assetDj)
-        else:
-          if assetDj.asset_name!=assetMf['TIT_NOM']:
-            assetDj.asset_name=assetMf['TIT_NOM']
-            assetDj.save()
-            logger.debug("Updated asset: %s"%assetDj)
+        # Need another "update" flag to identify if updated or not
+        #else:
+        #  logger.debug("Updated asset: %s"%assetDj)
 
       if options['debug']:
         progress.finish()

@@ -35,7 +35,7 @@ class MfManager:
   def assetsList(self):
     return self._execute("""
       SELECT
-        TIT_COD, TIT_NOM
+        TIT_COD, TIT_NOM, TIT_ISIN_COD
       FROM TITRE
     """)
 

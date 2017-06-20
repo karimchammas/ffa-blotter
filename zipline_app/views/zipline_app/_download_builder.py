@@ -19,6 +19,7 @@ class DownloadBuilder:
       'Order Type':[],
       'Qty':[],
       'Security Name':[],
+      'Security ISIN':[],
       'Quote':[],
       'Order nbr':[],
       'Status':[]
@@ -42,6 +43,7 @@ class DownloadBuilder:
         'Order Type':'-',
         'Qty':order.order_qty_unsigned,
         'Security Name':order.asset.asset_symbol,
+        'Security ISIN':order.asset.asset_isin,
         'Quote':order.avgPrice(),
         'Order nbr':'-' if order.dedicated_fill() is None else order.dedicated_fill().tt_order_key,
         'Status':'working' if order.filled()!=order.order_qty_signed() else 'filled'
@@ -70,6 +72,7 @@ class DownloadBuilder:
         'Order Type',
         'Qty',
         'Security Name',
+        'Security ISIN',
         'Quote',
         'Order nbr',
         'Status'

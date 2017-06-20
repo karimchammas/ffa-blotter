@@ -6,7 +6,7 @@ from ...utils import redirect_index_or_local
 
 class AssetCreate(generic.CreateView):
   model = Asset
-  fields = ['asset_symbol','asset_name','asset_exchange']
+  fields = ['asset_symbol','asset_name','asset_exchange','asset_isin']
   template_name = 'zipline_app/asset/asset_form.html'
 
   def get_success_url(self):
@@ -34,7 +34,7 @@ class AssetDetailView(generic.DetailView):
 
 class AssetUpdateView(generic.UpdateView):
   model = Asset
-  fields = ['asset_symbol','asset_name','asset_exchange']
+  fields = ['asset_symbol','asset_name','asset_exchange','asset_isin']
   template_name = 'zipline_app/asset/asset_form.html'
 
   def get_success_url(self):

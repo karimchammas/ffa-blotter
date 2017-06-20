@@ -4,9 +4,10 @@
 
 Asset Details
 <ul>
-  <li>{{asset.asset_symbol}}</li>
-  <li>{{asset.asset_name}}</li>
-  <li>{{asset.asset_exchange}}</li>
+  <li>Symbol: {{asset.asset_symbol}}</li>
+  <li>Name: {{asset.asset_name}}</li>
+  <li>ISIN: {{asset.asset_isin}}</li>
+  <li>Exchange: {{asset.asset_exchange}}</li>
 </ul>
 
 <a href="{% url 'zipline_app:assets-update' asset.id %}">Edit</a>

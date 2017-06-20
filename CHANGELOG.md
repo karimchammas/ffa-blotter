@@ -1,7 +1,10 @@
 ## Changelog
 See also [TODO](TODO.md)
 
-## [ ] Version 1.1
+## [ ] Version 1.2
+- 
+
+## [x] Version 1.1
 - [x] missing environment variables `EMAIL_*` do not cause server exception, but display message in django logs that email not sent
 - [x] add filter in blotter/concealed view: by order side
 - [x] run the `OrderManager.process` function at each page load
