@@ -6,7 +6,7 @@ from ...utils import redirect_index_or_local
 
 class AssetCreate(generic.CreateView):
   model = Asset
-  fields = ['asset_symbol','asset_name','asset_exchange','asset_isin']
+  fields = ['asset_symbol','asset_name','asset_exchange','asset_isin','asset_currency']
   template_name = 'zipline_app/asset/asset_form.html'
 
   def get_success_url(self):
@@ -28,9 +28,21 @@ class AssetDelete(generic.DeleteView):
     success_url = reverse_lazy('zipline_app:assets-list')
     template_name = 'zipline_app/asset/asset_confirm_delete.html'
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 class AssetDetailView(generic.DetailView):
     model = Asset
     template_name = 'zipline_app/asset/asset_detail.html'
+
+    # Django view returning json without using template
+    # https://stackoverflow.com/a/26726893/4126114
+    def get(self,*args,**kwargs):
+      asJson = self.request.GET.get("asJson",None)
+      if not asJson:
+        return super(AssetDetailView,self).get(*args,**kwargs)
+      asset = get_object_or_404(self.model, id=kwargs['pk'])
+      #data = {'currency':asset.asset_currency}
+      return JsonResponse(asset.to_dict())
 
 class AssetUpdateView(generic.UpdateView):
   model = Asset

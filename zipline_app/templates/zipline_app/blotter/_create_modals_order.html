@@ -44,6 +44,21 @@
               {% bootstrap_field field=order_form.validity_date layout='horizontal' %}
               {% bootstrap_field field=order_form.order_side layout='horizontal' %}
               {% bootstrap_field field=order_form.order_qty_unsigned layout='horizontal' %}
+              <div class="form-group" id="unitDiv">
+                <div class="col-md-3"><b>Unit</b></div>
+                <div class="col-md-9">
+                  <span>
+                    <input
+                      name="order_qty_unit"
+                      type="radio"
+                      value="shares"
+                      checked
+                    />
+                    shares
+                    &nbsp;&nbsp;&nbsp;
+                  </span>
+                </div>
+              </div>
               {% bootstrap_field field=order_form.order_text layout='horizontal' %}
         </div>
 
@@ -59,3 +74,19 @@
 
 {# copied from https://github.com/applegrew/django-select2/blob/master/tests/testapp/templates/form.html#L24 #}
 {{ order_form.media.js }}
+
+<script type="text/javascript">
+  // upon selecting a different asset, fetch its currency, display it under the unit, and remove any earlier currencies displayed there
+  $("#orders-new select[name='asset']").change(function() {
+    $("#orders-new input[type='radio'][name='order_qty_unit'][value!='shares']").parent().remove();
+    var base = "{% url 'zipline_app:assets-detail' 1 %}";
+    var id = $("#orders-new select[name='asset']").val();
+    $.get(
+      base.replace("1",id)+"?asJson=true",
+      function(data, textStatus, jqXHR ) {
+        var currency = data["currency"];
+        $("#unitDiv div[class='col-md-9'").append($('<span><input type="radio" name="order_qty_unit" value="'+currency+'" />&nbsp;'+currency+'</span>'));
+      }
+    );
+  });
+</script>

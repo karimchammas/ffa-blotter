@@ -44,7 +44,8 @@ class Command(BaseCommand):
           defaults={
             'asset_name': assetMf['TIT_NOM'],
             'asset_isin': assetMf['TIT_ISIN_COD'],
-            'asset_exchange': 'N/A'
+            'asset_exchange': 'N/A',
+            'asset_currency': assetMf['DEV_SYM_LGE1']
           }
         )
         if created:

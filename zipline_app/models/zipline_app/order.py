@@ -37,6 +37,11 @@ class AbstractOrder(models.Model):
       validators=[MaxValueValidator(1000000), validate_nonzero],
       verbose_name="Qty"
     )
+    order_qty_unit = models.CharField(
+      max_length=20,
+      default="shares",
+      verbose_name="Qty unit"
+    )
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     order_side = models.CharField(
       max_length=1,
@@ -86,7 +91,13 @@ class AbstractOrder(models.Model):
       if other is None:
         return []
       messages = []
-      attrs = ['order_text', 'pub_date', 'asset', 'order_qty_unsigned', 'account', 'order_side', 'order_type', 'limit_price', 'order_status', 'order_validity', 'validity_date', 'am_type']
+      attrs = [
+        'order_text', 'pub_date', 'asset',
+        'order_qty_unsigned', 'order_qty_unit',
+        'account', 'order_side', 'order_type',
+        'limit_price', 'order_status',
+        'order_validity', 'validity_date', 'am_type'
+      ]
       for attr in attrs:
         if getattr(self, attr) != getattr(other, attr):
           messages.append(
@@ -176,6 +187,7 @@ class Order(AbstractOrder):
         pub_date = self.pub_date,
         asset = self.asset,
         order_qty_unsigned = self.order_qty_unsigned,
+        order_qty_unit = self.order_qty_unit,
         account = self.account,
         order_side = self.order_side,
         user = self.user,

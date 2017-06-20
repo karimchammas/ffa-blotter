@@ -34,6 +34,7 @@ class OrderForm(forms.ModelForm):
       'validity_date',
       'order_side',
       'order_qty_unsigned',
+      'order_qty_unit',
       'order_text'
     ]
     widgets = {

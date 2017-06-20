@@ -35,8 +35,10 @@ class MfManager:
   def assetsList(self):
     return self._execute("""
       SELECT
-        TIT_COD, TIT_NOM, TIT_ISIN_COD
+        TIT_COD, TIT_NOM, TIT_ISIN_COD,
+        DEVISE.DEV_SYM_LGE1
       FROM TITRE
+      left join DEVISE on DEVISE.DEV_COD=TITRE.TIT_DEV_COD 
     """)
 
   def accountsCount(self):
