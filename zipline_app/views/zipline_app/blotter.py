@@ -56,30 +56,35 @@ class BlotterBaseView(generic.ListView):
     def order_by(self, queryset):
       return queryset.order_by(self.get_sort())
 
-    def get_filter_account(self):
-      return self.request.GET.get("account", None)
-
-    def get_filter_asset(self):
-      return self.request.GET.get("asset", None)
+    def get_filter(self,field):
+      return self.request.GET.get(field, None)
 
     def filter_account(self, queryset):
-      account = self.get_filter_account()
+      account = self.get_filter("account")
       if account is not None:
         queryset = queryset.filter(account__id=account)
       return queryset
 
     def filter_asset(self, queryset):
-      asset = self.get_filter_asset()
+      asset = self.get_filter("asset")
       if asset is not None:
         queryset = queryset.filter(asset__id=asset)
+      return queryset
+
+    def filter_order_side(self, queryset):
+      order_side = self.get_filter("order_side")
+      if order_side is not None:
+        queryset = queryset.filter(order_side=order_side)
       return queryset
 
     def get_orders(self):
       return self.filter_asset(
                self.filter_account(
-                 self.order_by(
-                   Order.objects.filter(
-                     pub_date__lte=timezone.now()
+                 self.filter_order_side(
+                   self.order_by(
+                     Order.objects.filter(
+                       pub_date__lte=timezone.now()
+                     )
                    )
                  )
                )
@@ -160,16 +165,20 @@ class BlotterConcealedView(BlotterBaseView):
         context = super(BlotterConcealedView, self).get_context_data(*args, **kwargs)
         context["sort"] = self.get_sort()
 
-        filter_account = self.get_filter_account()
+        filter_account = self.get_filter("account")
         if filter_account is not None:
-          context["filter_account"] = Account.objects.get(id=self.get_filter_account())
+          context["filter_account"] = Account.objects.get(id=self.get_filter("account"))
 
-        filter_asset = self.get_filter_asset()
+        filter_asset = self.get_filter("asset")
         if filter_asset is not None:
-          context["filter_asset"] = Asset.objects.get(id=self.get_filter_asset())
+          context["filter_asset"] = Asset.objects.get(id=self.get_filter("asset"))
+
+        filter_order_side = self.get_filter("order_side")
+        if filter_order_side is not None:
+          context["filter_order_side"] = self.get_filter("order_side")
 
         c1 = ( context['sort'] is not None and context['sort'] != '-pub_date' )
-        context['anyFilterOrSort'] = c1 or filter_account is not None or filter_asset is not None
+        context['anyFilterOrSort'] = c1 or filter_account is not None or filter_asset is not None or filter_order_side is not None
 
         return context
 

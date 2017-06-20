@@ -37,7 +37,7 @@
       &nbsp;
     {% endif %}
 
-    {% if filter_account is not None or filter_asset is not None %}
+    {% if filter_account is not None or filter_asset is not None or filter_order_side is not None %}
       Filtered for:
       {% if filter_account is not None %}
       <span class='btn btn-default'>
@@ -66,6 +66,18 @@
         </a>
       </span>
       {% endif %}
+
+      {% if filter_order_side is not None %}
+      <span class='btn btn-default'>
+        Order side:
+        {{filter_order_side}}
+        &nbsp;
+        <a href='#' name="delete-param" data-param="order_side" title="Remove filter">
+          <span class='glyphicon glyphicon-remove'></span>
+        </a>
+      </span>
+      {% endif %}
+
     {% endif %}
 
     </b>
@@ -97,19 +109,30 @@
         <a href="#" id="search-account-btn"><span class="glyphicon glyphicon-search"></span></a>
         <div id="search-account-div">{% bootstrap_field field=order_form.account layout='inline' %}</div>
       </div>
-      <div class="col-xs-1"><em>Qty</em></div>
+      <div class="col-xs-1">
+        <div class='row'>
+          <div class="col-xs-6">
+            <em>Side</em>
+            <a href="#" id="search-order_side-btn"><span class="glyphicon glyphicon-search"></span></a>
+            <div id="search-order_side-div">{% bootstrap_field field=order_form.order_side layout='inline' %}</div>
+          </div>
+          <div class="col-xs-6">
+            <em>Qty</em>
+          </div>
+        </div>
+      </div>
       <div class="col-xs-3">
         {% include 'zipline_app/blotter/concealed/_sortable.html' with field_name='Security' field_sort='asset__asset_name' field_direction='down' %}
         <a href="#" id="search-asset-btn"><span class="glyphicon glyphicon-search"></span></a>
         <div id="search-asset-div">{% bootstrap_field field=order_form.asset layout='inline' %}</div>
         <script type="text/javascript">
-          function setSearchEvents(type, divId, btnId) {
+          function setSearchEvents(type, divId, btnId, event) {
             $(divId).hide();
             $(btnId).click(function() {
               $(divId).toggle();
               return false;
             });
-            $(divId+" select").on("select2:select", function() {
+            $(divId+" select").on(event, function() {
               // Change URL parameters
               // http://stackoverflow.com/a/41662783/4126114
               // Mozilla URLSearchParams
@@ -119,8 +142,12 @@
               window.location.search = searchParams.toString();
             });
           }
-          setSearchEvents("asset",  "#search-asset-div",   "#search-asset-btn"  );
-          setSearchEvents("account","#search-account-div", "#search-account-btn");
+          setSearchEvents("asset",     "#search-asset-div",     "#search-asset-btn"  ,   "select2:select");
+          setSearchEvents("account",   "#search-account-div",   "#search-account-btn",   "select2:select");
+          setSearchEvents("order_side","#search-order_side-div","#search-order_side-btn","change");
+
+          // add a "" to the order_side filter dropdown
+          $("#search-order_side-div select").append($("<option></option>").attr("value","").text("")).val("");
         </script>
       </div>
       <div class="col-xs-1"><em>Price</em></div>
