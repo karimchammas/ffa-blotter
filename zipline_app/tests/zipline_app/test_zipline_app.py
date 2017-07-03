@@ -34,7 +34,7 @@ def create_asset(symbol, exchange, name):
       asset_name=name
     )
 
-def create_order(order_text, days, asset, order_side, order_qty_unsigned, account, user=None):
+def create_order(order_text, days, asset, order_side, order_qty_unsigned, account, user=None, *args, **kwargs):
     """
     Creates a order with the given `order_text` and published the
     given number of `days` offset to now (negative for orders published
@@ -49,7 +49,9 @@ def create_order(order_text, days, asset, order_side, order_qty_unsigned, accoun
       order_side=order_side,
       order_qty_unsigned=order_qty_unsigned,
       account=account,
-      user=user
+      user=user,
+      *args,
+      **kwargs
     )
     order.clean()
     order.save()

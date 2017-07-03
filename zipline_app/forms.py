@@ -35,7 +35,8 @@ class OrderForm(forms.ModelForm):
       'order_side',
       'order_qty_unsigned',
       'order_qty_unit',
-      'order_text'
+      'order_text',
+      'commission'
     ]
     widgets = {
       'asset': AssetModelSelect2Widget(),

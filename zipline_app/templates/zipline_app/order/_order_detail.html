@@ -21,6 +21,10 @@
   <li>Qty: {{order.order_qty_unsigned|intcomma}}</li>
   <li>Unit: {{order.order_qty_unit}}</li>
   <li>Comment: {% if order.order_text %}{{ order.order_text }}{% else %}None{% endif %}</li>
+  <li>Commission (%): {{order.commission}}</li>
+
+  <!-- non-user input -->
+
   <li>User: {{order.user.username}}</li>
   <li>Filled: <font color="red">{{order.filled|intcomma}}</font></li>
   <li>Status: {{order.get_order_status_display}}</li>

@@ -86,6 +86,12 @@ class AbstractOrder(models.Model):
       default=NONE,
       verbose_name="AM Type"
     )
+    commission = PositiveFloatFieldModel(
+      default=0,
+      validators=[MaxValueValidator(1000000), MinValueValidator(0)],
+      null=True,
+      blank=True
+    )
 
     def diff(self, other):
       if other is None:
@@ -96,7 +102,8 @@ class AbstractOrder(models.Model):
         'order_qty_unsigned', 'order_qty_unit',
         'account', 'order_side', 'order_type',
         'limit_price', 'order_status',
-        'order_validity', 'validity_date', 'am_type'
+        'order_validity', 'validity_date', 'am_type',
+        'commission'
       ]
       for attr in attrs:
         if getattr(self, attr) != getattr(other, attr):
@@ -196,7 +203,8 @@ class Order(AbstractOrder):
         order_status = self.order_status,
         order_validity = self.order_validity,
         validity_date = self.validity_date,
-        am_type = self.am_type
+        am_type = self.am_type,
+        commission = self.commission
       )
 
     # excluding the first entry with previous=None since this is available regardless of edits made

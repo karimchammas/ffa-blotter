@@ -106,6 +106,10 @@ class OrderModelTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertTrue("New order" in mail.outbox[0].subject)
 
+    def test_commission(self):
+        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1, commission=0.5)
+        self.assertEqual(0.5, o1.commission)
+
 class OrderGeneralViewsTests(TestCase):
     def setUp(self):
       self.acc1 = create_account(symbol="TEST01")

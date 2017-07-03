@@ -54,6 +54,7 @@
         {% if order.order_type == "L" %}
         <div class='row'>Limit price: {{ order.limit_price }}</div>
         {% endif %}
+        <div class='row'>Commission (%): {{ order.commission }}</div>
       </div>
       <div class="col-xs-1">
         {{ order.get_order_validity_display }}
