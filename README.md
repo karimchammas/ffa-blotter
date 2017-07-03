@@ -15,19 +15,19 @@ Also check
 - github issues
 
 ## Installation
+Prerequisites
 ```bash
 sudo pip3 install pew
 sudo apt-get install g++ freetds-dev
-pew new FFA_BLOTTER
-pip3 install -r requirements.txt # Django datetime zipline
+pew new --python=python3 FFA_BLOTTER
+pip install -r requirements.txt # Django datetime zipline
 ```
 
-Apply patch from https://github.com/quantopian/zipline/pull/1683 if not already merged and usable
-
+Django management
 ```bash
-python3 manage.py migrate
-python3 manage.py test zipline_app.tests
-python3 manage.py createsuperuser
+python manage.py migrate
+python manage.py test zipline_app.tests
+python manage.py createsuperuser
 ```
 Reference
 * [creating an admin user](https://docs.djangoproject.com/en/1.10/intro/tutorial02/#creating-an-admin-user)
@@ -35,12 +35,12 @@ Reference
 ## Usage
 To serve the web app
 ```bash
-python3 manage.py runserver 0.0.0.0:8000
+python manage.py runserver 0.0.0.0:8000
 ```
 
 To import marketflow accounts/assets
 ```bash
-python3 manage.py importMarketflow --debug
+python manage.py importMarketflow --debug
 ```
 
 ## Environment variables required

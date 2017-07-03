@@ -31,6 +31,8 @@ def myTestLogin(client):
   password = 'glass onion'
   user = User.objects.create_user(username='john', email='jlennon@beatles.com', password=password)
   response = client.login(username=user.username, password=password, follow=True)
+  if not response:
+    raise Exception("Failed to log in")
   return user
 
 def getenv_or_fail(envName: str):

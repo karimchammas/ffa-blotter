@@ -13,6 +13,8 @@ a1 = {
   "exchange":'exchange name',
   "symbol":'A1',
   "name":'A1 name',
+  "currency": None,
+  "isin": None
 }
 a2 = {
   "exchange":'exchange name',

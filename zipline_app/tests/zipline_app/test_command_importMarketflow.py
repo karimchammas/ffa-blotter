@@ -13,8 +13,8 @@ class ImportMarketflowCommandTests(TestCase):
     mock = patcher.start()
     instance = mock.return_value.__enter__.return_value
     instance.assetsList.return_value = [
-      {'TIT_COD':'asset 1', 'TIT_NOM':'name of asset 1'},
-      {'TIT_COD':'asset 2', 'TIT_NOM':'name of asset 2'},
+      {'TIT_COD':'asset 1', 'TIT_NOM':'name of asset 1', 'TIT_ISIN_COD': 'ISIN 1', 'DEV_SYM_LGE1': 'USD'},
+      {'TIT_COD':'asset 2', 'TIT_NOM':'name of asset 2', 'TIT_ISIN_COD': 'ISIN 2', 'DEV_SYM_LGE1': 'USD'},
     ]
     instance.assetsCount.return_value = 2
 

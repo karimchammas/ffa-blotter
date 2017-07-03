@@ -133,9 +133,22 @@ class OrderGeneralViewsTests(TestCase):
         # http://stackoverflow.com/questions/40005411/django-django-test-client-post-request
         time = '2015-01-01 00:00:00' #timezone.now() + datetime.timedelta(days=-0.5)
         url = reverse('zipline_app:orders-new')
-        response = self.client.post(url, {'pub_date':time, 'asset':self.a1a.id, 'order_side': BUY, 'order_qty_unsigned':10, 'account':self.acc1.id, 'order_type': MARKET, 'order_validity': GTC})
+        response = self.client.post(
+          url,
+          { 'pub_date':time,
+            'asset':self.a1a.id,
+            'order_side': BUY,
+            'order_qty_unsigned':10,
+            'account':self.acc1.id,
+            'order_type': MARKET,
+            'order_validity': GTC,
+            'am_type': 'N',
+            'order_qty_unit': 'share'
+          }
+        )
         # check that the post was successful by being a redirect
         #self.assertNotContains(response, 'has-error')
+        # print(list(response))
         self.assertNotEqual(response.status_code, 200)
         self.assertEqual(response.status_code, 302)
 
@@ -169,9 +182,22 @@ class OrderGeneralViewsTests(TestCase):
     def test_new_order_user(self):
         url = reverse('zipline_app:orders-new')
         time = '2015-01-01 06:00:00'
-        o1={'pub_date':time, 'asset':self.a1a.id, 'order_side': BUY, 'order_qty_unsigned':1, 'account':self.acc1.id, 'order_type': MARKET, 'order_validity': GTC}
+        o1={
+          'pub_date':time,
+          'asset':self.a1a.id,
+          'order_side': BUY,
+          'order_qty_unsigned':1,
+          'account':self.acc1.id,
+          'order_type': MARKET,
+          'order_validity': GTC,
+          'am_type': 'N',
+          'order_qty_unit': 'shares'
+        }
 
         response = self.client.post(url,o1,follow=True)
+        # print(list(response))
+        # check no errors
+        self.assertNotContains(response, 'has-error')
         # check that "john" shows up twice, once for the "logged in as john", and once for the order author
         self.assertEqual(b''.join(list(response)).count(b"john"),2)
 
