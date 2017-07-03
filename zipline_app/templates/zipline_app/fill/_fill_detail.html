@@ -16,6 +16,7 @@
   <li>Status: {{ fill.get_status_display }}</li>
   <li>Category: {{ fill.get_category_display }}</li>
   <li>{{ fill.get_is_internal_display }}</li>
+  <li>Trade date: {{ fill.trade_date|date:"Y-m-d" }}</li>
   <li>Comment: {% if fill.fill_text %}{{ fill.fill_text }}{% else %}None{% endif %}</li>
 </ul>
 

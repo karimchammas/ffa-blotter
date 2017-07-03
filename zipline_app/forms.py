@@ -14,7 +14,7 @@ class FillForm(forms.ModelForm):
     fields = [
       'pub_date', 'asset', 'fill_side', 'fill_qty_unsigned', 'fill_price', 'fill_text', 'tt_order_key',
       'dedicated_to_order',
-      'status', 'category', 'is_internal'
+      'status', 'category', 'is_internal', 'trade_date'
     ]
     widgets = {
       'asset': AssetModelSelect2Widget()

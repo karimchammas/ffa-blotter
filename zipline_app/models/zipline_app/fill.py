@@ -55,6 +55,7 @@ class Fill(models.Model):
       verbose_name="Order Category"
     )
     is_internal = models.BooleanField(default=False)
+    trade_date = models.DateField('trade date',default=datetime.date.today)
 
     def get_is_internal_display(self):
       if self.is_internal: return "Internal"

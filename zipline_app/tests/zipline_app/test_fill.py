@@ -165,7 +165,8 @@ class FillGeneralViewsTests(TestCase):
           'dedicated_to_order':self.o1.id,
           'status': PLACED,
           'category': PRINCIPAL,
-          'is_internal': False
+          'is_internal': False,
+          'trade_date': '2000-01-01'
         }
         response = self.client.post(url,f1,follow=True)
 
@@ -180,7 +181,7 @@ class FillGeneralViewsTests(TestCase):
         url = reverse('zipline_app:fills-new')
         time = '2015-01-01 06:00:00'
         f1={'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':1, 'fill_price':1, 'dedicated_to_order':'', 'fill_text':'random fill',
-          'status': PLACED, 'category': PRINCIPAL, 'is_internal': False
+          'status': PLACED, 'category': PRINCIPAL, 'is_internal': False, 'trade_date': '2000-01-01'
         }
         response = self.client.post(url,f1,follow=True)
         # print(list(response))
