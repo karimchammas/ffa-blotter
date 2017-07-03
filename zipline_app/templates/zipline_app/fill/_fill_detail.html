@@ -13,6 +13,7 @@
     Dedicated to order:
     {% include 'zipline_app/fill/_fill_dedicated_to_order.html' %}
   </li>
+  <li>Status: {{ fill.get_status_display }}</li>
   <li>Comment: {% if fill.fill_text %}{{ fill.fill_text }}{% else %}None{% endif %}</li>
 </ul>
 

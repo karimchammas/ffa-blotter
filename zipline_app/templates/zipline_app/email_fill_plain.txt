@@ -10,3 +10,4 @@ Price: {{fill.fill_price}}
 TT order key: {% if fill.tt_order_key %}{{fill.tt_order_key}}{% else %}None{% endif %}
 Dedicated to order: {% if fill.dedicated_to_order is not None %}Order #{{ fill.dedicated_to_order.id }}{% else %}None{% endif %}
 Comment: {% if fill.fill_text %}{{ fill.fill_text }}{% else %}None{% endif %}
+Status: {{ fill.get_status_display }}
