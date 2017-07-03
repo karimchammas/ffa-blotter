@@ -85,3 +85,12 @@ FILL_STATUS_CHOICES = (
   (COMPLETED, 'Completed')
 )
 
+# Fill category: principal, agent
+# https://github.com/shadiakiki1986/ffa-blotter/issues/60
+PRINCIPAL = 'P'
+AGENT = 'A'
+FILL_CATEGORY_CHOICES = (
+  (PRINCIPAL, 'Principal'),
+  (AGENT, 'Agent')
+)
+
