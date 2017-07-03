@@ -54,6 +54,11 @@ class Fill(models.Model):
       default=PRINCIPAL,
       verbose_name="Order Category"
     )
+    is_internal = models.BooleanField(default=False)
+
+    def get_is_internal_display(self):
+      if self.is_internal: return "Internal"
+      return "External"
 
     def fill_qty_signed(self):
       return self.fill_qty_unsigned * (+1 if self.fill_side==BUY else -1)
