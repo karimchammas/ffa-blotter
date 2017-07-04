@@ -32,10 +32,11 @@ class FillModelTests(TestCase):
     with self.assertRaises(ValidationError):
       f1 = create_fill(    fill_text="test fill",     days=-1, asset=a2a, fill_side=BUY,  fill_qty_unsigned=10, fill_price=2,     dedicated_to_order=order)
 
+  # 2017-07-04: relaxed this constraint now that orders and fills are one-to-one
   def test_clean_invalid_dedicated_order_pub_date(self):
     order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc                          )
-    with self.assertRaises(ValidationError):
-      f1 = create_fill(    fill_text="test fill",     days=-30, asset=self.a1a, fill_side=BUY,  fill_qty_unsigned=10, fill_price=2,     dedicated_to_order=order)
+    # with self.assertRaises(ValidationError):
+    f1 = create_fill(    fill_text="test fill",     days=-30, asset=self.a1a, fill_side=BUY,  fill_qty_unsigned=10, fill_price=2,     dedicated_to_order=order)
 
   def test_clean_valid_dedicated_order(self):
     order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc                          )
@@ -113,11 +114,26 @@ class FillGeneralViewsTests(TestCase):
 
     def test_quantity_large_does_not_trigger_error_integer_too_large(self):
         time = '2015-01-01 00:00:00' #timezone.now() + datetime.timedelta(days=-0.5)
-        url = reverse('zipline_app:fills-new')
+        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
         largeqty=100000000000000000000000000000
-        response = self.client.post(url, {'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':largeqty, 'fill_price':1})
-        self.assertContains(response,"Ensure this value is less than or equal to")
-        response = self.client.post(url, {'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':1, 'fill_price':largeqty})
+        in1 =  {
+          'pub_date':time,
+          'asset':self.a1a.id,
+          'fill_side': BUY,
+          'fill_qty_unsigned':largeqty,
+          'fill_price':1,
+          'fill_status': 'P',
+          'category': 'P',
+          'trade_date': '2000-01-01',
+        }
+        response = self.client.post( url, in1)
+        # 2017-07-04: this now is supposed to pass instead of throw error because the form qty is taken from the order
+        # make sure we get a 302 return code
+        self.assertEqual(response.status_code, 302)
+        # self.assertNotContains(response,"Ensure this value is less than or equal to")
+        in1['fill_qty_unsigned'] = 1
+        in1['fill_price'] = largeqty
+        response = self.client.post(url, in1, follow=True)
         self.assertContains(response,"Ensure this value is less than or equal to")
 
     def test_update_get(self):
@@ -129,7 +145,7 @@ class FillGeneralViewsTests(TestCase):
     def test_update_post_wo_tt_order_key(self):
         f1 = create_fill_from_order(order=self.o1, fill_text="test?", fill_price=2, user=self.user)
         url = reverse('zipline_app:fills-update', args=(f1.id,))
-        f2={'pub_date':f1.pub_date, 'asset':f1.asset.id, 'fill_side': f1.fill_side, 'fill_qty_unsigned':4444, 'fill_price':f1.fill_price}
+        f2={'pub_date':f1.pub_date, 'asset':f1.asset.id, 'fill_side': f1.fill_side, 'fill_qty_unsigned':4444, 'fill_price':f1.fill_price, 'source':'concealed'}
         response = self.client.post(url,f2)
         self.assertContains(response,"4444")
 
