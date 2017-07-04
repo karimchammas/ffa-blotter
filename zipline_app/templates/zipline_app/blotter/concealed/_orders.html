@@ -9,12 +9,14 @@
         </a>
       </div>
 
-      <div class='col-xs-6'>
-        {% ifchanged order.pub_date %}
-        <em><b>{{order.pub_date|date:"H:i"}}</b></em>
-        {% else %}
-        &nbsp;
-        {% endifchanged %}
+      <div class='col-xs-6' title='{{order.pub_date|date:"H:i"}}'>
+        <em>
+          <b>
+            {{order.pub_date|date:"Y"}}
+            <br>
+            {{order.pub_date|date:"m-d"}}
+          </b>
+        </em>
       </div>
     </div>
   </div>

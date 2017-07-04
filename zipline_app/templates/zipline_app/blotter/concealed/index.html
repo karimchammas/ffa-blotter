@@ -162,15 +162,19 @@
 
     {% for order in latest_order_list %}
 
+
       {# https://docs.djangoproject.com/en/1.10/ref/templates/builtins/#ifchanged #}
       {% ifchanged order.pub_date.date %}
         <hr style="margin-top:5px;margin-bottom:5px">
+
+<!--
         <div class="row text-center text-info">
           <br>&nbsp;
           {# {{ minute.minute.date }} #}
           {{order.pub_date|date:"Y-m-d"}}
           <br>&nbsp;
         </div>
+        -->
       {% endifchanged %}
 
       <div class="row {% if order.filled == order.order_qty_signed or order.order_status == 'C' %}text-muted{% endif %}">
