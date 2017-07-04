@@ -42,7 +42,7 @@ class Fill(models.Model):
       verbose_name="Side"
     )
     user = models.ForeignKey(User, null=True, default=None)
-    status = models.CharField(
+    fill_status = models.CharField(
       max_length=1,
       choices=FILL_STATUS_CHOICES,
       default=PLACED,
