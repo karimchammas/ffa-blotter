@@ -2,9 +2,11 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
 from ...models.zipline_app.fill import Fill
+from ...models.zipline_app.order import Order
 from ...utils import redirect_index_or_local
 from ...forms import FillForm
 from django.core.exceptions import PermissionDenied
+from ...utils import now_minute
 
 class FillCreate(generic.CreateView):
   model = Fill
@@ -20,6 +22,19 @@ class FillCreate(generic.CreateView):
   def get_success_url(self):
     messages.add_message(self.request, messages.INFO, "Successfully created fill: %s" % self.object)
     return redirect_index_or_local(self,'zipline_app:fills-list')
+
+  def get_initial(self):
+    initial = super(FillCreate, self).get_initial()
+    initial['pub_date'] = now_minute()
+    order_id = self.request.GET.get('order',None)
+    if not order_id: raise Exception("Order not passed to create fill")
+    order = Order.objects.get(id=order_id) # will raise exception if id doesn't exist
+    initial['dedicated_to_order'] = order
+    initial['fill_side'] = order.order_side
+    initial['fill_qty_unsigned'] = order.order_qty_unsigned
+    initial['asset'] = order.asset
+    initial['source'] = self.request.GET.get('source',None)
+    return initial
 
 class FillList(generic.ListView):
   template_name = 'zipline_app/fill/fill_list.html'

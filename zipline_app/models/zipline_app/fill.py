@@ -21,7 +21,6 @@ class Fill(models.Model):
     dedicated_to_order = models.OneToOneField(Order, null=True, blank=True, verbose_name="Order", on_delete=models.SET_NULL)
 
     fill_text = models.CharField(max_length=200, blank=True)
-    votes = models.IntegerField(default=0)
     fill_qty_unsigned = models.PositiveIntegerField(
       default=0,
       validators=[MaxValueValidator(1000000), validate_nonzero],
@@ -85,14 +84,17 @@ class Fill(models.Model):
           errors['fill_qty_unsigned']=_('Dedicated fill qty doesnt match with order')
         if self.asset!=self.dedicated_to_order.asset:
           errors['asset']=_('Dedicated fill asset doesnt match with order')
-        if self.pub_date!=self.dedicated_to_order.pub_date:
-          errors['pub_date']=_(
-            'Dedicated fill date (%s) doesnt match with order (%s)'
-            %(
-              self.pub_date,
-              self.dedicated_to_order.pub_date
-            )
-          )
+
+        # 2017-07-04: since all fills are dedicated to orders, relax this constraint, to gain the real creation date of the fill
+        #if self.pub_date!=self.dedicated_to_order.pub_date:
+        #  errors['pub_date']=_(
+        #    'Dedicated fill date (%s) doesnt match with order (%s)'
+        #    %(
+        #      self.pub_date,
+        #      self.dedicated_to_order.pub_date
+        #    )
+        #  )
+
         if len(errors)>0:
           raise ValidationError(errors)
 

@@ -24,22 +24,12 @@
 
     {% if order.order_status != 'C' %}
       <abbr title="Fill order #{{order.id}}">
-        <button
-          type="button"
-          class="btn btn-xs fill-from-order"
-          data-toggle="modal"
-          data-target="#fills-new"
-          data-order-id="{{order.id}}"
-          data-order-pub_date="{{order.pub_date|date:"Y-m-d H:i:s"}}"
-          data-order-order_side="{{order.order_side}}"
-          data-order-order_type="{{order.order_type}}"
-          data-order-limit_price="{{order.limit_price}}"
-          data-order-order_qty_unsigned="{{order.order_qty_unsigned}}"
-          data-order-asset-id="{{order.asset.id}}"
-          data-order-asset-str="{{order.asset.str}}"
+        <a
+          class="btn btn-xs"
+          href="{% url 'zipline_app:fills-new' %}?order={{order.id}}&source=blotter-concealed"
         >
           <span class="glyphicon glyphicon-copy"></span>
-        </button>
+        </a>
       </abbr>
     {% endif %}
 

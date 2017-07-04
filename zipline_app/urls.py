@@ -17,11 +17,6 @@ urlpatterns = [
     # ex: /<root>/blotter/download/
     url(r'^blotter/download/$', blotter.BlotterDownloadView.as_view(), name='blotter-download'),
 
-    # ex: /<root>/5/results/
-    url(r'^(?P<pk>[0-9]+)/results/$', views.ResultsView.as_view(), name='results'),
-    # ex: /<root>/5/vote/
-    url(r'^(?P<order_id>[0-9]+)/vote/$', views.vote, name='vote'),
-
     # ex: /<root>/accounts/
     url(r'^accounts/$', account.AccountList.as_view(), name='accounts-list'),
     # ex: /<root>/accounts/new/
