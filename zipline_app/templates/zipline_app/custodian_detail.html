@@ -1,0 +1,13 @@
+{% extends "zipline_app/base.html" %}
+
+{% block content %}
+
+Custodian Details
+<ul>
+  <li>{{object.custodian_symbol}}: {{object.custodian_name}}</li>
+</ul>
+
+<a href="{% url 'zipline_app:custodians-update' object.id %}">Edit</a>
+<a href="{% url 'zipline_app:custodians-delete' object.id %}">Delete</a>
+
+{% endblock %}

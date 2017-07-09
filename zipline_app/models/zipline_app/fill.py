@@ -8,6 +8,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from .asset import Asset
 from .order import Order
+from .custodian import Custodian
 from .side import BUY, FILL_SIDE_CHOICES, validate_nonzero, PositiveFloatFieldForm, PositiveFloatFieldModel, PLACED, FILL_STATUS_CHOICES, PRINCIPAL, FILL_CATEGORY_CHOICES
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -54,7 +55,8 @@ class Fill(models.Model):
       verbose_name="Order Category"
     )
     is_internal = models.BooleanField(default=False)
-    trade_date = models.DateField('trade date',default=datetime.date.today)
+    settlement_date = models.DateField('settlement date',default=datetime.date.today)
+    custodian = models.ForeignKey(Custodian, on_delete=models.CASCADE, null=True)
 
     def get_is_internal_display(self):
       if self.is_internal: return "Internal"

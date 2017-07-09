@@ -1,8 +1,7 @@
 from django.conf.urls import url
 
 from .views.zipline_app import zipline_app as views
-from .views.zipline_app import blotter
-from .views.zipline_app import order, asset, fill, account, autocomplete
+from .views.zipline_app import blotter, order, asset, fill, account, autocomplete, custodian
 from django.contrib.auth import views as auth_views
 
 app_name='zipline_app'
@@ -27,6 +26,17 @@ urlpatterns = [
     url(r'^accounts/(?P<pk>[0-9]+)/update/$', account.AccountUpdateView.as_view(), name='accounts-update'),
     # ex: /<root>/accounts/1/delete/
     url(r'^accounts/(?P<pk>[0-9]+)/delete/$', account.AccountDelete.as_view(), name='accounts-delete'),
+
+    # ex: /<root>/custodians/
+    url(r'^custodians/$', custodian.CustodianList.as_view(), name='custodians-list'),
+    # ex: /<root>/custodians/new/
+    url(r'^custodians/new/$', custodian.CustodianCreate.as_view(), name='custodians-new'),
+    # ex: /<root>/custodians/5/
+    url(r'^custodians/(?P<pk>[0-9]+)/$', custodian.CustodianDetailView.as_view(), name='custodians-detail'),
+    # ex: /<root>/custodians/1/update/
+    url(r'^custodians/(?P<pk>[0-9]+)/update/$', custodian.CustodianUpdateView.as_view(), name='custodians-update'),
+    # ex: /<root>/custodians/1/delete/
+    url(r'^custodians/(?P<pk>[0-9]+)/delete/$', custodian.CustodianDelete.as_view(), name='custodians-delete'),
 
     # ex: /<root>/assets/
     url(r'^assets/$', asset.AssetList.as_view(), name='assets-list'),
