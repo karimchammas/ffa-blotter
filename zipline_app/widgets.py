@@ -89,3 +89,18 @@ class ReadOnlyWidgetOrderSide(ReadOnlyWidgetSimple):
     v3 = super().render(name, v2, attrs)
     v3 = v3.replace('value="'+v2+'"', 'value="'+str(value)+'"')
     return v3
+
+class OrderQtyUnitWidget(widgets.TextInput):
+  def render(self, name, value, attrs=None):
+    # original = super().render("order_qty_unit", "shares", attrs)
+    out = super().render(name, value, attrs)
+    out = out.replace("text", "radio")
+    out = out.replace("input", "input checked")
+    out = out.replace("form-control","")
+    out = "<label>"+out+"&nbsp;"+value+"&nbsp;&nbsp;</label>"
+    out2 = ""
+    if value!="shares":
+      out2 = out
+      out2 = out2.replace(value,"shares")
+      out2 = out2.replace(" checked","")
+    return out2+out

@@ -2,7 +2,8 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
 from ...models.zipline_app.order import Order
-from ...utils import redirect_index_or_local
+from ...utils import redirect_index_or_local, now_minute
+
 from ...forms import OrderForm
 from django.urls import  reverse_lazy
 from django.core.exceptions import PermissionDenied
@@ -23,6 +24,12 @@ class OrderCreate(generic.CreateView):
     # https://docs.djangoproject.com/en/1.10/ref/contrib/messages/#message-levels
     messages.add_message(self.request, messages.INFO, "Successfully created order: %s" % self.object)
     return redirect_index_or_local(self,'zipline_app:orders-list')
+
+  def get_initial(self):
+    initial = super(OrderCreate, self).get_initial()
+    initial['pub_date'] = now_minute()
+    initial['source'] = self.request.GET.get('source',None)
+    return initial
 
 class OrderList(generic.ListView):
   template_name = 'zipline_app/order/order_list.html'

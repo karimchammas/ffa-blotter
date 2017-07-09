@@ -2,18 +2,16 @@
 
 
 {% block content %}
-{% include 'zipline_app/blotter/_create_modals_order.html' %}
-{% include 'zipline_app/blotter/_create_modals_js.html' %}
 
 <div class='row'>
   <div class='col-md-3'>
     <h1>Orders</h1>
   </div>
   <div class='col-md-9 text-right'>
-    <button data-toggle="modal" data-target="#orders-new" class='btn btn-primary'>
+    <a class='btn btn-primary' href="{% url 'zipline_app:orders-new' %}">
       Create
       <span class="glyphicon glyphicon-plus"></span>
-    </button>
+    </a>
   </div>
 </div>
 

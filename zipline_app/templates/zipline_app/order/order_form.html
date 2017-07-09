@@ -6,10 +6,9 @@
 {% block content %}
 {{ form.media.css }}
 
-{# it is necessary to keep using order_form (and not replace it with _create_modals_order) because it is the only form that displays errors properly #}
 <div class='row'>
 <div class='col-md-6'>
-<form action="" method="post" class="form" name="main-form">
+<form action="" method="post" class="form" name="main-form" id="orders-new">
   {% csrf_token %}
   {% bootstrap_form form layout='horizontal' %}
   {% comment %}
@@ -23,19 +22,80 @@
     <div class="col-xs-3"><div class="row">{% bootstrap_field field=form.order_text placeholder="some comments" %}</div></div>
   </div>
   {% endcomment %}
+
   {% if source %}<input type="hidden" name="source" value="{{source}}" />{% endif %}
     <div class="col-xs-1">{% bootstrap_button content="Save" icon="star" button_type="submit" button_class="btn-primary" %}</div>
 </form>
 </div>
 </div>
 
-<!-- disable the submit button when the form is submitted to avoid having the user clicking multiple times during page reload (and hence submitting duplicates) -->
 <script type="text/javascript">
 $(function() {
+  // disable the submit button when the form is submitted to avoid having the user clicking multiple times during page reload (and hence submitting duplicates)
   $("form").submit(function(e) {
     $("form[name='main-form'] button[type='submit']").prop("disabled","disabled");
     $("form[name='main-form'] button[type='submit']").html("Saving order...");
   });
+
+  // order limit price disabled when order type = market
+  $("#orders-new select[name='order_type']").change(function() {
+    if($(this).val()=="M") {
+      $("#orders-new input[name='limit_price']").prop("disabled", "disabled");
+      $("#orders-new input[name='limit_price']").val('');
+    } else {
+      $("#orders-new input[name='limit_price']").prop("disabled", false);
+    }
+  });
+
+  // since default order_type = market, disable the limit price
+  $("#orders-new input[name='limit_price']").prop("disabled", "disabled");
+  $("#orders-new input[name='limit_price']").val('');
+
+  // order validity date disabled when order type != GTD
+  $("#orders-new select[name='order_validity']").change(function() {
+    if($(this).val()!="D") {
+      $("#orders-new input[name='validity_date']").prop("disabled", "disabled");
+      $("#orders-new input[name='validity_date']").val('');
+    } else {
+      $("#orders-new input[name='validity_date']").prop("disabled", false);
+      let date = new Date();
+      date = date.toISOString().substr(0,10);
+      $("#orders-new input[name='validity_date']").val(date);
+    }
+  });
+
+  // since default order_validity = GTC, disable the validity date
+  $("#orders-new input[name='validity_date']").prop("disabled", "disabled");
+  $("#orders-new input[name='validity_date']").val('');
+
+  // upon selecting a different asset, fetch its currency, display it under the unit, and remove any earlier currencies displayed there
+  var updateQtyUnit = function(force) {
+    var selector = $("#orders-new input[type='radio'][name='order_qty_unit'][value!='shares']");
+    if(selector.length>0) {
+      if(!force && selector.attr('checked')) {
+        return;
+      }
+      selector.parent().remove();
+    }
+    var base = "{% url 'zipline_app:assets-detail' 1 %}";
+    var id = $("#orders-new select[name='asset']").val();
+    if(id != null) {
+      $.get(
+        base.replace("1",id)+"?asJson=true",
+        function(data, textStatus, jqXHR ) {
+          var currency = data["currency"];
+          var span = $('<label />')
+            .append($('<input type="radio" name="order_qty_unit" value="'+currency+'" />'))
+            .append('&nbsp;'+currency);
+          $("#orders-new input[type='radio'][name='order_qty_unit'][value='shares']")
+            .parent()
+            .append(span);
+        }
+      );
+    }
+  };
+  $("#orders-new select[name='asset']").change(function() { updateQtyUnit(true); });
+  if($("#id_asset").val()!=null) updateQtyUnit(false);
 });
 </script>
 

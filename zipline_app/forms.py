@@ -2,7 +2,7 @@ from .models.zipline_app.fill import Fill
 from .models.zipline_app.order import Order
 from .models.zipline_app.asset import Asset
 
-from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, ReadOnlyWidgetOrderSide
+from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, ReadOnlyWidgetOrderSide, OrderQtyUnitWidget
 from django import forms
 
 # override widget in createview
@@ -38,24 +38,31 @@ class FillForm(forms.ModelForm):
 
 class OrderForm(forms.ModelForm):
   source=forms.CharField(required=False, widget = forms.HiddenInput())
+  field_order = [
+    'pub_date',
+    'asset',
+    'account',
+    'am_type',
+    'order_type',
+    'limit_price',
+    'order_validity',
+    'validity_date',
+    'order_side',
+    'order_qty_unsigned',
+    'order_qty_unit',
+    'order_text',
+    'commission'
+  ]
+
   class Meta:
     model=Order
-    fields = [
-      'pub_date',
-      'asset',
-      'account',
-      'am_type',
-      'order_type',
-      'limit_price',
-      'order_validity',
-      'validity_date',
-      'order_side',
-      'order_qty_unsigned',
-      'order_qty_unit',
-      'order_text',
-      'commission'
-    ]
+    exclude=['user','order_status']
     widgets = {
+      'pub_date': ReadOnlyWidgetSimple(),
       'asset': AssetModelSelect2Widget(),
       'account': AccountModelSelect2Widget(),
+      'order_qty_unit': OrderQtyUnitWidget(),
     }
+  def clean_pub_date(self): return self.initial['pub_date'] #.strftime("%Y-%m-%d %H:%i:%s")
+  def clean_source(self): return self.initial['source'] if 'source' in self.initial else None
+
