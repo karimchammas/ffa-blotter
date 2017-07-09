@@ -102,7 +102,7 @@ class FillGeneralViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_new(self):
-        url = reverse('zipline_app:fills-new')
+        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -157,21 +157,44 @@ class FillGeneralViewsTests(TestCase):
         self.assertContains(response,"foo key")
 
     def test_new_fill_zero_qty(self):
-        url = reverse('zipline_app:fills-new')
+        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
         time = '2015-01-01 06:00:00'
-        f1={'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':0, 'fill_price':1}
+        f1={
+          'pub_date':time,
+          'asset':self.a1a.id,
+          'fill_side': BUY,
+          'fill_qty_unsigned':0,
+          'fill_price':1,
+          'fill_status': PLACED,
+          'category': PRINCIPAL,
+          'is_internal': False,
+          'trade_date': '2000-01-01'
+        }
         response = self.client.post(url,f1)
-        self.assertContains(response,"Quantity 0 is not allowed")
+        # 2017-07-09: now that the fill is linked to the order, the qty submitted is cleaned to be the same from the order, so the above POST will pass successfully
+        # print(list(response))
+        # self.assertContains(response,"Quantity 0 is not allowed")
+        self.assertEqual(response.status_code, 302)
 
     def test_new_fill_negative_price(self):
-        url = reverse('zipline_app:fills-new')
+        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
         time = '2015-01-01 06:00:00'
-        f1={'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':1, 'fill_price':-1}
+        f1={
+          'pub_date':time,
+          'asset':self.a1a.id,
+          'fill_side': BUY,
+          'fill_qty_unsigned':1,
+          'fill_price':-1,
+          'fill_status': PLACED,
+          'category': PRINCIPAL,
+          'is_internal': False,
+          'trade_date': '2000-01-01'
+        }
         response = self.client.post(url,f1)
         self.assertContains(response,"Enter a positive number.")
 
     def test_new_fill_dedicated_to_order(self):
-        url = reverse('zipline_app:fills-new')
+        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
         f1={
           'pub_date':self.o1.pub_date.astimezone(get_current_timezone()).strftime('%Y-%m-%d %H:%M'),
           'asset':self.o1.asset.id,
@@ -194,17 +217,19 @@ class FillGeneralViewsTests(TestCase):
         self.assertEqual(b''.join(list(response)).count(b"john"),2)
 
     def test_new_fill_user_not_dedicated(self):
-        url = reverse('zipline_app:fills-new')
+        url = reverse('zipline_app:fills-new') # intentionally do not pass order here
         time = '2015-01-01 06:00:00'
         f1={'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':1, 'fill_price':1, 'dedicated_to_order':'', 'fill_text':'random fill',
           'fill_status': PLACED, 'category': PRINCIPAL, 'is_internal': False, 'trade_date': '2000-01-01'
         }
-        response = self.client.post(url,f1,follow=True)
-        # print(list(response))
-        self.assertNotContains(response,'has-error')
-        # random fill shows up once in "successfully created..." and once in table body
-        self.assertEqual(b''.join(list(response)).count(b"random fill"),2)
-        self.assertEqual(b''.join(list(response)).count(b"john"),2)
+        # 2017-08-09: fills untied to orders are no longer accepted
+        with self.assertRaises(Exception):
+          response = self.client.post(url,f1,follow=True)
+          # print(list(response))
+          # self.assertNotContains(response,'has-error')
+          # random fill shows up once in "successfully created..." and once in table body
+          # self.assertEqual(b''.join(list(response)).count(b"random fill"),2)
+          # self.assertEqual(b''.join(list(response)).count(b"john"),2)
 
 def url_permission(test, url, obj_id):
   url = reverse(url, args=(obj_id,))
