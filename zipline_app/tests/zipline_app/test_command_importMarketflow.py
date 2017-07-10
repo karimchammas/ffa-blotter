@@ -24,8 +24,14 @@ class ImportMarketflowCommandTests(TestCase):
     ]
     instance.accountsCount.return_value = 2
 
+    instance.custodiansList.return_value = [
+      {'CLI_COD':'custodian 1', 'CLI_NOM_PRE':'name of custodian 1'},
+      {'CLI_COD':'custodian 2', 'CLI_NOM_PRE':'name of custodian 2'},
+    ]
+    instance.custodiansCount.return_value = 2
+
   def testMain(self):
     with StringIO() as out, StringIO() as err:
-      call_command('importMarketflow', stderr=err, stdout=out, debug=True)
+      call_command('importMarketflow', '--host=bla', '--port=123', '--user=bla', '--password=bla', '--db=bla', '--origin=bli', stderr=err, stdout=out, debug=True)
       self.assertIn('Django import', err.getvalue())
 

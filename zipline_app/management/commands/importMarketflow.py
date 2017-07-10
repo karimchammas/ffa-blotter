@@ -15,19 +15,19 @@ class Command(BaseCommand):
   help = """Usage:
          python manage.py importMarketflow --help
          python manage.py importMarketflow --debug ...
-         python manage.py importMarketflow --origin="MF Dubai" --host=123.123.123.123 --port=123 --user=username --pass=mypass --db=database_name
+         python manage.py importMarketflow --origin="MF Dubai" --host=123.123.123.123 --port=123 --user=username --password=mypass --db=database_name
          """
 
   def add_arguments(self, parser):
-    parser.add_argument('--debug',  action='store_true', dest='debug', default=False, help='show higher verbosity')
-    parser.add_argument('--origin', action='store',      dest='origin',required=True, help='set origin field of imported clients, assets, custodians')
-    parser.add_argument('--host',   action='store',      dest='host',  required=True, help='ms sql server for marketflow: host IP or name')
-    parser.add_argument('--port',   action='store',      dest='port',  required=True, help='ms sql server for marketflow: port number')
-    parser.add_argument('--user',   action='store',      dest='user',  required=True, help='ms sql server for marketflow: username')
-    parser.add_argument('--pass',   action='store',      dest='pass',  required=True, help='ms sql server for marketflow: password')
-    parser.add_argument('--db',     action='store',      dest='db',    required=True, help='ms sql server for marketflow: database name')
+    parser.add_argument('--debug',   action='store_true', dest='debug', default=False, help='show higher verbosity')
+    parser.add_argument('--origin',  action='store',      dest='origin',required=True, help='set origin field of imported clients, assets, custodians')
+    parser.add_argument('--host',    action='store',      dest='host',  required=True, help='ms sql server for marketflow: host IP or name')
+    parser.add_argument('--port',    action='store',      dest='port',  required=True, help='ms sql server for marketflow: port number')
+    parser.add_argument('--user',    action='store',      dest='user',  required=True, help='ms sql server for marketflow: username')
+    parser.add_argument('--password',action='store',  dest='password',  required=True, help='ms sql server for marketflow: password')
+    parser.add_argument('--db',      action='store',      dest='db',    required=True, help='ms sql server for marketflow: database name')
 
-  def _handle_assets(self, mfMan, **options):
+  def _handle_assets(self, mfMan, options):
       total = mfMan.assetsCount()
       logger.debug("Django import assets: %s"%total)
       if options['debug']:
@@ -61,7 +61,7 @@ class Command(BaseCommand):
       if options['debug']:
         progress.finish()
 
-  def _handle_accounts(self, mfMan, **options):
+  def _handle_accounts(self, mfMan, options):
       total = mfMan.accountsCount()
       logger.debug("Django import accounts: %s"%total)
       if options['debug']:
@@ -76,10 +76,12 @@ class Command(BaseCommand):
 
         # get/create entity/row/case
         accountDj, created = Account.objects.update_or_create(
-          account_symbol=accountMf['CLI_COD']
+          account_symbol=accountMf['CLI_COD'],
           defaults={
-            account_name=accountMf['CLI_NOM_PRE']
-          })
+            'account_name': accountMf['CLI_NOM_PRE'],
+            'account_origin': options['origin']
+          }
+        )
 
         if created:
           logger.debug("Created account: %s"%accountDj)
@@ -88,7 +90,7 @@ class Command(BaseCommand):
         progress.finish()
 
 
-  def _handle_custodians(self, mfMan, **options):
+  def _handle_custodians(self, mfMan, options):
       total = mfMan.custodiansCount()
       logger.debug("Django import custodians: %s"%total)
       if options['debug']:
@@ -122,7 +124,7 @@ class Command(BaseCommand):
     if options['debug']:
       logger.setLevel(logging.DEBUG)
 
-    with MfManager(host=options['host'], port=options['port'], user=options['user'], password=options['pass'], db=options['db']) as mfMan:
+    with MfManager(host=options['host'], port=options['port'], user=options['user'], password=options['password'], db=options['db']) as mfMan:
       self._handle_assets(mfMan, options)
       self._handle_accounts(mfMan, options)
       self._handle_custodians(mfMan, options)
