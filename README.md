@@ -33,25 +33,11 @@ Reference
 * [creating an admin user](https://docs.djangoproject.com/en/1.10/intro/tutorial02/#creating-an-admin-user)
 
 ## Usage
-To serve the web app
-```bash
-python manage.py runserver 0.0.0.0:8000
-```
+To serve the web app: `python manage.py runserver 0.0.0.0:8000`
 
-To import marketflow accounts/assets
-```bash
-python manage.py importMarketflow --debug
-```
+To import marketflow accounts/assets: `python manage.py help importMarketflow`, where the command will need the hostname, port number, username, password, and database name
 
 ## Environment variables required
-For importing from marketflow sql server
-
-    export PYMSSQL_SERVER=...
-    export PYMSSQL_PORT=...
-    export PYMSSQL_USERNAME=...
-    export PYMSSQL_PASSWORD=...
-    export PYMSSQL_DB=...
-
 For sending email through a SMTP server with NTLM authentication
 
     export DEFAULT_FROM_EMAIL=from@email.com
@@ -85,8 +71,6 @@ To access deeper namespace, use
 ```
 ## Under the hood
 * [django](https://www.djangoproject.com/)
-* [zipline](https://github.com/quantopian/zipline/)
-  * [zipline/finance/order](https://github.com/quantopian/zipline/blob/master/zipline/finance/order.py)
 * [django-bootstrap3](https://github.com/dyve/django-bootstrap3)
 
 ### Django
@@ -107,10 +91,4 @@ python manage.py makemigrations zipline_app
 python manage.py migrate
 ```
 
-### Zipline
-* `pip3 install zipline` currently takes a long time (more than 15 mins on aws ec2)
-* [Order](https://github.com/quantopian/zipline/blob/master/zipline/finance/order.py)
-* [Blotter](https://github.com/quantopian/zipline/blob/3350227f44dcf36b6fe3c509dcc35fe512965183/zipline/finance/blotter.py#L123)
-  * Line 123 shows usage for `Order`
-  * Checks [test_blotter.py](https://github.com/quantopian/zipline/blob/3350227f44dcf36b6fe3c509dcc35fe512965183/tests/test_blotter.py)
-  * will require an `AssetFinder` class .. I'll probably need to override this with my own class linking assets from marketflow? (what abuot new assets?)
+To squash migrations: `> ./manage.sh squashmigrations zipline_app 0003 0005`
