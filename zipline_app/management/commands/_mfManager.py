@@ -41,6 +41,8 @@ class MfManager:
       left join DEVISE on DEVISE.DEV_COD=TITRE.TIT_DEV_COD 
     """)
 
+  #----------------------------
+
   def accountsCount(self):
     cursor = self._execute("""
       SELECT
@@ -53,6 +55,28 @@ class MfManager:
     return res[0]['n']
 
   def accountsList(self):
+    return self._execute("""
+      SELECT
+        CLI_COD, CLI_NOM_PRE
+      FROM CLIENT
+      where
+      CLI_TTU_COD=1 and CLI_CLOSED=0
+    """)
+
+  #----------------------------
+
+  def custodiansCount(self):
+    cursor = self._execute("""
+      SELECT
+        count(*) as n
+      FROM CLIENT
+      where
+      CLI_TTU_COD=1 and CLI_CLOSED=0
+    """)
+    res = cursor.fetchall()
+    return res[0]['n']
+
+  def custodiansList(self):
     return self._execute("""
       SELECT
         CLI_COD, CLI_NOM_PRE
