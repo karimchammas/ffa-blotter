@@ -13,7 +13,8 @@ class AssetModelSelect2Widget(ModelSelect2Widget):
     model = Asset
     search_fields = [
         'asset_name__icontains',
-        'asset_symbol__startswith'
+        'asset_symbol__icontains',
+        'asset_origin__icontains'
     ]
     def label_from_instance(self, obj):
       return force_text(obj.__str__())
@@ -22,7 +23,8 @@ class AccountModelSelect2Widget(ModelSelect2Widget):
     model = Account
     search_fields = [
         'account_name__icontains',
-        'account_symbol__startswith'
+        'account_symbol__icontains',
+        'account_origin__icontains'
     ]
     def label_from_instance(self, obj):
       return force_text(obj.__str__())
@@ -31,7 +33,8 @@ class CustodianModelSelect2Widget(ModelSelect2Widget):
     model = Custodian
     search_fields = [
         'custodian_name__icontains',
-        'custodian_symbol__startswith'
+        'custodian_symbol__icontains',
+        'custodian_origin__icontains'
     ]
     def label_from_instance(self, obj):
       return force_text(obj.__str__())
