@@ -4,7 +4,7 @@ from django.urls import reverse
 from ...utils import myTestLogin
 from ...models.zipline_app.side import BUY
 
-class AssetViewsTests(TestCase):
+class AccountViewsTests(TestCase):
     def setUp(self):
       myTestLogin(self.client)
 

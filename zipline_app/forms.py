@@ -2,7 +2,7 @@ from .models.zipline_app.fill import Fill
 from .models.zipline_app.order import Order
 from .models.zipline_app.asset import Asset
 
-from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, ReadOnlyWidgetOrderSide, OrderQtyUnitWidget
+from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, ReadOnlyWidgetOrderSide, OrderQtyUnitWidget, CustodianModelSelect2Widget
 from django import forms
 
 # override widget in createview
@@ -13,7 +13,8 @@ class FillForm(forms.ModelForm):
   source=forms.CharField(required=False, widget = forms.HiddenInput())
   field_order = [
     'pub_date', 'dedicated_to_order', 'fill_side', 'fill_qty_unsigned', 'asset',
-    'fill_price', 'fill_status', 'category', 'is_internal', 'trade_date', 'fill_text'
+    'fill_price', 'fill_status', 'category', 'is_internal', 'trade_date', 'settlement_date',
+    'custodian', 'fill_text'
   ]
   class Meta:
     model=Fill
@@ -21,7 +22,7 @@ class FillForm(forms.ModelForm):
     widgets = {
       'pub_date': ReadOnlyWidgetSimple(),
       'dedicated_to_order': ReadOnlyWidgetOrder(),
-      # 'asset': AssetModelSelect2Widget(),
+      'custodian': CustodianModelSelect2Widget(),
       'asset': ReadOnlyWidgetAsset(),
       'fill_side': ReadOnlyWidgetOrderSide(),
       'fill_qty_unsigned': ReadOnlyWidgetSimple(),

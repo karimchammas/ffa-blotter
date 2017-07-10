@@ -6,7 +6,7 @@ from ...models.zipline_app.custodian import Custodian
 
 class CustodianCreate(generic.CreateView):
   model = Custodian
-  exclude = []
+  fields = ['custodian_symbol','custodian_name']
   success_url = reverse_lazy('zipline_app:custodians-list')
 
 class CustodianList(generic.ListView):
@@ -21,5 +21,5 @@ class CustodianDetailView(generic.DetailView):
 
 class CustodianUpdateView(generic.UpdateView):
   model = Custodian
-  exclude = []
+  fields = ['custodian_symbol','custodian_name']
   success_url = reverse_lazy('zipline_app:custodians-list')

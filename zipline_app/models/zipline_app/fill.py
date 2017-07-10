@@ -55,6 +55,7 @@ class Fill(models.Model):
       verbose_name="Order Category"
     )
     is_internal = models.BooleanField(default=False)
+    trade_date = models.DateField('trade date',default=datetime.date.today)
     settlement_date = models.DateField('settlement date',default=datetime.date.today)
     custodian = models.ForeignKey(Custodian, on_delete=models.CASCADE, null=True)
 

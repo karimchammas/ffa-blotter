@@ -1,6 +1,7 @@
 from .models.zipline_app.asset import Asset
 from .models.zipline_app.account import Account
 from .models.zipline_app.order import Order
+from .models.zipline_app.custodian import Custodian
 
 # using select2, copied from https://github.com/applegrew/django-select2/blob/master/tests/testapp/forms.py
 from django_select2.forms import ModelSelect2Widget
@@ -22,6 +23,15 @@ class AccountModelSelect2Widget(ModelSelect2Widget):
     search_fields = [
         'account_name__icontains',
         'account_symbol__startswith'
+    ]
+    def label_from_instance(self, obj):
+      return force_text(obj.__str__())
+
+class CustodianModelSelect2Widget(ModelSelect2Widget):
+    model = Custodian
+    search_fields = [
+        'custodian_name__icontains',
+        'custodian_symbol__startswith'
     ]
     def label_from_instance(self, obj):
       return force_text(obj.__str__())

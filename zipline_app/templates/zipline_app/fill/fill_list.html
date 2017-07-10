@@ -43,6 +43,8 @@
         <div class='row'>{{ fill.get_category_display }}</div>
         <div class='row'>{{ fill.get_is_internal_display }}</div>
         <div class='row'>Trade date: {{ fill.trade_date|date:"Y-m-d" }}</div>
+        <div class='row'>Settlement date: {{ fill.settlement_date|date:"Y-m-d" }}</div>
+        <div class='row'>Custodian: {%if fill.custodian%}{{fill.custodian}}{%else%}None{%endif%}</div>
         <div class='row'>{{ fill.fill_text }}</div>
       </div>
       <div class="col-xs-1">{{ fill.user.username }}</div>

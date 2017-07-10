@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .test_zipline_app import create_fill, create_asset, a1, create_order, create_account, a2, create_fill_from_order
+from .test_zipline_app import create_fill, create_asset, a1, create_order, create_account, a2, create_fill_from_order, create_custodian
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL, PLACED, PRINCIPAL
@@ -95,6 +95,7 @@ class FillGeneralViewsTests(TestCase):
         self.user = myTestLogin(self.client)
         self.acc = create_account("test acc")
         self.o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc, user=self.user)
+        self.cust1 = create_custodian("C1", "Custodian 1")
 
     def test_list(self):
         url = reverse('zipline_app:fills-list')
@@ -125,6 +126,8 @@ class FillGeneralViewsTests(TestCase):
           'fill_status': 'P',
           'category': 'P',
           'trade_date': '2000-01-01',
+          'settlement_date': '2000-01-01',
+          'custodian': self.cust1.id
         }
         response = self.client.post( url, in1)
         # 2017-07-04: this now is supposed to pass instead of throw error because the form qty is taken from the order
@@ -168,7 +171,9 @@ class FillGeneralViewsTests(TestCase):
           'fill_status': PLACED,
           'category': PRINCIPAL,
           'is_internal': False,
-          'trade_date': '2000-01-01'
+          'trade_date': '2000-01-01',
+          'settlement_date': '2000-01-01',
+          'custodian': self.cust1.id
         }
         response = self.client.post(url,f1)
         # 2017-07-09: now that the fill is linked to the order, the qty submitted is cleaned to be the same from the order, so the above POST will pass successfully
@@ -205,11 +210,14 @@ class FillGeneralViewsTests(TestCase):
           'fill_status': PLACED,
           'category': PRINCIPAL,
           'is_internal': False,
-          'trade_date': '2000-01-01'
+          'trade_date': '2000-01-01',
+          'settlement_date': '2000-01-01',
+          'custodian': self.cust1.id
         }
         response = self.client.post(url,f1,follow=True)
 
         expected = reverse('zipline_app:orders-detail', args=(self.o1.id,))
+        # print(list(response))
         self.assertNotContains(response, "has-error")
         self.assertContains(response, expected)
 

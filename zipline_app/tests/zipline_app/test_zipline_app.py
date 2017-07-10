@@ -6,6 +6,7 @@ from time import sleep
 import pandas as pd
 from unittest import skip
 from ...models.zipline_app.zipline_app import Order, Fill, Account, Asset
+from ...models.zipline_app.custodian import Custodian
 from ...models.zipline_app.side import BUY
 from ...utils import myTestLogin, chopSeconds
 
@@ -87,6 +88,9 @@ def create_fill_from_order(order, fill_text, fill_price, tt_order_key="", user=N
     fill.clean()
     fill.save()
     return fill
+
+def create_custodian(symbol, name):
+  return Custodian.objects.create(custodian_symbol=symbol, custodian_name=name)
 
 class OrderMethodTests(TestCase):
     def setUp(self):
