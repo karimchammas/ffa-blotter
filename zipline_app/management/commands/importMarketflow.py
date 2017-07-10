@@ -106,9 +106,9 @@ class Command(BaseCommand):
         # get/create entity/row/case
         #logger.debug("get or create: %s"%custodian['TIT_COD'])
         custodianDj, created = Custodian.objects.update_or_create(
-          custodian_symbol=custodianMf['CLI_COD'],
+          custodian_symbol=custodianMf['ENT_COD'],
           defaults={
-            'custodian_name': custodianMf['CLI_NOM_PRE'],
+            'custodian_name': custodianMf['ENT_FULL_NAME'],
             'custodian_origin': options['origin']
           }
         )

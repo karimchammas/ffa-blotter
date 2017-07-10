@@ -64,24 +64,20 @@ class MfManager:
     """)
 
   #----------------------------
-
+  # Queries by Minerva
   def custodiansCount(self):
     cursor = self._execute("""
-      SELECT
-        count(*) as n
-      FROM CLIENT
-      where
-      CLI_TTU_COD=1 and CLI_CLOSED=0
+      SELECT count(*) as n
+      from CLIENT_ENTITY
+      where CLIENT_ENTITY.ENT_TYPE=4
     """)
     res = cursor.fetchall()
     return res[0]['n']
 
   def custodiansList(self):
     return self._execute("""
-      SELECT
-        CLI_COD, CLI_NOM_PRE
-      FROM CLIENT
-      where
-      CLI_TTU_COD=1 and CLI_CLOSED=0
+      select CLIENT_ENTITY.ENT_COD, ENT_FULL_NAME
+      from CLIENT_ENTITY
+      where CLIENT_ENTITY.ENT_TYPE=4
     """)
 
