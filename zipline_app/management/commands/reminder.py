@@ -6,7 +6,7 @@ from ...utils import email_ctx
 # https://docs.djangoproject.com/en/1.10/howto/custom-management-commands/
 from django.core.management.base import BaseCommand
 
-logger = logging.getLogger('FFA Dubai blotter')
+logger = logging.getLogger('FFA blotter')
 
 class Command(BaseCommand):
   help = """Usage:

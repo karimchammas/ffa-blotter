@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 
 import progressbar
 
-logger = logging.getLogger('FFA Dubai blotter')
+logger = logging.getLogger('FFA blotter')
 
 class Command(BaseCommand):
   help = """Usage:
