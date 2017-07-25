@@ -7,7 +7,7 @@
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
-<form method="post" action="{% url 'zipline_app:login' %}">
+<form method="post" action="{% url 'login' %}">
 {% csrf_token %}
 <table>
 <tr>
@@ -23,5 +23,8 @@
 <input type="submit" value="login" />
 <input type="hidden" name="next" value="{{request.session.next}}" />
 </form>
+
+<br>
+<a class='btn btn-default' href="{% url 'password_reset' %}">Reset password</a>
 
 {% endblock %}

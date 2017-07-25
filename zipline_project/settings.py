@@ -150,8 +150,11 @@ LOGGING = {
     },
 }
 
-LOGIN_URL = '/users/login/' # 'zipline_app:login' # 
-LOGIN_EXEMPT_URLS = ['^$']
+from django.urls import  reverse_lazy
+LOGIN_URL = reverse_lazy('login')
+# copy from /home/shadi/.local/share/virtualenvs/ZL2/lib/python3.5/site-packages/django/contrib/auth/urls.py
+auth_urls = ['login', 'logout', 'password_change', 'password_reset', 'reset']
+LOGIN_EXEMPT_URLS = ['^$'] + ['^%s'%(x) for x in auth_urls]
 LOGIN_REDIRECT_URL = '/'
 
 # sending email with django

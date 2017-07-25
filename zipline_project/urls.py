@@ -16,8 +16,15 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from django.contrib.auth import views as auth_views
+
+from django.urls import  reverse_lazy
 urlpatterns = [
     url(r'^', include('zipline_app.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^select2/', include('django_select2.urls')),
+
+    # https://docs.djangoproject.com/en/1.11/topics/auth/default/#using-the-views
+    # https://stackoverflow.com/questions/44552357/django-authentication-urls-py-with-namespace
+    url(r'^', include('django.contrib.auth.urls')),
 ]
