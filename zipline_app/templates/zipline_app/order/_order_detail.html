@@ -18,8 +18,7 @@
     {% endif %}
   </li>
   <li>Side: {{order.get_order_side_display}}</li>
-  <li>Qty: {{order.order_qty_unsigned|intcomma}}</li>
-  <li>Unit: {{order.order_qty_unit}}</li>
+  <li>{% if order.order_qty_unit == 'shares' %}Qty{% else %}Amount{% endif %}: {{order.order_qty_unsigned|intcomma}} {{order.order_qty_unit}}</li>
   <li>Comment: {% if order.order_text %}{{ order.order_text }}{% else %}None{% endif %}</li>
   <li>Commission (%): {{order.commission}}</li>
 

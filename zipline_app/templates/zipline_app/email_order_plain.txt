@@ -4,15 +4,24 @@ Order Details
 
 Date: {{order.pub_date}}
 Asset: {{order.asset.asset_symbol}}
-Type: {{order.get_order_type_display}}
+Account: {{order.account.account_symbol}}
+AM Type: {{order.get_am_type_display}}
+Execution: {{order.get_order_type_display}}
 {% if order.order_type == 'L' %}
 Limit price: {{order.limit_price}}
 {% endif %}
+Validity: {{order.get_order_validity_display}}
+{% if order.order_validity == 'D' %}
+({{order.validity_date}})
+{% endif %}
 Side: {{order.get_order_side_display}}
-Qty: {{order.order_qty_unsigned|intcomma}}
+{% if order.order_qty_unit == 'shares' %}Qty{% else %}Amount{% endif %}: {{order.order_qty_unsigned|intcomma}} {{order.order_qty_unit}}
+Comment: {% if order.order_text %}{{ order.order_text }}{% else %}None{% endif %}
+Commission (%): {{order.commission}}
+
+User: {{order.user.username}}
 Filled: {{order.filled|intcomma}}
 Status: {{order.get_order_status_display}}
-Account: {{order.account.account_symbol}}
 
 Dedicated fill:
 {% if order.dedicated_fill is not None %}
@@ -20,10 +29,5 @@ Dedicated fill:
 {% else %}
 None
 {% endif %}
-Comment: {% if order.order_text %}{{ order.order_text }}{% else %}None{% endif %}
-User: {{order.user.username}}
-Validity: {{order.get_order_validity_display}}
-{% if order.order_validity == 'D' %}
-({{order.validity_date}})
-{% endif %}
-Comments: {{ order.order_text }}
+
+Published at {{domain}}{% url 'zipline_app:orders-detail' order.id %}
