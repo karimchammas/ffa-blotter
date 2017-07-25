@@ -25,22 +25,25 @@
       {% endifchanged %}
   </div>
 
-  <div class="col-xs-1" title="{{order.account.account_name}} ({{order.account.account_origin}})">
-    {% ifchanged order.account order.pub_date.date %}
-      <a href="{% url 'zipline_app:blotter-concealed' %}?account={{order.account.id}}{% if sort %}&sort={{sort}}{% endif %}{% if filter_asset %}&asset={{filter_asset.id}}{% endif %}">
-        {{order.account.account_symbol}}
-      </a>
-    {% endifchanged %}
-  </div>
-
-  <div class="col-xs-2">
+  <div class="col-xs-3">
     <div class='row'>
-      <div class="col-xs-4">{{order.get_order_side_display}}</div>
-      <div class="col-xs-4">{{order.order_qty_unit}}</div>
+      <div class="col-xs-2">{{order.get_order_side_display}}</div>
+      <div class="col-xs-4" title="{{order.account.account_name}} ({{order.account.account_origin}})">
+        {% ifchanged order.account order.pub_date.date %}
+          <a href="{% url 'zipline_app:blotter-concealed' %}?account={{order.account.id}}{% if sort %}&sort={{sort}}{% endif %}{% if filter_asset %}&asset={{filter_asset.id}}{% endif %}">
+            {{order.account.account_symbol}}
+          </a>
+        {% endifchanged %}
+      </div>
+      <div class="col-xs-2">{% if order.order_qty_unit != 'shares' %}{{order.order_qty_unit}}{% else %}-{% endif %}</div>
       <div class='col-xs-4'>
-        <span class='pull-right'>{{order.order_qty_unsigned|intcomma}}</span>
+        <span class='pull-right'>{% if order.order_qty_unit != 'shares' %}{{order.order_qty_unsigned|intcomma}}{% else %}-{% endif %}</span>
       </div>
     </div>
+  </div>
+
+  <div class='col-xs-1'>
+    <span class='pull-right'>{% if order.order_qty_unit == 'shares' %}{{order.order_qty_unsigned|intcomma}}{% else %}-{% endif %}</span>
   </div>
 
   <div class="col-xs-1">
@@ -73,20 +76,12 @@
     {% endif %}
   </div>
 
-  <div class="col-xs-2">
+  <div class="col-xs-3">
     <div class='row'>
-      <div class='col-xs-4'>
-        {% if order.dedicated_fill is not None %}
-        {{order.dedicated_fill.tt_order_key}}
-        {% else %}
-        -
-        {% endif %}
-      </div>
-
-      <div class='col-xs-6 text-right'>
+      <div class='col-xs-11'>
         {% include 'zipline_app/blotter/concealed/_orders_status.html' %}
       </div>
-      <div class='col-xs-2'>&nbsp;</div>
+      <div class='col-xs-1'>&nbsp;</div>
     </div>
   </div>
 

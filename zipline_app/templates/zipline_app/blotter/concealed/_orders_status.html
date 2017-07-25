@@ -1,11 +1,13 @@
 {% load humanize %}
 
+<div class='row'>
 {% if order.dedicated_fill is not None %}
-
-  <div class='row'>
+  <div class='col-xs-3'>
     <a href="{% url 'zipline_app:fills-detail' order.dedicated_fill.id %}">
       Fill #{{order.dedicated_fill.id}}
     </a>
+  </div>
+  <div class='col-xs-9'>
     ({{order.dedicated_fill.user.username}},
      {{order.dedicated_fill.get_fill_status_display}},
      {{order.dedicated_fill.get_category_display}},
@@ -14,15 +16,9 @@
 
 {% else %}
 
-  <div class='row text-right'>
-  {% if order.filled == order.order_qty_signed %}
-    Filled
-  {% else %}
-    {% if order.order_status == 'C' and order.filled != 0 %}
-    {{order.filled|intcomma}} / {{order.order_qty_signed}}
-    {% endif %}
-
-    {% if order.order_status != 'C' %}
+  {% if order.order_status != 'C' %}
+    <div class='col-xs-12 text-left'>
+      Open
       <abbr title="Fill order #{{order.id}}">
         <a
           class="btn btn-xs"
@@ -31,10 +27,8 @@
           <span class="glyphicon glyphicon-copy"></span>
         </a>
       </abbr>
-    {% endif %}
-
+    </div>
   {% endif %}
-  </div>
 
   {% if order.order_status == 'C' %}
     <div class='row text-right'>
@@ -51,3 +45,4 @@
   {% endif %}
 
 {% endif %}
+</div>
