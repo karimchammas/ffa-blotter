@@ -5,12 +5,18 @@ from django.db import models
 from django.urls import reverse
 
 class Asset(models.Model):
-    asset_symbol = models.CharField(max_length=20, unique=True)
+    asset_symbol = models.CharField(max_length=20)
     asset_exchange = models.CharField(max_length=200)
     asset_name = models.CharField(max_length=200)
     asset_isin = models.CharField(max_length=20, null=True)
     asset_currency = models.CharField(max_length=20, null=True)
     asset_origin = models.CharField(max_length=20,  default="Manual")
+
+    # How to define two fields “unique” as couple
+    # https://stackoverflow.com/a/2201687/4126114
+    class Meta:
+      unique_together = ('asset_symbol', 'asset_origin')
+      ordering = ['asset_symbol', 'asset_origin']
 
     def __str__(self):
         return "%s: %s (%s, %s)" % (self.asset_symbol, self.asset_name, self.asset_currency, self.asset_origin)

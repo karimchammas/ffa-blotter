@@ -92,3 +92,10 @@ python manage.py migrate
 ```
 
 To squash migrations: `> ./manage.sh squashmigrations zipline_app 0003 0005`
+
+## django shell example
+```
+>>> from zipline_app.models.zipline_app.asset import Asset
+>>> Asset.objects.filter(asset_symbol='0.01 HKD').count()
+1
+```

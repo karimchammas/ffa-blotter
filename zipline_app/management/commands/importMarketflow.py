@@ -44,12 +44,12 @@ class Command(BaseCommand):
         #logger.debug("get or create: %s"%asset['TIT_COD'])
         assetDj, created = Asset.objects.update_or_create(
           asset_symbol=assetMf['TIT_COD'],
+          asset_origin = options['origin'],
           defaults={
             'asset_name': assetMf['TIT_NOM'],
             'asset_isin': assetMf['TIT_ISIN_COD'],
             'asset_exchange': 'N/A',
             'asset_currency': assetMf['DEV_SYM_LGE1'],
-            'asset_origin': options['origin']
           }
         )
         if created:

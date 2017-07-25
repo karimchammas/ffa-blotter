@@ -14,17 +14,16 @@
 
 {% for asset in asset_list %}
     <div class="row">
-      <div class="col-xs-1 text-right">
+      <div class='col-xs-1'>{{ asset.asset_origin }}</div>
+      <div class="col-xs-2">
         <a href="{% url 'zipline_app:assets-detail' asset.id %}">
-          #{{ asset.id }}
+          {{ asset.asset_symbol }}
         </a>
       </div>
-      <div class="col-xs-2">{{ asset.asset_symbol }}</div>
       <div class="col-xs-4">{{ asset.asset_name }}</div>
       <div class="col-xs-1">{{ asset.asset_isin }}</div>
       <div class="col-xs-1">{{ asset.asset_currency }}</div>
       <div class="col-xs-2">{{ asset.asset_exchange }}</div>
-      <div class='col-xs-1'>{{ asset.asset_origin }}</div>
     </div>
 {% empty %}
     <div class="alert alert-info">No assets yet.</div>
