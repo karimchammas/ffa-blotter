@@ -35,7 +35,7 @@
           </a>
         {% endifchanged %}
       </div>
-      <div class="col-xs-2">{% if order.order_qty_unit != 'shares' %}{{order.order_qty_unit}}{% else %}-{% endif %}</div>
+      <div class="col-xs-2">{{order.order_qty_unit}}</div>
       <div class='col-xs-4'>
         <span class='pull-right'>{% if order.order_qty_unit != 'shares' %}{{order.order_qty_unsigned|intcomma}}{% else %}-{% endif %}</span>
       </div>
