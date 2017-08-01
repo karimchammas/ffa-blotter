@@ -55,7 +55,7 @@ class OrderDelete(generic.DeleteView):
 
   def get_object(self, *args, **kwargs):
     obj = super(OrderDelete, self).get_object(*args, **kwargs)
-    if not obj.user == self.request.user:
+    if not (obj.user == self.request.user and len(obj.fills())==0):
       raise PermissionDenied
     return obj
 
@@ -82,7 +82,7 @@ class OrderUpdateView(generic.UpdateView):
 
   def get_object(self, *args, **kwargs):
     obj = super(OrderUpdateView, self).get_object(*args, **kwargs)
-    if not obj.user == self.request.user:
+    if not (obj.user == self.request.user and len(obj.fills())==0):
       raise PermissionDenied
     return obj
 

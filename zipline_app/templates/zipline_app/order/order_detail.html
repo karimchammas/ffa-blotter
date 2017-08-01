@@ -26,7 +26,7 @@
 {% endif %}
 </font>
 
-        {% if request.user.is_authenticated and order.user == request.user %}
+        {% if request.user.is_authenticated and order.user == request.user and order.fills|length == 0 %}
 
         <!-- delete with confirmation -->
         <a href="{% url 'zipline_app:orders-delete' order.id %}" class='btn btn-danger'>Delete</a>

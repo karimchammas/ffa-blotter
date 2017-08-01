@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from .asset import Asset
-from .order import Order
+from .order import Order, ORDER_UNIT_CHOICES, SHARE
 from .custodian import Custodian
 from .side import BUY, FILL_SIDE_CHOICES, validate_nonzero, PositiveFloatFieldForm, PositiveFloatFieldModel, PLACED, FILL_STATUS_CHOICES, PRINCIPAL, FILL_CATEGORY_CHOICES
 from django.core.exceptions import ValidationError
@@ -58,6 +58,12 @@ class Fill(models.Model):
     trade_date = models.DateField('trade date',default=datetime.date.today)
     settlement_date = models.DateField('settlement date',default=datetime.date.today)
     custodian = models.ForeignKey(Custodian, on_delete=models.CASCADE, null=True)
+    fill_unit = models.CharField(
+      max_length=1,
+      choices=ORDER_UNIT_CHOICES,
+      default=SHARE,
+      verbose_name="Unit"
+    )
 
     def get_is_internal_display(self):
       if self.is_internal: return "Internal"
@@ -103,3 +109,12 @@ class Fill(models.Model):
 #    def get_absolute_url(self):
 #      return reverse('zipline_app:fills-list') # TODO rename to fills
 #      return reverse('zipline_app:fills-list', kwargs={'pk': self.pk})
+
+    # copy from order
+    def _get_FIELD_display(self, field):
+      f_name = field.name
+      if f_name == 'fill_unit':
+        if self.fill_unit==SHARE: return "share"
+        return self.asset.asset_currency
+      return super(Fill, self)._get_FIELD_display(field=field)
+

@@ -1,6 +1,6 @@
 from .models.zipline_app.asset import Asset
 from .models.zipline_app.account import Account
-from .models.zipline_app.order import Order
+from .models.zipline_app.order import Order, ORDER_UNIT_CHOICES, SHARE
 from .models.zipline_app.custodian import Custodian
 
 # using select2, copied from https://github.com/applegrew/django-select2/blob/master/tests/testapp/forms.py
@@ -91,19 +91,21 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
     append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.get_order_unit_display()
     return "<p>"+out + append+"</p>"
 
-from .models.zipline_app.order import SHARE
-class FillQtyWidget(widgets.TextInput):
+class FillUnitWidget(widgets.TextInput):
   def render(self, name, value, attrs=None):
     out = super().render(name, value, attrs)
+    out = out.replace("text", "hidden")
+
+    value2 = ""
+    if value==ORDER_UNIT_CHOICES[0][0]:
+      value2 = ORDER_UNIT_CHOICES[0][1]
+    else:
+      value2 = ORDER_UNIT_CHOICES[1][1]
+
+    if value==SHARE:
+      return out + "<p>"+value2+"</p>"
+
     order_id = self.form_instance.initial['dedicated_to_order']
     order = Order.objects.get(id=order_id)
-    #order = order_id
-    unit = order.order_unit
-    if unit!=SHARE:
-      append = "<span>&nbsp;shares</span>"
-      return out + append
-
     currency = order.asset.asset_currency
-    append = "<span>&nbsp;"+currency+"</span>"
-    return out + append
-
+    return out + "<p>"+value2+"&nbsp;("+currency+")</p>"

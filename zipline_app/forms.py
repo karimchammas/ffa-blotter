@@ -2,7 +2,7 @@ from .models.zipline_app.fill import Fill
 from .models.zipline_app.order import Order
 from .models.zipline_app.asset import Asset
 
-from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, CustodianModelSelect2Widget, FillQtyWidget
+from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, CustodianModelSelect2Widget, FillUnitWidget
 from django import forms
 
 # override widget in createview
@@ -12,7 +12,7 @@ from django import forms
 class FillForm(forms.ModelForm):
   source=forms.CharField(required=False, widget = forms.HiddenInput())
   field_order = [
-    'pub_date', 'dedicated_to_order', 'fill_side', 'asset', 'fill_qty_unsigned',
+    'pub_date', 'dedicated_to_order', 'fill_side', 'asset', 'fill_qty_unsigned', 'fill_unit',
     'fill_price', 'fill_status', 'category', 'is_internal', 'trade_date', 'settlement_date',
     'custodian', 'fill_text'
   ]
@@ -25,7 +25,7 @@ class FillForm(forms.ModelForm):
       'custodian': CustodianModelSelect2Widget(),
       'asset': ReadOnlyWidgetAsset(),
       'fill_side': forms.HiddenInput(),
-      'fill_qty_unsigned': FillQtyWidget(),
+      'fill_unit': FillUnitWidget(),
     }
   def clean_pub_date(self): return self.initial['pub_date'] #.strftime("%Y-%m-%d %H:%i:%s")
   def clean_dedicated_to_order(self): return self.initial['dedicated_to_order']
@@ -35,10 +35,11 @@ class FillForm(forms.ModelForm):
     return Asset.objects.get(id=aid)
   def clean_fill_side(self): return self.initial['fill_side']
   def clean_source(self): return self.initial['source'] if 'source' in self.initial else None
+  def clean_fill_unit(self): return self.initial['fill_unit']
 
   def __init__(self, *args, **kwargs):
     super(FillForm, self).__init__(*args, **kwargs)
-    self.fields['fill_qty_unsigned'].widget.form_instance = self
+    self.fields['fill_unit'].widget.form_instance = self
 
 class OrderForm(forms.ModelForm):
   source=forms.CharField(required=False, widget = forms.HiddenInput())

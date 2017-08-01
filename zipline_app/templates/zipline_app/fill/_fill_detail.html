@@ -6,8 +6,8 @@
   <li>Date: {{fill.pub_date}}</li>
   <li>Asset: {{fill.asset.asset_symbol}}</li>
   <li>Side: {{fill.get_fill_side_display}}</li>
-  <li>Qty: {{fill.fill_qty_unsigned|intcomma}}</li>
-  <li>Price: {{fill.fill_price}}</li>
+  <li>Qty: {{fill.fill_qty_unsigned|intcomma}} {{fill.get_fill_unit_display}}</li>
+  <li>Price: {{fill.fill_price}} {{fill.asset.asset_currency}}/share</li>
   <li>TT order key: {% if fill.tt_order_key %}{{fill.tt_order_key}}{% else %}None{% endif %}</li>
   <li>
     Dedicated to order:

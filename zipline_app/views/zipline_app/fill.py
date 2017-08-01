@@ -2,7 +2,7 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
 from ...models.zipline_app.fill import Fill
-from ...models.zipline_app.order import Order
+from ...models.zipline_app.order import Order, SHARE, CURRENCY
 from ...utils import redirect_index_or_local
 from ...forms import FillForm
 from django.core.exceptions import PermissionDenied
@@ -33,6 +33,7 @@ class FillCreate(generic.CreateView):
     initial['fill_side'] = order.order_side
     initial['asset'] = order.asset
     initial['source'] = self.request.GET.get('source',None)
+    initial['fill_unit'] = SHARE if order.order_unit!=SHARE else CURRENCY
     return initial
 
 class FillList(generic.ListView):
