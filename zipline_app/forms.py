@@ -50,7 +50,7 @@ class OrderForm(forms.ModelForm):
     'validity_date',
     'order_side',
     'order_qty_unsigned',
-    'order_qty_unit',
+    'order_unit',
     'order_text',
     'commission'
   ]
@@ -62,7 +62,7 @@ class OrderForm(forms.ModelForm):
       'pub_date': ReadOnlyWidgetSimple(),
       'asset': AssetModelSelect2Widget(),
       'account': AccountModelSelect2Widget(),
-      'order_qty_unit': OrderQtyUnitWidget(),
+      'order_unit': OrderQtyUnitWidget(),
     }
   def clean_pub_date(self): return self.initial['pub_date'] #.strftime("%Y-%m-%d %H:%i:%s")
   def clean_source(self): return self.initial['source'] if 'source' in self.initial else None

@@ -88,7 +88,7 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
   def render(self, name, value, attrs=None):
     out = super().render(name, value, attrs)
     order = self.model.objects.get(id=value)
-    append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.order_qty_unit
+    append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.order_unit
     return "<p>"+out + append+"</p>"
 
 #########################
@@ -104,7 +104,7 @@ class ReadOnlyWidgetOrderSide(ReadOnlyWidgetSimple):
 
 class OrderQtyUnitWidget(widgets.TextInput):
   def render(self, name, value, attrs=None):
-    # original = super().render("order_qty_unit", "shares", attrs)
+    # original = super().render("order_unit", "shares", attrs)
     if value is None: value="shares"
     out = super().render(name, value, attrs)
     out = out.replace("text", "radio")

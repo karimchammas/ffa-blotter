@@ -147,7 +147,7 @@ class OrderGeneralViewsTests(TestCase):
             'order_type': MARKET,
             'order_validity': GTC,
             'am_type': 'N',
-            'order_qty_unit': 'share'
+            'order_unit': 'share'
           }
         )
         # check that the post was successful by being a redirect
@@ -195,7 +195,7 @@ class OrderGeneralViewsTests(TestCase):
           'order_type': MARKET,
           'order_validity': GTC,
           'am_type': 'N',
-          'order_qty_unit': 'shares'
+          'order_unit': 'shares'
         }
 
         response = self.client.post(url,o1,follow=True)

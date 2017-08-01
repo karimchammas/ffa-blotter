@@ -70,7 +70,7 @@ $(function() {
 
   // upon selecting a different asset, fetch its currency, display it under the unit, and remove any earlier currencies displayed there
   var updateQtyUnit = function(force) {
-    var selector = $("#orders-new input[type='radio'][name='order_qty_unit'][value!='shares']");
+    var selector = $("#orders-new input[type='radio'][name='order_unit'][value!='shares']");
     if(selector.length>0) {
       if(!force && selector.attr('checked')) {
         return;
@@ -85,9 +85,9 @@ $(function() {
         function(data, textStatus, jqXHR ) {
           var currency = data["currency"];
           var span = $('<label />')
-            .append($('<input type="radio" name="order_qty_unit" value="'+currency+'" />'))
+            .append($('<input type="radio" name="order_unit" value="'+currency+'" />'))
             .append('&nbsp;'+currency);
-          $("#orders-new input[type='radio'][name='order_qty_unit'][value='shares']")
+          $("#orders-new input[type='radio'][name='order_unit'][value='shares']")
             .parent()
             .append(span);
         }
