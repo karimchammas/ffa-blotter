@@ -2,7 +2,7 @@ from .models.zipline_app.fill import Fill
 from .models.zipline_app.order import Order
 from .models.zipline_app.asset import Asset
 
-from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, ReadOnlyWidgetOrderSide, OrderQtyUnitWidget, CustodianModelSelect2Widget
+from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, CustodianModelSelect2Widget
 from django import forms
 
 # override widget in createview
@@ -24,8 +24,8 @@ class FillForm(forms.ModelForm):
       'dedicated_to_order': ReadOnlyWidgetOrder(),
       'custodian': CustodianModelSelect2Widget(),
       'asset': ReadOnlyWidgetAsset(),
-      'fill_side': ReadOnlyWidgetOrderSide(),
-      'fill_qty_unsigned': ReadOnlyWidgetSimple(),
+      'fill_side': forms.HiddenInput(),
+      'fill_qty_unsigned': forms.HiddenInput(), #ReadOnlyWidgetSimple(),
     }
   def clean_pub_date(self): return self.initial['pub_date'] #.strftime("%Y-%m-%d %H:%i:%s")
   def clean_dedicated_to_order(self): return self.initial['dedicated_to_order']
@@ -62,7 +62,6 @@ class OrderForm(forms.ModelForm):
       'pub_date': ReadOnlyWidgetSimple(),
       'asset': AssetModelSelect2Widget(),
       'account': AccountModelSelect2Widget(),
-      'order_unit': OrderQtyUnitWidget(),
     }
   def clean_pub_date(self): return self.initial['pub_date'] #.strftime("%Y-%m-%d %H:%i:%s")
   def clean_source(self): return self.initial['source'] if 'source' in self.initial else None

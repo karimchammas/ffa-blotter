@@ -28,6 +28,14 @@ AM_TYPE_CHOICES = (
   (UNSOLICITED, 'Unsolicited'),
   (DISCRETIONARY, 'Discretionary'),
 )
+# types of units
+SHARE = 'S'
+CURRENCY = 'C'
+ORDER_UNIT_CHOICES = (
+  (SHARE, 'Share'),
+  (CURRENCY, 'Currency')
+)
+#-----------
 class AbstractOrder(models.Model):
     order_text = models.CharField(max_length=200, blank=True)
     pub_date = models.DateTimeField('date published',default=now_minute)
@@ -38,8 +46,9 @@ class AbstractOrder(models.Model):
       verbose_name="Qty"
     )
     order_unit = models.CharField(
-      max_length=20,
-      default="shares",
+      max_length=1,
+      choices=ORDER_UNIT_CHOICES,
+      default=SHARE,
       verbose_name="Qty unit"
     )
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -222,6 +231,17 @@ class Order(AbstractOrder):
     def setOpen(self):
       self.order_status = OPEN
       self.save()
+
+    def get_order_unit_display(self):
+      if self.order_unit==SHARE: return "share"
+      return self.order.asset_currency
+
+    def _get_FIELD_display(self, field):
+      f_name = field.name
+      if f_name == 'order_unit':
+        if self.order_unit==SHARE: return "share"
+        return self.asset.asset_currency
+      return super(Order, self)._get_FIELD_display(field=field)
 
 #####################
 # Model History in Django

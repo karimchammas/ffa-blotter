@@ -88,32 +88,6 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
   def render(self, name, value, attrs=None):
     out = super().render(name, value, attrs)
     order = self.model.objects.get(id=value)
-    append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.order_unit
+    append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.get_order_unit_display()
     return "<p>"+out + append+"</p>"
 
-#########################
-from .models.zipline_app.side import FILL_SIDE_CHOICES
-class ReadOnlyWidgetOrderSide(ReadOnlyWidgetSimple):
-  def render(self, name, value, attrs=None):
-    if not value: return super().render(name, "N/A", attrs)
-    filtered = [x for x in FILL_SIDE_CHOICES if x[0]==value]
-    v2 = filtered[0][1]
-    v3 = super().render(name, v2, attrs)
-    v3 = v3.replace('value="'+v2+'"', 'value="'+str(value)+'"')
-    return v3
-
-class OrderQtyUnitWidget(widgets.TextInput):
-  def render(self, name, value, attrs=None):
-    # original = super().render("order_unit", "shares", attrs)
-    if value is None: value="shares"
-    out = super().render(name, value, attrs)
-    out = out.replace("text", "radio")
-    out = out.replace("input", "input checked")
-    out = out.replace("form-control","")
-    out = "<label>"+out+"&nbsp;"+value+"&nbsp;&nbsp;</label>"
-    out2 = ""
-    if value!="shares":
-      out2 = out
-      out2 = out2.replace(value,"shares")
-      out2 = out2.replace(" checked","")
-    return out2+out

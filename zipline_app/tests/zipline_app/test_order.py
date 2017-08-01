@@ -2,7 +2,7 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from ...models.zipline_app.order import Order, OrderManager
+from ...models.zipline_app.order import Order, OrderManager, SHARE, NONE
 from .test_zipline_app import create_asset, create_order, create_account, a1
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL, MARKET, GTC, GTD, DAY, OPEN, CANCELLED
@@ -146,8 +146,8 @@ class OrderGeneralViewsTests(TestCase):
             'account':self.acc1.id,
             'order_type': MARKET,
             'order_validity': GTC,
-            'am_type': 'N',
-            'order_unit': 'share'
+            'am_type': NONE,
+            'order_unit': SHARE
           }
         )
         # check that the post was successful by being a redirect
@@ -194,8 +194,8 @@ class OrderGeneralViewsTests(TestCase):
           'account':self.acc1.id,
           'order_type': MARKET,
           'order_validity': GTC,
-          'am_type': 'N',
-          'order_unit': 'shares'
+          'am_type': NONE,
+          'order_unit': SHARE
         }
 
         response = self.client.post(url,o1,follow=True)

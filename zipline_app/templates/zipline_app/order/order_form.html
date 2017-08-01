@@ -68,15 +68,8 @@ $(function() {
   $("#orders-new input[name='validity_date']").prop("disabled", "disabled");
   $("#orders-new input[name='validity_date']").val('');
 
-  // upon selecting a different asset, fetch its currency, display it under the unit, and remove any earlier currencies displayed there
-  var updateQtyUnit = function(force) {
-    var selector = $("#orders-new input[type='radio'][name='order_unit'][value!='shares']");
-    if(selector.length>0) {
-      if(!force && selector.attr('checked')) {
-        return;
-      }
-      selector.parent().remove();
-    }
+  // upon selecting a different asset, fetch its currency, display it under the unit
+  var updateQtyUnit = function() {
     var base = "{% url 'zipline_app:assets-detail' 1 %}";
     var id = $("#orders-new select[name='asset']").val();
     if(id != null) {
@@ -84,18 +77,15 @@ $(function() {
         base.replace("1",id)+"?asJson=true",
         function(data, textStatus, jqXHR ) {
           var currency = data["currency"];
-          var span = $('<label />')
-            .append($('<input type="radio" name="order_unit" value="'+currency+'" />'))
-            .append('&nbsp;'+currency);
-          $("#orders-new input[type='radio'][name='order_unit'][value='shares']")
-            .parent()
-            .append(span);
+          $('span[id="added_currency"]').remove();
+          var span = $('<span id="added_currency" />').append('&nbsp; ('+currency+')');
+          $("#orders-new select[name='order_unit'] option[value='C']").append(span);
         }
       );
     }
   };
-  $("#orders-new select[name='asset']").change(function() { updateQtyUnit(true); });
-  if($("#id_asset").val()!=null) updateQtyUnit(false);
+  $("#orders-new select[name='asset']").change(function() { updateQtyUnit(); });
+  updateQtyUnit();
 });
 </script>
 

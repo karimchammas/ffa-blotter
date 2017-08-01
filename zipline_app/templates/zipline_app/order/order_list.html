@@ -61,7 +61,7 @@
         {% endif %}
       </div>
       <div class="col-xs-1">{{ order.get_order_side_display }}</div>
-      <div class="col-xs-1 text-right">{{ order.order_qty_unsigned }} ({{order.order_unit}})</div>
+      <div class="col-xs-1 text-right">{{ order.order_qty_unsigned }} ({{order.get_order_unit_display}})</div>
       <div class="col-xs-1">{{ order.user.username }}</div>
       <div class="col-xs-1">
         {{ order.get_order_status_display }}

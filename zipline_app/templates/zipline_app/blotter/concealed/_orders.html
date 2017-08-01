@@ -37,13 +37,13 @@
       </div>
       <div class="col-xs-2">{{order.asset.asset_currency}}</div>
       <div class='col-xs-4'>
-        <span class='pull-right'>{% if order.order_unit != 'shares' %}{{order.order_qty_unsigned|intcomma}}{% else %}-{% endif %}</span>
+        <span class='pull-right'>{% if order.order_unit != 'S' %}{{order.order_qty_unsigned|intcomma}}{% else %}-{% endif %}</span>
       </div>
     </div>
   </div>
 
   <div class='col-xs-1'>
-    <span class='pull-right'>{% if order.order_unit == 'shares' %}{{order.order_qty_unsigned|intcomma}}{% else %}-{% endif %}</span>
+    <span class='pull-right'>{% if order.order_unit == 'S' %}{{order.order_qty_unsigned|intcomma}}{% else %}-{% endif %}</span>
   </div>
 
   <div class="col-xs-1">
