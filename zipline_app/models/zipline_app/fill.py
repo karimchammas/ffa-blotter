@@ -25,7 +25,7 @@ class Fill(models.Model):
     fill_qty_unsigned = models.PositiveIntegerField(
       default=0,
       validators=[MaxValueValidator(1000000), validate_nonzero],
-      verbose_name="Qty"
+      verbose_name="Qty/Amount"
     )
     fill_price = PositiveFloatFieldModel(
       default=0,

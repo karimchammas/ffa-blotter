@@ -117,4 +117,4 @@ class FillUnitWidget(widgets.TextInput):
     order_id = self.form_instance.initial['dedicated_to_order']
     order = Order.objects.get(id=order_id)
     currency = order.asset.asset_currency
-    return out + "<p>"+value2+"&nbsp;("+currency+")</p>"
+    return out + "<p>"+currency+"</p>"

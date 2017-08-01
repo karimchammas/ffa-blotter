@@ -43,13 +43,13 @@ class AbstractOrder(models.Model):
     order_qty_unsigned = models.PositiveIntegerField(
       default=0,
       validators=[MaxValueValidator(1000000), validate_nonzero],
-      verbose_name="Qty"
+      verbose_name="Qty/Amount"
     )
     order_unit = models.CharField(
       max_length=1,
       choices=ORDER_UNIT_CHOICES,
       default=SHARE,
-      verbose_name="Qty unit"
+      verbose_name="Unit"
     )
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     order_side = models.CharField(
