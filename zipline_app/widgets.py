@@ -71,26 +71,25 @@ class ReadOnlyWidgetModel(widgets.TextInput):
 
     url = reverse(self.url_detail, args=(value,))
     p1 = "<a href='"+url+"'>#"+str(value)+"</a>"
-
-    p2 = ""
-    if self.show_str:
-      p2 = self.model.objects.get(id=value)
-      p2 = ": "+str(p2)
-
-    return out + "<p>"+p1+p2+"</p>"
-
-
-    return v3
+    return out+"<span>"+p1+"</span>"
 
 class ReadOnlyWidgetAsset(ReadOnlyWidgetModel):
   model = Asset
   url_detail = 'zipline_app:assets-detail'
-  show_str=True
+  def render(self, name, value, attrs=None):
+    out = super().render(name, value, attrs)
+    asset = self.model.objects.get(id=value)
+    append = ": "+str(asset)
+    return "<p>"+out + append+"</p>"
 
 class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
   model = Order
   url_detail = 'zipline_app:orders-detail'
-  show_str=False
+  def render(self, name, value, attrs=None):
+    out = super().render(name, value, attrs)
+    order = self.model.objects.get(id=value)
+    append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.order_qty_unit
+    return "<p>"+out + append+"</p>"
 
 #########################
 from .models.zipline_app.side import FILL_SIDE_CHOICES
