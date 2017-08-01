@@ -86,10 +86,19 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
   model = Order
   url_detail = 'zipline_app:orders-detail'
   def render(self, name, value, attrs=None):
-    out = super().render(name, value, attrs)
+    order_link = super().render(name, value, attrs)
     order = self.model.objects.get(id=value)
-    append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.get_order_unit_display()
-    return "<p>"+out + append+"</p>"
+    url = reverse('zipline_app:assets-detail', args=(order.account.id,))
+    account_link = "<a href='"+url+"'>"+order.account.account_symbol+"</a>"
+
+    out = "<p>%s: %s %s %s for %s</p>" % (
+      order_link,
+      order.get_order_side_display(),
+      str(order.order_qty_unsigned),
+      order.get_order_unit_display(),
+      account_link
+    )
+    return out
 
 class FillUnitWidget(widgets.TextInput):
   def render(self, name, value, attrs=None):
