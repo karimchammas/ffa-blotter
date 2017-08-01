@@ -29,9 +29,8 @@ class FillCreate(generic.CreateView):
     order_id = self.request.GET.get('order',None)
     if not order_id: raise Exception("Order not passed to create fill")
     order = Order.objects.get(id=order_id) # will raise exception if id doesn't exist
-    initial['dedicated_to_order'] = order
+    initial['dedicated_to_order'] = order_id
     initial['fill_side'] = order.order_side
-    initial['fill_qty_unsigned'] = order.order_qty_unsigned
     initial['asset'] = order.asset
     initial['source'] = self.request.GET.get('source',None)
     return initial

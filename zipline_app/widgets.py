@@ -91,3 +91,19 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
     append = ": " + order.get_order_side_display() + " " + str(order.order_qty_unsigned) + " " + order.get_order_unit_display()
     return "<p>"+out + append+"</p>"
 
+from .models.zipline_app.order import SHARE
+class FillQtyWidget(widgets.TextInput):
+  def render(self, name, value, attrs=None):
+    out = super().render(name, value, attrs)
+    order_id = self.form_instance.initial['dedicated_to_order']
+    order = Order.objects.get(id=order_id)
+    #order = order_id
+    unit = order.order_unit
+    if unit!=SHARE:
+      append = "<span>&nbsp;shares</span>"
+      return out + append
+
+    currency = order.asset.asset_currency
+    append = "<span>&nbsp;"+currency+"</span>"
+    return out + append
+
