@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from .views.zipline_app import zipline_app as views
-from .views.zipline_app import blotter, order, asset, fill, account, autocomplete, custodian
+from .views.zipline_app import blotter, order, asset, fill, account, autocomplete, custodian, placement
 
 app_name='zipline_app'
 urlpatterns = [
@@ -74,5 +74,8 @@ urlpatterns = [
     # http://blog.appliedinformaticsinc.com/autocomplete-input-field-in-django-template-with-jquery-ui/
     url(r'^autocomplete/asset/$',   autocomplete.AutoCompleteAssetView.as_view(),   name='autocomplete-asset'),
     url(r'^autocomplete/account/$', autocomplete.AutoCompleteAccountView.as_view(), name='autocomplete-account'),
+
+    # ex: /<root>/placements/new/
+    url(r'^placements/new/$', placement.PlacementCreate.as_view(), name='placements-new'),
 
 ]

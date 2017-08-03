@@ -1,0 +1,16 @@
+{% load humanize %}
+{# note that this template is also used in the email, so probably not a good idea to use bootstrap here? Maybe if needed I'll split this into two files, one for the email and another for the UI #}
+
+<h2>Placement Details</h2>
+<ul>
+  <li>Date: {{placement.date}}</li>
+  <li>Order: <a href="{{domain}}{% url 'zipline_app:orders-detail' placement.order.id %}">#{{ placement.order.id }}</a></li>
+  <li>User: {{placement.user.username}}</li>
+</ul>
+
+{% if domain %}
+<p>
+  Published in
+  <a href="{{domain}}{% url 'zipline_app:blotter-concealed' %}">blotter</a>
+</p>
+{% endif %}

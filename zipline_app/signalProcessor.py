@@ -5,9 +5,7 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger("zipline_app") #__name__)
 
-from .models.zipline_app.asset import Asset
-from .models.zipline_app.account import Account
-from .models.zipline_app.order import Order, OrderManager
+from .models.zipline_app.order import OrderManager
 from .models.zipline_app.fill import Fill
 from .utils import email_ctx
 
@@ -48,6 +46,18 @@ class SignalProcessor:
           {'order': instance},
           'zipline_app/email_order_plain.txt',
           'zipline_app/order/_order_detail.html',
+          subject,
+          logger
+        )
+
+    if sender.__name__=="Placement":
+      logger.debug("post_save placement %s"%created)
+      if created:
+        subject = "Placement for order #%s" % (instance.order.id)
+        email_ctx(
+          {'placement': instance},
+          'zipline_app/email_placement.txt',
+          'zipline_app/email_placement.html',
           subject,
           logger
         )

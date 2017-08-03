@@ -37,6 +37,15 @@
     None
     {% endif %}
   </li>
+  <li>
+    Placed:
+    {% if order.placement %}
+      {{order.placement.date|date:"Y-m-d H:i"}}
+    {% else %}
+      No
+    {% endif %}
+  </li>
+
 </ul>
 
 {% if domain %}

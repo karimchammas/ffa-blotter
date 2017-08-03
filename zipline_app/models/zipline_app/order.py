@@ -129,7 +129,7 @@ class AbstractOrder(models.Model):
     class Meta:
       abstract=True
 
-
+#---------------------------
 class Order(AbstractOrder):
     def order_qty_signed(self):
       return self.order_qty_unsigned * (+1 if self.order_side==BUY else -1)

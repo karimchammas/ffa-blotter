@@ -13,7 +13,8 @@ class ZiplineAppConfig(AppConfig):
     def ready(self):
       from .signalProcessor import SignalProcessor
       request_started.connect(SignalProcessor.request_started)
-      senders=("zipline_app.Order", "zipline_app.Fill", "zipline_app.Asset")
+      # below models should be defined in models/zipline_app/zipline_app.py
+      senders=("zipline_app.Order", "zipline_app.Fill", "zipline_app.Asset", "zipline_app.Placement")
       for sender in senders:
         #models.signals.post_init.connect(SignalProcessor.post_init, sender=sender)
         models.signals.post_save.connect(SignalProcessor.post_save, sender=sender)

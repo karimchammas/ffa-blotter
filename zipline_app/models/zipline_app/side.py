@@ -76,15 +76,6 @@ ORDER_VALIDITY_CHOICES = (
   (DAY, 'Day order'),
 )
 
-# Fill status: placed, completed
-# https://github.com/shadiakiki1986/ffa-blotter/issues/59
-PLACED = 'P'
-COMPLETED = 'C'
-FILL_STATUS_CHOICES = (
-  (PLACED, 'Placed'),
-  (COMPLETED, 'Completed')
-)
-
 # Fill category: principal, agent
 # https://github.com/shadiakiki1986/ffa-blotter/issues/60
 PRINCIPAL = 'P'

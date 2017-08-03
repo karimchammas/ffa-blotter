@@ -1,0 +1,9 @@
+{% load humanize %}
+
+Placement Details
+
+Date: {{placement.date}}
+Order: #{{placement.order.id}}
+User: {{placement.user.username}}
+
+Published at {{domain}}{% url 'zipline_app:blotter-concealed' %}

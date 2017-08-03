@@ -30,4 +30,6 @@ Dedicated fill:
 None
 {% endif %}
 
+Placed: {% if order.placement %}{{order.placement.date|date:"Y-m-d H:i"}}{% else %}No{% endif %}
+
 Published at {{domain}}{% url 'zipline_app:orders-detail' order.id %}

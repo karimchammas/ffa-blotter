@@ -9,7 +9,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from .asset import Asset
 from .order import Order, ORDER_UNIT_CHOICES, SHARE
 from .custodian import Custodian
-from .side import BUY, FILL_SIDE_CHOICES, validate_nonzero, PositiveFloatFieldForm, PositiveFloatFieldModel, PLACED, FILL_STATUS_CHOICES, PRINCIPAL, FILL_CATEGORY_CHOICES
+from .side import BUY, FILL_SIDE_CHOICES, validate_nonzero, PositiveFloatFieldForm, PositiveFloatFieldModel, PRINCIPAL, FILL_CATEGORY_CHOICES
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from ...utils import now_minute, chopSeconds
@@ -42,12 +42,6 @@ class Fill(models.Model):
       verbose_name="Side"
     )
     user = models.ForeignKey(User, null=True, default=None)
-    fill_status = models.CharField(
-      max_length=1,
-      choices=FILL_STATUS_CHOICES,
-      default=PLACED,
-      verbose_name="Status"
-    )
     category = models.CharField(
       max_length=1,
       choices=FILL_CATEGORY_CHOICES,

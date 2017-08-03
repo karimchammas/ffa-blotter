@@ -2,7 +2,7 @@ from django.test import TestCase
 from .test_zipline_app import create_fill, create_asset, a1, create_order, create_account, a2, create_fill_from_order, create_custodian
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
-from ...models.zipline_app.side import BUY, SELL, PLACED, PRINCIPAL
+from ...models.zipline_app.side import BUY, SELL, PRINCIPAL
 from django.core.exceptions import ValidationError
 from ...utils import myTestLogin
 from django.contrib.auth.models import User
@@ -168,7 +168,6 @@ class FillGeneralViewsTests(TestCase):
           'fill_side': BUY,
           'fill_qty_unsigned':0,
           'fill_price':1,
-          'fill_status': PLACED,
           'category': PRINCIPAL,
           'is_internal': False,
           'trade_date': '2000-01-01',
@@ -190,7 +189,6 @@ class FillGeneralViewsTests(TestCase):
           'fill_side': BUY,
           'fill_qty_unsigned':1,
           'fill_price':-1,
-          'fill_status': PLACED,
           'category': PRINCIPAL,
           'is_internal': False,
           'trade_date': '2000-01-01'
@@ -207,7 +205,6 @@ class FillGeneralViewsTests(TestCase):
           'fill_qty_unsigned':self.o1.order_qty_unsigned,
           'fill_price':1,
           'dedicated_to_order':self.o1.id,
-          'fill_status': PLACED,
           'category': PRINCIPAL,
           'is_internal': False,
           'trade_date': '2000-01-01',
@@ -228,7 +225,7 @@ class FillGeneralViewsTests(TestCase):
         url = reverse('zipline_app:fills-new') # intentionally do not pass order here
         time = '2015-01-01 06:00:00'
         f1={'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':1, 'fill_price':1, 'dedicated_to_order':'', 'fill_text':'random fill',
-          'fill_status': PLACED, 'category': PRINCIPAL, 'is_internal': False, 'trade_date': '2000-01-01'
+          'category': PRINCIPAL, 'is_internal': False, 'trade_date': '2000-01-01'
         }
         # 2017-08-09: fills untied to orders are no longer accepted
         with self.assertRaises(Exception):
