@@ -1,6 +1,6 @@
 from django.test import TestCase
 from ...models.zipline_app.placement import Placement
-from .test_zipline_app import create_asset, create_account, a1, create_order
+from .test_zipline_app import create_a1, create_account, a1, create_order
 from ...models.zipline_app.side import BUY
 from ...utils import myTestLogin
 from django.core import mail
@@ -9,7 +9,7 @@ from django.urls import reverse
 class PlacementBaseTests(TestCase):
   def setUp(self):
     acc1 = create_account(symbol="TEST01")
-    a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+    a1a = create_a1()
     self.user = myTestLogin(self.client)
     self.o1 = create_order(order_text="test?",days=-1, asset=a1a, order_side=BUY, order_qty_unsigned=10, account=acc1, user=self.user)
 

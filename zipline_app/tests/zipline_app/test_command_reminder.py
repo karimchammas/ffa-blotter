@@ -6,14 +6,14 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 
 from ...models.zipline_app.side import BUY
-from .test_zipline_app import create_asset, create_order, create_account, a1
+from .test_zipline_app import create_a1, create_order, create_account
 from django.core import mail
 from ...utils import myTestLogin
 
 class ReminderCommandTests(TestCase):
   def setUp(self):
     self.acc1 = create_account(symbol="TEST01")
-    self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+    self.a1a = create_a1()
 
   def testMain(self):
     with StringIO() as out, StringIO() as err:

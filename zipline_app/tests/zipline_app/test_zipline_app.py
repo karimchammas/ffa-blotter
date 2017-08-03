@@ -14,7 +14,7 @@ a1 = {
   "exchange":'exchange name',
   "symbol":'A1',
   "name":'A1 name',
-  "currency": None,
+  "currency": 'USD',
   "isin": None,
   "origin": "Manual"
 }
@@ -22,6 +22,9 @@ a2 = {
   "exchange":'exchange name',
   "symbol":'A2',
   "name":'A2 name',
+  "currency": 'USD',
+  "isin": None,
+  "origin": "Manual"
 }
 
 def create_account(symbol):
@@ -29,12 +32,15 @@ def create_account(symbol):
       account_symbol=symbol
     )
 
-def create_asset(symbol, exchange, name):
+def create_asset(symbol, exchange, name, currency):
     return Asset.objects.create(
       asset_exchange=exchange,
       asset_symbol=symbol,
-      asset_name=name
+      asset_name=name,
+      asset_currency = currency
     )
+
+def create_a1(): return create_asset(a1["symbol"],a1["exchange"],a1["name"],a1["currency"])
 
 def create_order(order_text, days, asset, order_side, order_qty_unsigned, account, user=None, *args, **kwargs):
     """
@@ -96,8 +102,8 @@ def create_custodian(symbol, name):
 class OrderMethodTests(TestCase):
     def setUp(self):
       self.acc1 = create_account(symbol="TEST01")
-      self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
-      self.a2a = create_asset(a2["symbol"],a2["exchange"],a2["name"])
+      self.a1a = create_a1()
+      self.a2a = create_asset(a2["symbol"],a2["exchange"],a2["name"],a2["currency"])
 
     def test_was_published_recently_with_future_order(self):
         """
@@ -136,7 +142,7 @@ class OrderViewTests(TestCase):
 
     def setUp(self):
       self.acc1 = create_account(symbol="TEST01")
-      self.asset = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+      self.asset = create_a1()
       myTestLogin(self.client)
 
     def test_blotter_concealed_view_with_no_orders(self):
@@ -270,7 +276,7 @@ class OrderViewTests(TestCase):
 #        f1.delete()
 #        get_assert_contains(self,"Successfully deleted fill")
 #
-#        as1=create_asset("test","test","test")
+#        as1=create_asset("test","test","test","test")
 #        get_assert_contains(self,"Successfully created asset")
 #
 #        ac1=create_account("test")

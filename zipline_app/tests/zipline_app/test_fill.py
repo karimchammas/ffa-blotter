@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .test_zipline_app import create_fill, create_asset, a1, create_order, create_account, a2, create_fill_from_order, create_custodian
+from .test_zipline_app import create_fill, create_asset, create_a1, create_order, create_account, a2, create_fill_from_order, create_custodian
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL, PRINCIPAL
@@ -8,18 +8,21 @@ from ...utils import myTestLogin
 from django.contrib.auth.models import User
 from django.utils.timezone import get_current_timezone
 from django.core import mail
-from ...models.zipline_app.order import Order
+from ...models.zipline_app.order import Order, SHARE
 
 class FillModelTests(TestCase):
   def setUp(self):
     self.acc = create_account("test acc")
-    self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+    self.a1a = create_a1()
     self.o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc)
 
   def test_clean_invalid_dedicated_order_qty(self):
-    order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc                          )
-    with self.assertRaises(ValidationError):
-      f1 = create_fill(    fill_text="test fill",     days=-1, asset=self.a1a, fill_side=BUY,  fill_qty_unsigned=20, fill_price=2,     dedicated_to_order=order)
+    order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc)
+    # Edit 2017-07: Fill qty does not have to match with order qty because it could be a "fill qty (shares)" vs "order amount (currency)"
+    #with self.assertRaises(ValidationError):
+    #  f1 = create_fill(    fill_text="test fill",     days=-1, asset=self.a1a, fill_side=BUY,  fill_qty_unsigned=20, fill_price=2,     dedicated_to_order=order)
+    f1 = create_fill(    fill_text="test fill",     days=-1, asset=self.a1a, fill_side=BUY,  fill_qty_unsigned=20, fill_price=2,     dedicated_to_order=order)
+    self.assertTrue(True)
 
   def test_clean_invalid_dedicated_order_side(self):
     order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc                          )
@@ -28,7 +31,7 @@ class FillModelTests(TestCase):
 
   def test_clean_invalid_dedicated_order_asset(self):
     order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc                          )
-    a2a = create_asset(a2["symbol"],a2["exchange"],a2["name"])
+    a2a = create_asset(a2["symbol"],a2["exchange"],a2["name"],a2["currency"])
     with self.assertRaises(ValidationError):
       f1 = create_fill(    fill_text="test fill",     days=-1, asset=a2a, fill_side=BUY,  fill_qty_unsigned=10, fill_price=2,     dedicated_to_order=order)
 
@@ -91,7 +94,7 @@ class FillModelTests(TestCase):
 
 class FillGeneralViewsTests(TestCase):
     def setUp(self):
-        self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+        self.a1a = create_a1()
         self.user = myTestLogin(self.client)
         self.acc = create_account("test acc")
         self.o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc, user=self.user)
@@ -115,7 +118,9 @@ class FillGeneralViewsTests(TestCase):
 
     def test_quantity_large_does_not_trigger_error_integer_too_large(self):
         time = '2015-01-01 00:00:00' #timezone.now() + datetime.timedelta(days=-0.5)
-        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
+        # passing order in GET params is only useful for GET fetches of the fills-new page
+        # url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
+        url = reverse('zipline_app:fills-new')
         largeqty=100000000000000000000000000000
         in1 =  {
           'pub_date':time,
@@ -126,13 +131,16 @@ class FillGeneralViewsTests(TestCase):
           'category': 'P',
           'trade_date': '2000-01-01',
           'settlement_date': '2000-01-01',
-          'custodian': self.cust1.id
+          'custodian': self.cust1.id,
+          'dedicated_to_order': self.o1.id
         }
         response = self.client.post( url, in1)
+        # 2017-08-04: fill qty is not independent of order qty, and can represent shares if order represents currency, and vice versa
         # 2017-07-04: this now is supposed to pass instead of throw error because the form qty is taken from the order
-        # make sure we get a 302 return code
-        self.assertEqual(response.status_code, 302)
-        # self.assertNotContains(response,"Ensure this value is less than or equal to")
+        #   make sure we get a 302 return code
+        # print(list(response))
+        # self.assertEqual(response.status_code, 302)
+        self.assertContains(response,"Ensure this value is less than or equal to")
         in1['fill_qty_unsigned'] = 1
         in1['fill_price'] = largeqty
         response = self.client.post(url, in1, follow=True)
@@ -158,8 +166,13 @@ class FillGeneralViewsTests(TestCase):
         response = self.client.post(url,f1)
         self.assertContains(response,"foo key")
 
-    def test_new_fill_zero_qty(self):
+    def test_new_fill_GET(self):
         url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
+        response = self.client.get(url)
+        self.assertContains(response,"10")
+
+    def test_new_fill_zero_qty(self):
+        url = reverse('zipline_app:fills-new')
         time = '2015-01-01 06:00:00'
         f1={
           'pub_date':time,
@@ -171,16 +184,18 @@ class FillGeneralViewsTests(TestCase):
           'is_internal': False,
           'trade_date': '2000-01-01',
           'settlement_date': '2000-01-01',
-          'custodian': self.cust1.id
+          'custodian': self.cust1.id,
+          'dedicated_to_order': self.o1.id
         }
         response = self.client.post(url,f1)
+        # 2017-08-04: fill qty is independent of order qty now (shares vs currency)
         # 2017-07-09: now that the fill is linked to the order, the qty submitted is cleaned to be the same from the order, so the above POST will pass successfully
         # print(list(response))
-        # self.assertContains(response,"Quantity 0 is not allowed")
-        self.assertEqual(response.status_code, 302)
+        self.assertContains(response,"Quantity 0 is not allowed")
+        # self.assertEqual(response.status_code, 302)
 
     def test_new_fill_negative_price(self):
-        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
+        url = reverse('zipline_app:fills-new')
         time = '2015-01-01 06:00:00'
         f1={
           'pub_date':time,
@@ -190,25 +205,28 @@ class FillGeneralViewsTests(TestCase):
           'fill_price':-1,
           'category': PRINCIPAL,
           'is_internal': False,
-          'trade_date': '2000-01-01'
+          'trade_date': '2000-01-01',
+          'dedicated_to_order': self.o1.id
         }
         response = self.client.post(url,f1)
         self.assertContains(response,"Enter a positive number.")
 
     def test_new_fill_dedicated_to_order(self):
-        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
+        url = reverse('zipline_app:fills-new')
         f1={
           'pub_date':self.o1.pub_date.astimezone(get_current_timezone()).strftime('%Y-%m-%d %H:%M'),
           'asset':self.o1.asset.id,
           'fill_side': self.o1.order_side,
           'fill_qty_unsigned':self.o1.order_qty_unsigned,
+          'fill_unit': SHARE,
           'fill_price':1,
           'dedicated_to_order':self.o1.id,
           'category': PRINCIPAL,
           'is_internal': False,
           'trade_date': '2000-01-01',
           'settlement_date': '2000-01-01',
-          'custodian': self.cust1.id
+          'custodian': self.cust1.id,
+          'dedicated_to_order': self.o1.id
         }
         response = self.client.post(url,f1,follow=True)
 
@@ -253,7 +271,7 @@ def url_permission(test, url, obj_id):
 
 class FillDetailViewsTests(TestCase):
   def setUp(self):
-    self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+    self.a1a = create_a1()
     self.user = myTestLogin(self.client)
     self.acc = create_account("test acc")
     self.o1 = create_order(order_text="random order 1", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc, user=self.user)

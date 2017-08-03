@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .test_zipline_app import create_account, create_asset, create_order, a1
+from .test_zipline_app import create_account, create_a1, create_order
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL
@@ -8,7 +8,7 @@ from ...utils import myTestLogin
 class BlotterSideBySideViewsTests(TestCase):
   def setUp(self):
     self.acc = create_account("test acc")
-    self.ass = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+    self.ass = create_a1()
     myTestLogin(self.client)
 
   def test_one_order(self):

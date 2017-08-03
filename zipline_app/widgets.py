@@ -86,6 +86,7 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
   model = Order
   url_detail = 'zipline_app:orders-detail'
   def render(self, name, value, attrs=None):
+    if not value: return "<p>N/A</p>"
     order_link = super().render(name, value, attrs)
     order = self.model.objects.get(id=value)
     url = reverse('zipline_app:assets-detail', args=(order.account.id,))

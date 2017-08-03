@@ -25,8 +25,8 @@ class ImportMarketflowCommandTests(TestCase):
     instance.accountsCount.return_value = 2
 
     instance.custodiansList.return_value = [
-      {'CLI_COD':'custodian 1', 'CLI_NOM_PRE':'name of custodian 1'},
-      {'CLI_COD':'custodian 2', 'CLI_NOM_PRE':'name of custodian 2'},
+      {'ENT_COD':'custodian 1', 'ENT_FULL_NAME':'name of custodian 1'},
+      {'ENT_COD':'custodian 2', 'ENT_FULL_NAME':'name of custodian 2'},
     ]
     instance.custodiansCount.return_value = 2
 

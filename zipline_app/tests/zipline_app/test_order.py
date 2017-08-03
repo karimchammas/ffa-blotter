@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from ...models.zipline_app.order import Order, OrderManager, SHARE, NONE
-from .test_zipline_app import create_asset, create_order, create_account, a1
+from .test_zipline_app import create_a1, create_order, create_account, a1
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL, MARKET, GTC, GTD, DAY, OPEN, CANCELLED
 from .test_fill import create_fill_from_order, url_permission
@@ -14,7 +14,7 @@ from django.core import mail
 class OrderModelTests(TestCase):
     def setUp(self):
       self.acc1 = create_account(symbol="TEST01")
-      self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+      self.a1a = create_a1()
 
     def test_buy(self):
         o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
@@ -113,7 +113,7 @@ class OrderModelTests(TestCase):
 class OrderGeneralViewsTests(TestCase):
     def setUp(self):
       self.acc1 = create_account(symbol="TEST01")
-      self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+      self.a1a = create_a1()
       self.user = myTestLogin(self.client)
 
     def test_list(self):
@@ -208,7 +208,7 @@ class OrderGeneralViewsTests(TestCase):
 class OrderDetailViewTests(TestCase):
     def setUp(self):
       self.acc1 = create_account(symbol="TEST01")
-      self.a1a = create_asset(a1["symbol"],a1["exchange"],a1["name"])
+      self.a1a = create_a1()
       self.user = myTestLogin(self.client)
 
     def test_detail_view_with_a_future_order(self):

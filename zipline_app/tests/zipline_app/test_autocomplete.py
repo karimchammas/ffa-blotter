@@ -8,8 +8,8 @@ class AutoCompletAssetTests(TestCase):
     myTestLogin(self.client)
 
   def test_get(self):
-    asset1 = create_asset(symbol='asset1 symbol', exchange='asset1 exchange', name='asset1 name')
-    asset2 = create_asset(symbol='asset2 symbol', exchange='asset2 exchange', name='asset2 name')
+    asset1 = create_asset(symbol='asset1 symbol', exchange='asset1 exchange', name='asset1 name', currency='LBP')
+    asset2 = create_asset(symbol='asset2 symbol', exchange='asset2 exchange', name='asset2 name', currency='USD')
 
     url = reverse('zipline_app:autocomplete-asset')
     response = self.client.get(url, {'term':'asset1'}, follow=True)
