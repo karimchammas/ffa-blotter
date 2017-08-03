@@ -13,7 +13,7 @@ class FillForm(forms.ModelForm):
   source=forms.CharField(required=False, widget = forms.HiddenInput())
   field_order = [
     'pub_date', 'dedicated_to_order', 'fill_side', 'asset', 'fill_qty_unsigned', 'fill_unit',
-    'fill_price', 'fill_status', 'category', 'is_internal', 'trade_date', 'settlement_date',
+    'fill_price', 'category', 'is_internal', 'trade_date', 'settlement_date',
     'custodian', 'fill_text'
   ]
   class Meta:

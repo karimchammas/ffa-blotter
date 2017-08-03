@@ -123,7 +123,6 @@ class FillGeneralViewsTests(TestCase):
           'fill_side': BUY,
           'fill_qty_unsigned':largeqty,
           'fill_price':1,
-          'fill_status': 'P',
           'category': 'P',
           'trade_date': '2000-01-01',
           'settlement_date': '2000-01-01',

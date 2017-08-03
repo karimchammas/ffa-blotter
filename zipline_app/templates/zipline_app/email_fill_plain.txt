@@ -10,7 +10,6 @@ Price: {{fill.fill_price}}
 TT order key: {% if fill.tt_order_key %}{{fill.tt_order_key}}{% else %}None{% endif %}
 Dedicated to order: {% if fill.dedicated_to_order is not None %}Order #{{ fill.dedicated_to_order.id }}{% else %}None{% endif %}
 Comment: {% if fill.fill_text %}{{ fill.fill_text }}{% else %}None{% endif %}
-Status: {{ fill.get_fill_status_display }}
 Category: {{ fill.get_category_display }}
 Is {{fill.get_is_internal_display}}
 Trade date: {{fill.trade_date|date:"Y-m-d"}}

@@ -13,7 +13,6 @@
     Dedicated to order:
     {% include 'zipline_app/fill/_fill_dedicated_to_order.html' %}
   </li>
-  <li>Status: {{ fill.get_fill_status_display }}</li>
   <li>Category: {{ fill.get_category_display }}</li>
   <li>{{ fill.get_is_internal_display }}</li>
   <li>Trade date: {{ fill.trade_date|date:"Y-m-d" }}</li>
