@@ -6,27 +6,26 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 
 from ...models.zipline_app.side import BUY
-from .test_zipline_app import create_a1, create_order, create_account
+from .test_zipline_app import OrderBaseTests
 from django.core import mail
 from ...utils import myTestLogin
 
-class ReminderCommandTests(TestCase):
-  def setUp(self):
-    self.acc1 = create_account(symbol="TEST01")
-    self.a1a = create_a1()
-
+class ReminderCommandTests(OrderBaseTests):
   def testMain(self):
     with StringIO() as out, StringIO() as err:
-      user = myTestLogin(self.client)
-      o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+      o1 = self.create_order_default()
       call_command('reminder', stderr=err, stdout=out, debug=True)
+      # print([x.subject for x in mail.outbox])
       self.assertEqual(len(mail.outbox), 2) # 1 email for creating the order, and another for the reminder
 
   def testNoRecipients(self):
     with StringIO() as out, StringIO() as err:
-      o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+      self.user.email = ''
+      self.user.save()
+      o1 = self.create_order_default()
       call_command('reminder', stderr=err, stdout=out, debug=True)
-      self.assertEqual(len(mail.outbox), 0)
+      # print([x.subject for x in mail.outbox])
+      self.assertEqual(len(mail.outbox), 0) # only 1 email about created order
       self.assertNotIn("Failed", err.getvalue())
       self.assertIn("No users", err.getvalue())
       self.assertEquals(out.getvalue(), "")

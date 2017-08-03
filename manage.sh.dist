@@ -1,0 +1,18 @@
+#!/bin/sh
+# Usage: ./manage.sh runserver ...
+#        ./manage.sh migrate ...
+
+export DEFAULT_FROM_EMAIL=from@email.com
+export EMAIL_HOST=mail.ip.com
+export EMAIL_PORT=1234
+export EMAIL_HOST_USER=domain\\user # NTLM3 authentication
+export EMAIL_HOST_PASSWORD=pass
+export BASE_URL=http://hosted.django.com:1234 # for email links
+
+# Getting the source directory of a Bash script from within
+# https://stackoverflow.com/a/337006/4126114
+#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR=`dirname $0`
+# If FFA_BLOTTER doesn't exist, use `pew new FFA_BLOTTER` and install requirements
+# Check README for more info
+/usr/local/bin/pew in FFA_BLOTTER python $DIR/manage.py "$@"

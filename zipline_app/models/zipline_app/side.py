@@ -19,17 +19,23 @@ def validate_nonzero(value):
             params={'value': value},
         )
 
+
+
 # Inspired by django.forms.fields.py#FloatField
+def validatePositiveFloatField(value, *args, **kwargs):
+  if value is None:
+    return value
+  if value<0:
+    raise ValidationError(*args, **kwargs)
+  return value
+
 class PositiveFloatFieldForm(fields.FloatField):
   default_error_messages = {
     'invalid': _('Enter a positive number.'),
   }
   def validate(self, value):
-    super(PositiveFloatFieldForm, self).validate(value)
-    if value is None:
-      return value
-    if value<0:
-      raise ValidationError(self.error_messages['invalid'], code='invalid')
+    value = super(PositiveFloatFieldForm, self).validate(value)
+    value = validatePositiveFloatField(value, self.error_messages['invalid'], code='invalid')
     return value
 
   def widget_attrs(self, widget):
@@ -46,6 +52,10 @@ ORDER_TYPE_CHOICES = (
 )
 
 class PositiveFloatFieldModel(models.FloatField):
+  def to_python(self, value):
+    validatePositiveFloatField(value, "This value must be a positive float")
+    return super(PositiveFloatFieldModel, self).to_python(value)
+
   def formfield(self, **kwargs):
     defaults = {'form_class': PositiveFloatFieldForm}
     defaults.update(kwargs)

@@ -3,34 +3,32 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from ...models.zipline_app.order import Order, OrderManager, SHARE, NONE
-from .test_zipline_app import create_a1, create_order, create_account, a1
+from .test_zipline_app import create_a1, create_order, create_account, a1, create_custodian, OrderBaseTests
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL, MARKET, GTC, GTD, DAY, OPEN, CANCELLED
 from .test_fill import create_fill_from_order, url_permission
 from ...utils import myTestLogin
 from django.contrib.auth.models import User
 from django.core import mail
+from django.core.exceptions import ValidationError
 
-class OrderModelTests(TestCase):
-    def setUp(self):
-      self.acc1 = create_account(symbol="TEST01")
-      self.a1a = create_a1()
-
+class OrderModelTests(OrderBaseTests):
     def test_buy(self):
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+        o1 = self.create_order_default()
 
     def test_sell(self):
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=SELL, order_qty_unsigned=10, account=self.acc1)
+        o1 = self.create_order_default(order_side=SELL)
 
     def test_signed(self):
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+        o1 = self.create_order_default()
         self.assertEqual(o1.order_qty_signed(), 10)
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=SELL, order_qty_unsigned=10, account=self.acc1)
+        o1 = self.create_order_default(order_side=SELL)
         self.assertEqual(o1.order_qty_signed(), -10)
 
     def test_dedicated_fill(self):
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
-        f1 = create_fill_from_order(order=o1, fill_text="fill text", fill_price=1)
+        o1 = self.create_order_default()
+        cust = create_custodian("C1","custodian name 1")
+        f1 = create_fill_from_order(order=o1, fill_text="fill text", fill_price=1, user=self.user, custodian=cust, tt_order_key="")
         self.assertEqual(o1.dedicated_fill(), f1)
 
         # test that can now delete
@@ -38,18 +36,18 @@ class OrderModelTests(TestCase):
 
     def test_order_with_user(self):
       password='bla'
-      user = User.objects.create_user(username='john', email='jlennon@beatles.com', password=password)
-      o1 = create_order(days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=1, order_text="order 1", user=user, account=self.acc1)
+      user = User.objects.create_user(username='black', email='blackjack@something.com', password=password)
+      o1 = self.create_order_default(order_qty_unsigned=1, order_text="order 1")
 
     def test_history(self):
-      o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+      o1 = self.create_order_default()
       self.assertEqual(o1.history().count(), 0)
       o1.order_side=SELL
       o1.save()
       self.assertEqual(o1.history().count(), 1)
 
     def test_clean(self):
-      order = create_order(order_text="random order", days=-1,  asset=self.a1a, order_side=BUY, order_qty_unsigned=10,   account=self.acc1)
+      order = self.create_order_default(order_text="random order")
       order.order_validity = GTD
       order.validity_date = timezone.now()
       order.clean()
@@ -74,23 +72,20 @@ class OrderModelTests(TestCase):
 
     # assert that GTC order does not get instantly cancelled
     def test_validity_GTC(self):
-      user = myTestLogin(self.client)
-      order = self.provider_validity(order_validity=GTC, validity_date=None, pub_date=timezone.now(), user=user)
+      order = self.provider_validity(order_validity=GTC, validity_date=None, pub_date=timezone.now(), user=self.user)
       order.refresh_from_db()
       self.assertEqual(order.order_status,OPEN)
 
     # assert that GTD order does not get instantly cancelled
     def test_validity_GTD(self):
-      user = myTestLogin(self.client)
-      order = self.provider_validity(order_validity=GTD, validity_date=timezone.now(), pub_date=timezone.now(), user=user)
+      order = self.provider_validity(order_validity=GTD, validity_date=timezone.now(), pub_date=timezone.now(), user=self.user)
       order.refresh_from_db()
       self.assertEqual(order.order_status,OPEN)
 
     # assert that DAY order does not get instantly cancelled
     def test_validity_DAY_new_then_old(self):
-      user = myTestLogin(self.client)
-      o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=user)
-      o2 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now() + datetime.timedelta(days=-1), user=user)
+      o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=self.user)
+      o2 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now() + datetime.timedelta(days=-1), user=self.user)
       om = OrderManager()
       om.process()
       o1.refresh_from_db()
@@ -100,21 +95,47 @@ class OrderModelTests(TestCase):
 
     # https://docs.djangoproject.com/en/1.10/topics/testing/tools/#email-services
     def test_create_order_sends_email(self):
-      user = myTestLogin(self.client)
       with self.settings(EMAIL_HOST="bla", EMAIL_PORT="dummy", EMAIL_HOST_USER="dummy", EMAIL_HOST_PASSWORD="dummy"):
-        o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=user)
+        o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=self.user)
         self.assertEqual(len(mail.outbox), 1)
         self.assertTrue("New order" in mail.outbox[0].subject)
 
     def test_commission(self):
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1, commission=0.5)
+        o1 = self.create_order_default(commission=0.5)
         self.assertEqual(0.5, o1.commission)
 
-class OrderGeneralViewsTests(TestCase):
+    def test_qty_can_be_decimal(self):
+        o1 = self.create_order_default(order_qty_unsigned=10.23)
+        self.assertTrue(True)
+
+    def test_qty_cannot_be_negative(self):
+      with self.assertRaises(ValidationError):
+        o1 = self.create_order_default(order_qty_unsigned=-10)
+
+    # should not allow deleting a user if orders/fills exist
+    def test_delete_user(self):
+      o1 = self.create_order_default()
+      self.client.logout()
+      self.user.delete()
+      self.user.save()
+      with self.assertRaises(Order.DoesNotExist):
+        o1.refresh_from_db()
+        self.assertNotNull(o1)
+
+class OrderGeneralViewsTests(OrderBaseTests):
     def setUp(self):
-      self.acc1 = create_account(symbol="TEST01")
-      self.a1a = create_a1()
-      self.user = myTestLogin(self.client)
+      super(OrderGeneralViewsTests, self).setUp()
+      self.o1base = {
+        'pub_date': '2015-01-01 06:00:00',
+        'asset':self.a1a.id,
+        'order_side': BUY,
+        'order_qty_unsigned':1,
+        'account':self.acc1.id,
+        'order_type': MARKET,
+        'order_validity': GTC,
+        'am_type': NONE,
+        'order_unit': SHARE
+      }
 
     def test_list(self):
         url = reverse('zipline_app:orders-list')
@@ -127,7 +148,7 @@ class OrderGeneralViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_delete(self):
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1, user=self.user)
+        o1 = self.create_order_default()
 
         url = reverse('zipline_app:orders-delete', args=(self.a1a.id,))
         response = self.client.get(url)
@@ -178,25 +199,15 @@ class OrderGeneralViewsTests(TestCase):
 
     def test_new_order_zeroqty(self):
         url = reverse('zipline_app:orders-new')
-        time = '2015-01-01 06:00:00'
-        o1={'pub_date':time, 'asset':self.a1a.id, 'order_side': BUY, 'order_qty_unsigned':0, 'account':self.acc1.id}
+        o1 = self.o1base.copy() 
+        o1['order_qty_unsigned'] = 0
         response = self.client.post(url,o1)
-        self.assertContains(response,"Quantity 0 is not allowed")
+        # print(list(response))
+        self.assertContains(response,"Quantity 0.0 is not allowed")
 
     def test_new_order_user(self):
         url = reverse('zipline_app:orders-new')
-        time = '2015-01-01 06:00:00'
-        o1={
-          'pub_date':time,
-          'asset':self.a1a.id,
-          'order_side': BUY,
-          'order_qty_unsigned':1,
-          'account':self.acc1.id,
-          'order_type': MARKET,
-          'order_validity': GTC,
-          'am_type': NONE,
-          'order_unit': SHARE
-        }
+        o1=self.o1base
 
         response = self.client.post(url,o1,follow=True)
         # print(list(response))
@@ -205,18 +216,13 @@ class OrderGeneralViewsTests(TestCase):
         # check that "john" shows up twice, once for the "logged in as john", and once for the order author
         self.assertEqual(b''.join(list(response)).count(b"john"),2)
 
-class OrderDetailViewTests(TestCase):
-    def setUp(self):
-      self.acc1 = create_account(symbol="TEST01")
-      self.a1a = create_a1()
-      self.user = myTestLogin(self.client)
-
+class OrderDetailViewTests(OrderBaseTests):
     def test_detail_view_with_a_future_order(self):
         """
         The detail view of a order with a pub_date in the future should
         return a 404 not found.
         """
-        future_order = create_order(order_text='Future order.', days=5, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+        future_order = self.create_order_default(order_text='Future order.', days=5)
         url = reverse('zipline_app:orders-detail', args=(future_order.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
@@ -226,20 +232,20 @@ class OrderDetailViewTests(TestCase):
         The detail view of a order with a pub_date in the past should
         display the order's text.
         """
-        past_order = create_order(order_text='Past Order.', days=-5, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+        past_order = self.create_order_default(order_text='Past Order.', days=-5)
         url = reverse('zipline_app:orders-detail', args=(past_order.id,))
         response = self.client.get(url)
         self.assertContains(response, past_order.order_text)
 
     def test_update(self):
-        o1 = create_order(order_text="test?",days=-1, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1, user=self.user)
+        o1 = self.create_order_default()
 
         url = reverse('zipline_app:orders-update', args=(self.a1a.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_detail_view_history(self):
-      order = create_order(order_text='original order.', days=-5, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1)
+      order = self.create_order_default(order_text='original order.', days=-5)
       url = reverse('zipline_app:orders-detail', args=(order.id,))
       response = self.client.get(url, follow=True)
       self.assertContains(response, "No history")
@@ -249,7 +255,7 @@ class OrderDetailViewTests(TestCase):
       self.assertContains(response, "Changed order_side from")
 
     def test_detail_edit_del_only_for_owner(self):
-      o1 = create_order(order_text="test", days=-10, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1, user=self.user)
+      o1 = self.create_order_default(days=-10)
 
       url = reverse('zipline_app:orders-detail', args=(o1.id,))
 
@@ -269,9 +275,9 @@ class OrderDetailViewTests(TestCase):
 
 
     def test_edit_only_for_owner(self):
-      o1 = create_order(order_text="test", days=-10, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1, user=self.user)
+      o1 = self.create_order_default()
       url_permission(self, 'zipline_app:orders-update', o1.id)
 
     def test_del_only_for_owner(self):
-      o1 = create_order(order_text="test", days=-10, asset=self.a1a, order_side=BUY, order_qty_unsigned=10, account=self.acc1, user=self.user)
+      o1 = self.create_order_default()
       url_permission(self, 'zipline_app:orders-delete', o1.id)

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .test_zipline_app import create_account, create_a1, create_order, a1, create_fill
+from .test_zipline_app import OrderBaseTests
 from ...models.zipline_app.side import BUY
 from ...views.zipline_app._download_builder import DownloadBuilder
 from pandas import DataFrame
@@ -7,16 +7,15 @@ import tempfile
 from os.path import exists
 from django.http import FileResponse
 
-class DownloadBuilderTests(TestCase):
+class DownloadBuilderTests(OrderBaseTests):
   def setUp(self):
-    self.acc = create_account("test acc")
-    self.ass = create_a1()
+    super(DownloadBuilderTests, self).setUp()
     self.builder = DownloadBuilder()
 
   def test_orders2df(self):
-    o1 = create_order(order_text="random order 1", days=-1,  asset=self.ass, order_side=BUY, order_qty_unsigned=10,   account=self.acc)
-    o2 = create_order(order_text="random order 2", days=-2,  asset=self.ass, order_side=BUY, order_qty_unsigned=20,   account=self.acc)
-    o3 = create_order(order_text="random order 3", days=-3,  asset=self.ass, order_side=BUY, order_qty_unsigned=30,   account=self.acc)
+    o1 = self.create_order_default(order_text="random order 1", days=-1, order_qty_unsigned=10)
+    o2 = self.create_order_default(order_text="random order 2", days=-2, order_qty_unsigned=20)
+    o3 = self.create_order_default(order_text="random order 3", days=-3, order_qty_unsigned=30)
 
     orders = [o1, o2, o3]
     df = self.builder.orders2df(orders)

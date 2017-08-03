@@ -1,24 +1,18 @@
 from django.test import TestCase
-from .test_zipline_app import create_account, create_a1, create_order, create_fill
 from django.urls import reverse
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL
-from .test_fill import create_fill_from_order
+from .test_fill import FillBaseTests
 from io import BytesIO
 import pandas as pd
 from ...utils import myTestLogin
 
-class BlotterDownloadViewsTests(TestCase):
-  def setUp(self):
-    self.acc = create_account("test acc")
-    self.ass = create_a1()
-    myTestLogin(self.client)
-
+class BlotterDownloadViewsTests(FillBaseTests):
   def test_get(self):
-    o1 = create_order(order_text="random order 1", days=-1,  asset=self.ass, order_side=BUY, order_qty_unsigned=10,   account=self.acc)
-    o2 = create_order(order_text="random order 2", days=-2,  asset=self.ass, order_side=BUY, order_qty_unsigned=20,   account=self.acc)
-    o3 = create_order(order_text="random order 3", days=-3,  asset=self.ass, order_side=BUY, order_qty_unsigned=30,   account=self.acc)
-    f3 = create_fill_from_order(order=o3, fill_price=3, fill_text="fill 3")
+    # o1 is already created in setUp as self.o1
+    o2 = self.create_order_default(order_text="random order 2", days=-2, order_qty_unsigned=20)
+    o3 = self.create_order_default(order_text="random order 3", days=-3, order_qty_unsigned=30)
+    f3 = self.create_fill_from_order_default(order=o3, fill_price=3, fill_text="fill 3")
 
     # django test file download
     # http://stackoverflow.com/a/39655502/4126114

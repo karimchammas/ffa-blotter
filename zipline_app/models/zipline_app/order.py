@@ -15,7 +15,7 @@ from .side import BUY, FILL_SIDE_CHOICES, \
   ORDER_VALIDITY_CHOICES, GTC, GTD, DAY
 
 from numpy import average
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator
 from ...utils import now_minute, chopSeconds
 from django.contrib.auth.models import User
 
@@ -35,14 +35,18 @@ ORDER_UNIT_CHOICES = (
   (SHARE, 'Share'),
   (CURRENCY, 'Currency')
 )
+CIRCUIT_BREAKER = 1000000
 #-----------
 class AbstractOrder(models.Model):
     order_text = models.CharField(max_length=200, blank=True)
     pub_date = models.DateTimeField('date published',default=now_minute)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, null=True)
-    order_qty_unsigned = models.PositiveIntegerField(
+    # 2017-08-04: https://github.com/shadiakiki1986/ffa-blotter/issues/73
+    #             Allow decimals (for shares)
+    # order_qty_unsigned = models.PositiveIntegerField(
+    order_qty_unsigned = PositiveFloatFieldModel(
       default=0,
-      validators=[MaxValueValidator(1000000), validate_nonzero],
+      validators=[MaxValueValidator(CIRCUIT_BREAKER), validate_nonzero],
       verbose_name="Qty/Amount"
     )
     order_unit = models.CharField(
@@ -67,7 +71,7 @@ class AbstractOrder(models.Model):
     )
     limit_price = PositiveFloatFieldModel(
       default=None,
-      validators=[MaxValueValidator(1000000), MinValueValidator(0), validate_nonzero],
+      validators=[MaxValueValidator(CIRCUIT_BREAKER), validate_nonzero],
       null=True,
       blank=True
     )
@@ -97,7 +101,7 @@ class AbstractOrder(models.Model):
     )
     commission = PositiveFloatFieldModel(
       default=0,
-      validators=[MaxValueValidator(1000000), MinValueValidator(0)],
+      validators=[MaxValueValidator(CIRCUIT_BREAKER)],
       null=True,
       blank=True
     )

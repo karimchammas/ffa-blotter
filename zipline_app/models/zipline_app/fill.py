@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 import datetime
 from django.urls import reverse
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator
 
 from .asset import Asset
 from .order import Order, ORDER_UNIT_CHOICES, SHARE
@@ -22,14 +22,17 @@ class Fill(models.Model):
     dedicated_to_order = models.OneToOneField(Order, null=True, blank=False, verbose_name="Order", on_delete=models.SET_NULL)
 
     fill_text = models.CharField(max_length=200, blank=True)
-    fill_qty_unsigned = models.PositiveIntegerField(
+    # 2017-08-04: https://github.com/shadiakiki1986/ffa-blotter/issues/73
+    #             Allow decimals (for shares)
+    # fill_qty_unsigned = models.PositiveIntegerField(
+    fill_qty_unsigned = PositiveFloatFieldModel(
       default=0,
       validators=[MaxValueValidator(1000000), validate_nonzero],
       verbose_name="Qty/Amount"
     )
     fill_price = PositiveFloatFieldModel(
       default=0,
-      validators=[MaxValueValidator(1000000), MinValueValidator(0), validate_nonzero],
+      validators=[MaxValueValidator(1000000), validate_nonzero],
     )
     pub_date = models.DateTimeField('date published',default=now_minute)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, null=True)

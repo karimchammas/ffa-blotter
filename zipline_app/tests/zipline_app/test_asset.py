@@ -1,13 +1,10 @@
 from django.test import TestCase
-from .test_zipline_app import create_a1, create_account, create_fill, create_order
+from .test_zipline_app import OrderBaseTests
 from django.urls import reverse
 from ...utils import myTestLogin
 from ...models.zipline_app.side import BUY
 
-class AssetViewsTests(TestCase):
-    def setUp(self):
-      myTestLogin(self.client)
-
+class AssetViewsTests(OrderBaseTests):
     def test_list(self):
         url = reverse('zipline_app:assets-list')
         response = self.client.get(url)
@@ -19,23 +16,19 @@ class AssetViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_delete(self):
-        a1a = create_a1()
-        url = reverse('zipline_app:assets-delete', args=(a1a.id,))
+        url = reverse('zipline_app:assets-delete', args=(self.a1a.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_update(self):
-        a1a = create_a1()
-        url = reverse('zipline_app:assets-update', args=(a1a.id,))
+        url = reverse('zipline_app:assets-update', args=(self.a1a.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
 
-class AssetModelTests(TestCase):
+class AssetModelTests(OrderBaseTests):
+  # cannot delete asset linked to order
   def test_delete_fail(self):
-    acc1 = create_account("test acc")
-    a1a = create_a1()
-    o1 = create_order(order_text="test?",days=-1, asset=a1a, order_side=BUY, order_qty_unsigned=10, account=acc1)
-
+    o1 = self.create_order_default()
     with self.assertRaises(ValueError):
-      a1a.delete()
+      self.a1a.delete()
