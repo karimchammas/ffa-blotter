@@ -11,6 +11,7 @@ install:
   - pip show       setuptools numpy pip
   - pip install -r requirements.txt --cache-dir=$CACHE_DIR
 script:
+  - python manage.py createsuperuser --username travis --email shadiakiki1986@gmail.com --noinput
   - python manage.py test zipline_app.tests
 
 # copied from https://github.com/pymssql/pymssql/blob/master/.travis.yml#L10
