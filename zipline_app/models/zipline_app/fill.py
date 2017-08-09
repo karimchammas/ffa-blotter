@@ -4,7 +4,6 @@ from django.db import models
 from django.utils import timezone
 import datetime
 from django.urls import reverse
-from django.core.validators import MaxValueValidator
 
 from .asset import Asset
 from .order import Order, ORDER_UNIT_CHOICES, SHARE
@@ -27,12 +26,12 @@ class Fill(models.Model):
     # fill_qty_unsigned = models.PositiveIntegerField(
     fill_qty_unsigned = PositiveFloatFieldModel(
       default=0,
-      validators=[MaxValueValidator(1000000), validate_nonzero],
+      validators=[validate_nonzero],
       verbose_name="Qty/Amount"
     )
     fill_price = PositiveFloatFieldModel(
       default=0,
-      validators=[MaxValueValidator(1000000), validate_nonzero],
+      validators=[validate_nonzero],
     )
     pub_date = models.DateTimeField('date published',default=now_minute)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, null=True)
