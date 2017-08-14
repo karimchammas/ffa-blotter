@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'bootstrap3',
     'pagination_bootstrap',
     'django_select2',
+    'django_tables2',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

@@ -8,6 +8,16 @@ from ...forms import OrderForm
 from django.urls import  reverse_lazy
 from django.core.exceptions import PermissionDenied
 
+# https://django-tables2.readthedocs.io/en/latest/pages/tutorial.html
+from django_tables2 import RequestConfig
+from ...tables import OrderTable
+
+# django-tables2: Filtering data in your table
+# https://django-tables2.readthedocs.io/en/latest/pages/filtering.html
+from django_tables2 import SingleTableView
+from django_filters.views import FilterView
+from ...filters import OrderFilter
+
 class OrderCreate(generic.CreateView):
   model = Order
   template_name = 'zipline_app/order/order_form.html'
@@ -31,19 +41,26 @@ class OrderCreate(generic.CreateView):
     initial['source'] = self.request.GET.get('source',None)
     return initial
 
-class OrderList(generic.ListView):
-  template_name = 'zipline_app/order/order_list.html'
-  context_object_name='order_list'
-  source="orders-list"
-  def get_queryset(self):
-    return Order.objects.all()
+class FilteredSingleTableView(SingleTableView):
+  filter_class = None
 
-  def get_context_data(self, *args, **kwargs):
-    context = super(OrderList, self).get_context_data(*args, **kwargs)
-    view = OrderCreate()
-    form = view.get_form_class()
-    context["order_form"]=form
+  def get_table_data(self):
+    data = super(FilteredSingleTableView, self).get_table_data()
+    self.filter = self.filter_class(self.request.GET, queryset=data)
+    return self.filter.qs
+
+  def get_context_data(self, **kwargs):
+    context = super(FilteredSingleTableView, self).get_context_data(**kwargs)
+    context['filter'] = self.filter
     return context
+
+class OrderList(FilteredSingleTableView):
+  #template_name = 'zipline_app/order/order_list.html'
+  # template_name = 'zipline_app/order_filter.html'
+  source="orders-list"
+  table_class = OrderTable
+  model = Order
+  filter_class = OrderFilter
 
 class OrderDelete(generic.DeleteView):
   model = Order

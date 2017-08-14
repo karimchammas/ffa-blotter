@@ -1,0 +1,37 @@
+{% extends "zipline_app/base.html" %}
+{% load render_table from django_tables2 %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+{{ filter.form.media.css }}
+
+<div class='row'>
+  <div class='col-md-3'>
+    <h1>Orders</h1>
+  </div>
+  <div class='col-md-9 text-right'>
+    <a class='btn btn-primary' href="{% url 'zipline_app:orders-new' %}">
+      Create
+      <span class="glyphicon glyphicon-plus"></span>
+    </a>
+  </div>
+</div>
+
+
+{# https://github.com/spapas/django_table_filtering/blob/master/books/templates/books/book_list.html #}
+<form method='GET'>
+    <div class='row'>
+    {% bootstrap_form filter.form layout='horizontal' %}
+    </div>
+    <input type='submit' value='Filter' />
+    |
+    Displaying {{ filter.qs.count }} of {{ filter.queryset.count }} items.
+    |
+    <a href='{{ request.path }}' >Clear</a>
+</form>
+
+{% render_table table %}
+
+{{ filter.form.media.js }}
+{% endblock %}

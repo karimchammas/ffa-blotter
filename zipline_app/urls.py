@@ -53,7 +53,7 @@ urlpatterns = [
     # ex: /<root>/fills/5/
     url(r'^fills/(?P<pk>[0-9]+)/$', fill.FillDetailView.as_view(), name='fills-detail'),
     # ex: /<root>/fills/new/
-    url(r'^fills/new/$', fill.FillCreate.as_view(), name='fills-new'),
+    url(r'^fills/new/(?P<order>[0-9]+)$', fill.FillCreate.as_view(), name='fills-new'),
     # ex: /<root>/fills/1/update/
     url(r'^fills/(?P<pk>[0-9]+)/update/$', fill.FillUpdateView.as_view(), name='fills-update'),
     # ex: /<root>/fills/1/delete/
