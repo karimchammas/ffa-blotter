@@ -45,17 +45,25 @@ class FillForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
   source=forms.CharField(required=False, widget = forms.HiddenInput())
   field_order = [
+    'id',
     'pub_date',
-    'asset',
+    'user',
+    'order_side',
     'account',
+    'asset',
+    'order_unit',
+    'order_qty_unsigned',
+
+    # fields for tables.py
+    'asset_currency',
+    'order_amount',
+    'order_qty',
+
     'am_type',
     'order_type',
     'limit_price',
     'order_validity',
     'validity_date',
-    'order_side',
-    'order_qty_unsigned',
-    'order_unit',
     'order_text',
     'commission'
   ]
