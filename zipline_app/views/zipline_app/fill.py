@@ -26,8 +26,7 @@ class FillCreate(generic.CreateView):
   def get_initial(self):
     initial = super(FillCreate, self).get_initial()
     initial['pub_date'] = now_minute()
-    order_id = self.request.GET.get('order',None) if self.request.method == 'GET' else self.request.POST.get('dedicated_to_order',None)
-    if not order_id: raise Exception("Order not passed to create fill")
+    order_id = self.kwargs['order']
     order = Order.objects.get(id=order_id) # will raise exception if id doesn't exist
     initial['dedicated_to_order'] = order_id
     initial['fill_side'] = order.order_side

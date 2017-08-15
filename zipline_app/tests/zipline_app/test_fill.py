@@ -102,14 +102,16 @@ class FillModelTests(FillBaseTests):
 
 
 class FillGeneralViewsTests(FillBaseTests):
+    def setUp(self):
+      self.url_new = reverse('zipline_app:fills-new', kwargs={'order': self.o1.id})
+
     def test_list(self):
         url = reverse('zipline_app:fills-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_new(self):
-        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
-        response = self.client.get(url)
+        response = self.client.get(self.url_new)
         self.assertEqual(response.status_code, 200)
 
     def test_delete(self):
@@ -120,9 +122,6 @@ class FillGeneralViewsTests(FillBaseTests):
 
     def test_quantity_large_does_not_trigger_error_integer_too_large(self):
         time = '2015-01-01 00:00:00' #timezone.now() + datetime.timedelta(days=-0.5)
-        # passing order in GET params is only useful for GET fetches of the fills-new page
-        # url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
-        url = reverse('zipline_app:fills-new')
         largeqty=100000000000000000000000000000
         in1 =  {
           'pub_date':time,
@@ -136,7 +135,7 @@ class FillGeneralViewsTests(FillBaseTests):
           'custodian': self.cust.id,
           'dedicated_to_order': self.o1.id
         }
-        response = self.client.post( url, in1)
+        response = self.client.post( self.url_new, in1)
         # 2017-08-04: fill qty is not independent of order qty, and can represent shares if order represents currency, and vice versa
         # 2017-07-04: this now is supposed to pass instead of throw error because the form qty is taken from the order
         #   make sure we get a 302 return code
@@ -169,12 +168,10 @@ class FillGeneralViewsTests(FillBaseTests):
         self.assertContains(response,"foo key")
 
     def test_new_fill_GET(self):
-        url = reverse('zipline_app:fills-new')+'?order='+str(self.o1.id)
-        response = self.client.get(url)
+        response = self.client.get(self.url_new)
         self.assertContains(response,"10")
 
     def test_new_fill_zero_qty(self):
-        url = reverse('zipline_app:fills-new')
         time = '2015-01-01 06:00:00'
         f1={
           'pub_date':time,
@@ -189,7 +186,7 @@ class FillGeneralViewsTests(FillBaseTests):
           'custodian': self.cust.id,
           'dedicated_to_order': self.o1.id
         }
-        response = self.client.post(url,f1)
+        response = self.client.post(self.url_new,f1)
         # 2017-08-04: fill qty is independent of order qty now (shares vs currency)
         # 2017-07-09: now that the fill is linked to the order, the qty submitted is cleaned to be the same from the order, so the above POST will pass successfully
         # print(list(response))
@@ -197,7 +194,6 @@ class FillGeneralViewsTests(FillBaseTests):
         # self.assertEqual(response.status_code, 302)
 
     def test_new_fill_negative_price(self):
-        url = reverse('zipline_app:fills-new')
         time = '2015-01-01 06:00:00'
         f1={
           'pub_date':time,
@@ -210,11 +206,10 @@ class FillGeneralViewsTests(FillBaseTests):
           'trade_date': '2000-01-01',
           'dedicated_to_order': self.o1.id
         }
-        response = self.client.post(url,f1)
+        response = self.client.post(self.url_new,f1)
         self.assertContains(response,"Enter a positive number.")
 
     def test_new_fill_dedicated_to_order(self):
-        url = reverse('zipline_app:fills-new')
         f1={
           'pub_date':self.o1.pub_date.astimezone(get_current_timezone()).strftime('%Y-%m-%d %H:%M'),
           'asset':self.o1.asset.id,
@@ -230,7 +225,7 @@ class FillGeneralViewsTests(FillBaseTests):
           'custodian': self.cust.id,
           'dedicated_to_order': self.o1.id
         }
-        response = self.client.post(url,f1,follow=True)
+        response = self.client.post(self.url_new,f1,follow=True)
 
         expected = reverse('zipline_app:orders-detail', args=(self.o1.id,))
         # print(list(response))
@@ -241,19 +236,11 @@ class FillGeneralViewsTests(FillBaseTests):
         self.assertEqual(b''.join(list(response)).count(b"john"),2)
 
     def test_new_fill_user_not_dedicated(self):
-        url = reverse('zipline_app:fills-new') # intentionally do not pass order here
-        time = '2015-01-01 06:00:00'
-        f1={'pub_date':time, 'asset':self.a1a.id, 'fill_side': BUY, 'fill_qty_unsigned':1, 'fill_price':1, 'dedicated_to_order':'', 'fill_text':'random fill',
-          'category': PRINCIPAL, 'is_internal': False, 'trade_date': '2000-01-01'
-        }
-        # 2017-08-09: fills untied to orders are no longer accepted
-        with self.assertRaises(Exception):
-          response = self.client.post(url,f1,follow=True)
-          # print(list(response))
-          # self.assertNotContains(response,'has-error')
-          # random fill shows up once in "successfully created..." and once in table body
-          # self.assertEqual(b''.join(list(response)).count(b"random fill"),2)
-          # self.assertEqual(b''.join(list(response)).count(b"john"),2)
+      # intentionally do not pass order here
+      # Edit 2017-08-15: updated url pattern to force requiring the order id
+      #                  Because of this, the failure is earlier, at the 'reverse' call
+      with self.assertRaises(Exception):
+        url = reverse('zipline_app:fills-new') #, kwargs={'order': self.o1.id})
 
 def url_permission(test, url, obj_id):
   url = reverse(url, args=(obj_id,))
