@@ -6,19 +6,26 @@ from django.utils import timezone
 from django.urls import  reverse_lazy
 from django_tables2.utils import A  # alias for Accessor
 
-def render_make_fill(record):
-  if not record.filled(): return ''
-  return format_html('<span class="glyphicon glyphicon-copy"></span>')
-def render_make_placement(record):
-  if not record.filled(): return ''
-  return format_html('<span class="glyphicon glyphicon-check"></span>')
-
 class OrderTable(tables.Table):
     fill = tables.Column(verbose_name='Fill')
     # https://stackoverflow.com/q/6157101/4126114
-    id = tables.LinkColumn('zipline_app:orders-detail', args=(A('id'),), text=lambda record: '# %s'%(record.id))
-    make_fill = tables.LinkColumn('zipline_app:fills-new', kwargs={'order': A('id')}, text=render_make_fill )
-    make_placement = tables.LinkColumn('zipline_app:placements-new', text=render_make_placement ) # kwargs={'order': A('id')}, 
+    id = tables.LinkColumn(
+      'zipline_app:orders-detail',
+      args=(A('id'),),
+      text=lambda record: '# %s'%(record.id)
+    )
+    make_fill = tables.LinkColumn(
+      'zipline_app:fills-new',
+      verbose_name='',
+      kwargs={'order': A('id')},
+      text=lambda record: '' if record.filled() else format_html('<span class="glyphicon glyphicon-copy" title="Place fill for order #%s"></span>'%(record.id))
+     )
+    make_placement = tables.LinkColumn(
+      'zipline_app:placements-new',
+      verbose_name='',
+      # kwargs={'order': A('id')}, 
+      text=lambda record: '' if record.filled() else format_html('<span class="glyphicon glyphicon-check" title="Put placement for order #%s"></span>'%(record.id))
+    )
 
     class Meta:
         model = Order

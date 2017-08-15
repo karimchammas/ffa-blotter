@@ -38,7 +38,7 @@ ORDER_UNIT_CHOICES = (
 #-----------
 class AbstractOrder(models.Model):
     order_text = models.CharField(max_length=200, blank=True)
-    pub_date = models.DateTimeField('date published',default=now_minute)
+    pub_date = models.DateTimeField('Date',default=now_minute)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, null=True)
     # 2017-08-04: https://github.com/shadiakiki1986/ffa-blotter/issues/73
     #             Allow decimals (for shares)
