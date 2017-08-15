@@ -21,7 +21,8 @@ class FillCreate(generic.CreateView):
 
   def get_success_url(self):
     messages.add_message(self.request, messages.INFO, "Successfully created fill: %s" % self.object)
-    return redirect_index_or_local(self,'zipline_app:fills-list')
+    # exceptionally redirect to orders-list, as I'm not sure how to pass "source=" from zipline_app/tables.py LinkColumn
+    return redirect_index_or_local(self,'zipline_app:orders-list')
 
   def get_initial(self):
     initial = super(FillCreate, self).get_initial()
