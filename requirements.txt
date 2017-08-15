@@ -9,8 +9,28 @@ pandas==0.18.1
 progressbar33==2.4
 xlrd==1.0.0
 
-# can't just use pymssql until https://github.com/pymssql/pymssql/issues/432#issuecomment-238257092
-git+https://github.com/pymssql/pymssql.git
+# can't just use pymssql until
+#   https://github.com/pymssql/pymssql/issues/432#issuecomment-238257092
+# Also, pymssql repository size is large
+#   https://github.com/pymssql/pymssql/issues/496
+# Using my own fork instead, which is deep cleaned with
+#   https://gist.github.com/shadiakiki1986/2b8096f4ae9b6b7ece0c891ac978c82e
+#
+####### git+https://github.com/pymssql/pymssql.git
+# 
+# To benchmark, try the following with the upstream repo vs with my fork
+#   time pew new FFA_BLOTTER_DEV2 -r requirements.txt -d
+#
+# Test results on AWS EC2
+#   fork: real 2m20.740s
+#   upstream: real 2m20.740s (ALSO!?!?!?)
+#
+# I was surprised with the above,
+# eventhough the fork repository is around 2MB and the upstream is around 14MB.
+# Maybe that's just because it's on EC2. Maybe the speedup would be visible on my local laptop
+# Will test later. For now, keeping my fork (shrug)
+
+git+https://github.com/shadiakiki1986/pymssql.git
 
 # until https://github.com/trustrachel/python-ntlm3/pull/24 is closed
 git+https://github.com/shadiakiki1986/python-ntlm3.git@feature_smtp
