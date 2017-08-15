@@ -20,19 +20,14 @@ class OrderTable(tables.Table):
       kwargs={'order': A('id')},
       text=lambda record: '' if record.filled() else format_html('<span class="glyphicon glyphicon-copy" title="Place fill for order #%s"></span>'%(record.id))
      )
-    make_placement = tables.LinkColumn(
-      'zipline_app:placements-new',
-      verbose_name='',
-      # kwargs={'order': A('id')}, 
-      text=lambda record: '' if record.filled() else format_html('<span class="glyphicon glyphicon-check" title="Put placement for order #%s"></span>'%(record.id))
-    )
+    make_placement = tables.TemplateColumn(template_name='zipline_app/make_placement.html', verbose_name='')
 
     class Meta:
         model = Order
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue'}
-        sequence = ['id', 'user', 'order_status'] + OrderForm.field_order
-        fields = OrderForm.field_order + ['id', 'user', 'order_status', 'fill']
+        sequence = ['id', 'user', 'order_status'] + OrderForm.field_order + ['fill', 'make_fill', 'make_placement']
+        fields = OrderForm.field_order + ['id', 'user', 'order_status', 'fill', 'make_fill', 'make_placement']
         empty_text='No data'
 
     def render_pub_date(self, value):
@@ -53,5 +48,3 @@ class OrderTable(tables.Table):
         )
       )
       return out
-
-

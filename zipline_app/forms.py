@@ -1,6 +1,7 @@
 from .models.zipline_app.fill import Fill
 from .models.zipline_app.order import Order
 from .models.zipline_app.asset import Asset
+from .models.zipline_app.placement import Placement
 
 from .widgets import AssetModelSelect2Widget, AccountModelSelect2Widget, ReadOnlyWidgetSimple, ReadOnlyWidgetAsset, ReadOnlyWidgetOrder, CustodianModelSelect2Widget, FillUnitWidget
 from django import forms
@@ -70,3 +71,8 @@ class OrderForm(forms.ModelForm):
   def clean_pub_date(self): return self.initial['pub_date'] #.strftime("%Y-%m-%d %H:%i:%s")
   def clean_source(self): return self.initial['source'] if 'source' in self.initial else None
 
+
+class PlacementForm(forms.ModelForm):
+  class Meta:
+    model=Placement
+    exclude = ["date", "user"]

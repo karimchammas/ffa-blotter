@@ -22,13 +22,11 @@
       {% if order.placement %}
         <span class="glyphicon glyphicon-check text-danger" title="Placed on {{order.placement.date|date:'Y-m-d H:i'}} by {{order.placement.user.username}}"></span>
       {% else %}
-      <form action="{% url 'zipline_app:placements-new' %}" method="post" style="margin: 0; padding: 0; display: inline;">
-        {% csrf_token %}
-        <input type="hidden" name="order" value="{{order.id}}" />
+      <a href="{% url 'zipline_app:placements-new' order.id %}" >
         <button type="submit" class="btn btn-default btn-xs" title="Place order #{{order.id}}">
           <span class="glyphicon glyphicon-check"></span>
         </button>
-      </form>
+      </a>
       {% endif %}
       &nbsp;
       <abbr title="Fill order #{{order.id}}">

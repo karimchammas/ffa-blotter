@@ -1,4 +1,6 @@
+# Important to hold this version, otherwise django-bootstrap3 breaks (missing import flatatt)
 Django==1.10.5
+
 django-bootstrap3==8.1.0
 django-pagination-bootstrap==1.2
 Django-Select2==5.8.10

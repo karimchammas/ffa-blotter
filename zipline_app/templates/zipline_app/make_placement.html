@@ -1,0 +1,11 @@
+{% if record.filled %}
+{% else %}
+
+  {% if record.placement %}
+  <span class="glyphicon glyphicon-check text-danger" title="Place order #{{record.id}}"></span>
+  {% else %}
+<a href='{% url "zipline_app:placements-new" record.id %}'>
+  <span class="glyphicon glyphicon-check" title="Place order #{{record.id}}"></span>
+</a>
+  {% endif %}
+{% endif %}

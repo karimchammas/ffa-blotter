@@ -75,7 +75,7 @@ urlpatterns = [
     url(r'^autocomplete/asset/$',   autocomplete.AutoCompleteAssetView.as_view(),   name='autocomplete-asset'),
     url(r'^autocomplete/account/$', autocomplete.AutoCompleteAccountView.as_view(), name='autocomplete-account'),
 
-    # ex: /<root>/placements/new/
-    url(r'^placements/new/$', placement.PlacementCreate.as_view(), name='placements-new'),
+    # ex: /<root>/placements/new/1
+    url(r'^placements/new/(?P<order>[0-9]+)$', placement.PlacementCreate.as_view(), name='placements-new'),
 
 ]
