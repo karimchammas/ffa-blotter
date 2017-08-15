@@ -34,7 +34,11 @@
     <a href='{{ request.path }}' >Clear</a>
 </form>
 
+<div class='row'>
+<div class='col-xs-offset-2'>
 {% render_table table "django_tables2/bootstrap.html" %}
+</div>
+</div>
 
 {{ filter.form.media.js }}
 {% endblock %}

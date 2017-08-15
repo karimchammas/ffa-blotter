@@ -6,12 +6,7 @@ from django.utils import timezone
 from django.urls import  reverse_lazy
 from django_tables2.utils import A  # alias for Accessor
 
-# copy from https://github.com/bradleyayers/django-tables2/blob/2bf8fd326b697d4e0e4a70ed39aeb3df6ed81865/example/app/tables.py
-class BootstrapTable(tables.Table):
-  class Meta:
-    attrs = {'class': 'table table-bordered table-striped table-hover'}
-
-class OrderTable(BootstrapTable):
+class OrderTable(tables.Table):
     fill = tables.Column(verbose_name='Fill')
     # https://stackoverflow.com/q/6157101/4126114
     id = tables.LinkColumn(
@@ -23,16 +18,33 @@ class OrderTable(BootstrapTable):
       'zipline_app:fills-new',
       verbose_name='',
       kwargs={'order': A('id')},
-      text=lambda record: '' if record.filled() else format_html('<span class="glyphicon glyphicon-copy" title="Place fill for order #%s"></span>'%(record.id))
+      text=lambda record: '' if record.filled() else format_html('<span class="glyphicon glyphicon-copy" title="Place fill for order #{order_id}"></span>', order_id=record.id)
      )
     make_placement = tables.TemplateColumn(template_name='zipline_app/make_placement.html', verbose_name='')
-    order_qty = tables.TemplateColumn(verbose_name="Nb of shares", template_code='{% if record.order_unit!="SHARE" %}{{record.order_qty_unsigned}}{% endif %}', orderable=False)
-    order_amount = tables.TemplateColumn(verbose_name="Amount", template_code='{% if record.order_unit=="SHARE" %}{{record.order_qty_unsigned}}{% endif %}', orderable=False)
+    order_qty = tables.TemplateColumn(
+      verbose_name="Nb of shares",
+      template_code='{% if record.order_unit!="SHARE" %}{{record.order_qty_unsigned}}{% endif %}',
+      orderable=False,
+      attrs={"td": {"align": "right"}}
+    )
+    order_amount = tables.TemplateColumn(
+      verbose_name="Amount",
+      template_code='{% if record.order_unit=="SHARE" %}{{record.order_qty_unsigned}}{% endif %}',
+      orderable=False,
+      attrs={"td": {"align": "right"}}
+    )
     asset_currency = tables.Column(accessor='asset.asset_currency', verbose_name='Ccy')
+    asset = tables.TemplateColumn(template_code='<a href="{% url \'zipline_app:assets-detail\' record.asset.id %}" title="{{record.asset}}">{{record.asset.asset_symbol}}</a>')
+    account = tables.TemplateColumn(
+      template_code='<a href="{% url \'zipline_app:accounts-detail\' record.account.id %}" title="{{record.account}}">{{record.account.account_symbol}}</a>',
+      verbose_name='Client'
+    )
 
     class Meta:
-        model = Order
+        # copy from https://github.com/bradleyayers/django-tables2/blob/2bf8fd326b697d4e0e4a70ed39aeb3df6ed81865/example/app/tables.py
         # add class="paleblue" to <table> tag
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
+        model = Order
         sequence = OrderForm.field_order + ['fill', 'make_fill', 'make_placement']
         exclude=[
           'order_unit',

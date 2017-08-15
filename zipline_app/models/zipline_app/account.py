@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from django.urls import  reverse_lazy
 
 from django.db import models
 class Account(models.Model):
@@ -8,10 +9,10 @@ class Account(models.Model):
 
     def __str__(self):
       return "%s: %s (%s)" % (self.account_symbol, self.account_name, self.account_origin)
+      #return self.account_symbol
 
     def get_absolute_url(self):
-      return reverse('zipline_app:accounts-list') # TODO rename to accounts
-#      return reverse('zipline_app:accounts-list', kwargs={'pk': self.pk})
+      return reverse_lazy('zipline_app:accounts-detail', kwargs={'pk': self.pk})
 
     def delete(self):
       if self.order_set.count()>0:

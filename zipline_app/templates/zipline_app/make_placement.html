@@ -2,7 +2,7 @@
 {% else %}
 
   {% if record.placement %}
-  <span class="glyphicon glyphicon-check text-danger" title="Place order #{{record.id}}"></span>
+  <span class="glyphicon glyphicon-check text-danger" title="Placed on {{record.placement.date|date:'Y-m-d H:i'}} by {{record.placement.user.username}}"></span>
   {% else %}
 <a href='{% url "zipline_app:placements-new" record.id %}'>
   <span class="glyphicon glyphicon-check" title="Place order #{{record.id}}"></span>

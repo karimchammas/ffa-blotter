@@ -40,7 +40,5 @@ class Asset(models.Model):
       if self.fill_set.count()>0:
         raise ValueError("Cannot delete asset because it is linked to fills")
 
-# use get_success_url instead
-#    def get_absolute_url(self):
-#      return reverse('zipline_app:assets-list') # TODO rename to assets
-#      return reverse('zipline_app:assets-list', kwargs={'pk': self.pk})
+    def get_absolute_url(self):
+      return reverse('zipline_app:assets-detail', kwargs={'pk': self.pk})
