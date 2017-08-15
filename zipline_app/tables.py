@@ -33,8 +33,6 @@ class OrderTable(BootstrapTable):
     class Meta:
         model = Order
         # add class="paleblue" to <table> tag
-        #attrs = {'class': 'bootstrap'}
-        attrs = {'class': 'table table-bordered table-striped table-hover'}
         sequence = OrderForm.field_order + ['fill', 'make_fill', 'make_placement']
         exclude=[
           'order_unit',
