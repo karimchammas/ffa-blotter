@@ -32,4 +32,4 @@ class PlacementCreate(generic.CreateView):
     # django message levels
     # https://docs.djangoproject.com/en/1.10/ref/contrib/messages/#message-levels
     messages.add_message(self.request, messages.INFO, "Successfully created placement: %s" % self.object)
-    return reverse_lazy('zipline_app:blotter-concealed')
+    return reverse_lazy('zipline_app:orders-list')

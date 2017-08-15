@@ -6,4 +6,4 @@ Date: {{placement.date}}
 Order: #{{placement.order.id}}
 User: {{placement.user.username}}
 
-Published at {{domain}}{% url 'zipline_app:blotter-concealed' %}
+Published at {{domain}}{% url 'zipline_app:orders-list' %}

@@ -1,6 +1,6 @@
 {% load humanize %}
 
-{{pending|length}} pending order{{num_pending|pluralize}} in <a href="{{domain}}{% url 'zipline_app:blotter-concealed' %}">blotter</a>
+{{pending|length}} pending order{{num_pending|pluralize}} in <a href="{{domain}}{% url 'zipline_app:orders-list' %}">blotter</a>
 
 {% for order in pending %}
 {% ifchanged order.pub_date.date %}

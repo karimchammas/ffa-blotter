@@ -51,7 +51,7 @@
 {% if domain %}
 <p>
   Published in
-  <a href="{{domain}}{% url 'zipline_app:blotter-concealed' %}">blotter</a>
+  <a href="{{domain}}{% url 'zipline_app:orders-list' %}">blotter</a>
   /
   <a href="{{ domain }}{% url 'zipline_app:orders-detail' order.id %}">order #{{order.id}}</a>
 </p>
