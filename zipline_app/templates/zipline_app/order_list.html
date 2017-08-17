@@ -17,50 +17,57 @@
 <div class='row'>
   <div class='col-xs-2 h1'>Orders</div>
   <div class='col-xs-8'>
-    {%if filters_actual %}
-    <small>
-      <div class='alert alert-warning'>
-        Filtered for {{ filter.qs.count }} of {{ filter.queryset.count }} items:
-        &nbsp;
-        {% if filters_actual.asset %}
-        <span class='btn btn-default btn-xs'>
-        Security: <a href="{% url 'zipline_app:assets-detail' filters_actual.asset.id %}">{{filters_actual.asset}}</a>
+    <div clas='row'>
+    &nbsp;
+    </div>
+
+    <div class='row btn-group'>
+      <a class='btn btn-xs {% if filters_actual %}btn-warning{% else %}btn-default{%endif%}' href="#" data-toggle="modal" data-target="#filterModal">
+        Filter
+        <span class="glyphicon glyphicon-filter"></span>
+      </a>
+
+      {% for stat in stats_orders %}
+      <a href="{% url 'zipline_app:orders-list' %}?order_status={{stat.key}}" class='btn btn-xs {% if stat.display == filters_actual.order_status %}btn-primary{% else %}{% if not filters_actual and stat.display == 'All' %}btn-primary{%else%}btn-default{% endif %}{%endif%}'>
+        <span>
+        {{stat.display}}: {{stat.value}}
         </span>
+      </a>
+      {% endfor %}
+
+      {%if filters_actual %}
+        {% if filters_actual.asset %}
+        <a class='btn btn-default btn-xs btn-primary' href="{% url 'zipline_app:assets-detail' filters_actual.asset.id %}">
+        Security: {{filters_actual.asset}}
+        </a>
         {% endif %}
         &nbsp;
         {% if filters_actual.account %}
-        <span class='btn btn-default btn-xs'>
-        Client: <a href="{% url 'zipline_app:accounts-detail' filters_actual.account.id %}">{{filters_actual.account}}</a>
-        </span>
-        {% endif %}
-        &nbsp;
-        {% if filters_actual.order_status %}
-        <span class='btn btn-default btn-xs'>
-        Status: {{filters_actual.order_status}}
-        </span>
+        <a class='btn btn-default btn-xs btn-primary' href="{% url 'zipline_app:accounts-detail' filters_actual.account.id %}">
+        Client: {{filters_actual.account}}
+        </a>
         {% endif %}
         &nbsp;
         {% if filters_actual.order_side %}
-        <span class='btn btn-default btn-xs'>
+        <span class='btn btn-default btn-xs btn-primary'>
         Side: {{filters_actual.order_side}}
         </span>
         {% endif %}
         &nbsp;
-        <a href='{{ request.path }}' class='btn btn-warning btn-xs' >Clear</a>
+        <!-- <a href='{{ request.path }}' class='btn btn-warning btn-xs' >Clear</a> -->
+      {%endif%}
 
-      </div>
-    </small>
-    {%endif%}
+    </div>
+    <div clas='row'>
+      <small>Showing {{ filter.qs.count }} of {{ filter.queryset.count }} items</small>
+    </div>
+
   </div>
   <div class='col-xs-2'>
     <div class='btn-group pull-right'>
       <a class='btn btn-default' href="{% url 'zipline_app:orders-new' %}">
         New
         <span class="glyphicon glyphicon-plus"></span>
-      </a>
-      <a class='btn {% if filters_actual %}btn-warning{% else %}btn-default{%endif%}' href="#" data-toggle="modal" data-target="#filterModal">
-        Filter
-        <span class="glyphicon glyphicon-filter"></span>
       </a>
     </div>
   </div>
@@ -96,7 +103,7 @@
 
     </div>
   </div>
-</div
+</div>
 
 <br>
 
@@ -105,15 +112,11 @@
 .table-container { width:100%; }
 </style>
 
-{% for stat in stats_orders %}
-<a href="{% url 'zipline_app:orders-list' %}?order_status={{stat.key}}">
-  <span class='btn btn-xs {% if stat.display == filters_actual.order_status %}btn-primary{% else %}{% if not filters_actual and stat.display == 'All' %}btn-primary{%else%}btn-default{% endif %}{%endif%}'>
-  {{stat.display}}: {{stat.value}}
-  </span>
-</a>
-{% endfor %}
 
+
+<div class='row'>
 {% render_table table "django_tables2/bootstrap.html" %}
+</div>
 
 {{ filter.form.media.js }}
 {% endblock %}
