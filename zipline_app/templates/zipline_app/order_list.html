@@ -36,9 +36,13 @@
       {% endfor %}
 
       <script>
-        $("a[name='anchor_stats_orders']").click(function() {
-              $("#filterModal form select[id='id_order_status']").val($(this).data("status"));
-              $("#filterModal form").submit();
+        $("a[name='anchor_stats_orders']").click(function(e) {
+            e.preventDefault();
+            current = $("#filterModal form select[id='id_order_status']").val();
+            newVal = $(this).data("status");
+            if(current == newVal) newVal = '';
+            $("#filterModal form select[id='id_order_status']").val(newVal);
+            $("#filterModal form").submit();
         });
       </script>
 
