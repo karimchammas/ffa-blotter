@@ -105,7 +105,7 @@ class BlotterBaseView(generic.ListView):
 
 class BlotterSideBySideView(BlotterBaseView):
     template_name = 'zipline_app/blotter/sideBySide/index.html'
-    source="blotter-sideBySide"
+    source="blotter-deprecated-sideBySide"
 
     def get_combined(self):
         all_min_zl = []
@@ -160,7 +160,7 @@ class BlotterSideBySideView(BlotterBaseView):
 
 class BlotterConcealedView(BlotterBaseView):
     template_name = 'zipline_app/blotter/concealed/index.html'
-    source="blotter-concealed"
+    source="blotter-deprecated-concealed"
     def get_context_data(self, *args, **kwargs):
         context = super(BlotterConcealedView, self).get_context_data(*args, **kwargs)
         context["sort"] = self.get_sort()

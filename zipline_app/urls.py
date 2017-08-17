@@ -1,19 +1,27 @@
 from django.conf.urls import url
 
 from .views.zipline_app import zipline_app as views
-from .views.zipline_app import blotter, order, asset, fill, account, autocomplete, custodian, placement
+from .views.zipline_app import order, asset, fill, account, autocomplete, custodian, placement
+
+from .views.zipline_app import blotter
+from django.views.generic import RedirectView
+from django.urls import  reverse_lazy
 
 app_name='zipline_app'
 urlpatterns = [
     # ex: /<root>/
     url(r'^$', views.IndexView.as_view(), name='index'),
 
-    # ex: /<root>/blotter/sideBySide
-    url(r'^blotter/sideBySide/$', blotter.BlotterSideBySideView.as_view(), name='blotter-sideBySide'),
-    # ex: /<root>/blotter/concealed/
-    url(r'^blotter/concealed/$', blotter.BlotterConcealedView.as_view(), name='blotter-concealed'),
-    # ex: /<root>/blotter/download/
-    url(r'^blotter/download/$', blotter.BlotterDownloadView.as_view(), name='blotter-download'),
+    # EDIT 2017-08-16: redirect all traffic to "/blotter/.../" to orders-list
+    # ex: /<root>/blotter-deprecated/sideBySide
+    url(r'^blotter-deprecated/sideBySide/$', blotter.BlotterSideBySideView.as_view(), name='blotter-deprecated-sideBySide'),
+    # ex: /<root>/blotter-deprecated/concealed/
+    url(r'^blotter-deprecated/concealed/$', blotter.BlotterConcealedView.as_view(), name='blotter-deprecated-concealed'),
+    # ex: /<root>/blotter-deprecated/download/
+    url(r'^blotter-deprecated/download/$', blotter.BlotterDownloadView.as_view(), name='blotter-deprecated-download'),
+    url(r'^blotter/sideBySide/$', RedirectView.as_view(url=reverse_lazy('zipline_app:orders-list')), name='blotter-sideBySide'),
+    url(r'^blotter/concealed/$', RedirectView.as_view(url=reverse_lazy('zipline_app:orders-list')), name='blotter-concealed'),
+    url(r'^blotter/download/$', RedirectView.as_view(url=reverse_lazy('zipline_app:orders-list')), name='blotter-download'),
 
     # ex: /<root>/accounts/
     url(r'^accounts/$', account.AccountList.as_view(), name='accounts-list'),

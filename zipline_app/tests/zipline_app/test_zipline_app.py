@@ -164,7 +164,7 @@ class OrderViewTests(OrderBaseTests):
         """
         If no orders exist, an appropriate message should be displayed.
         """
-        response = self.client.get(reverse('zipline_app:blotter-concealed'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-concealed'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No orders are available.")
         self.assertQuerysetEqual(response.context['latest_order_list'], [])
@@ -177,7 +177,7 @@ class OrderViewTests(OrderBaseTests):
         blotter_engine page.
         """
         self.create_order_default(order_text="Past order.", days=-30)
-        response = self.client.get(reverse('zipline_app:blotter-concealed'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-concealed'))
         self.assertQuerysetEqual(
             response.context['latest_order_list'],
             ['<Order: A1, B, 10.0 (TEST01, Past order.)>']
@@ -189,7 +189,7 @@ class OrderViewTests(OrderBaseTests):
         the blotter_engine page.
         """
         self.create_order_default(order_text="Future order.", days=30)
-        response = self.client.get(reverse('zipline_app:blotter-concealed'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-concealed'))
         self.assertContains(response, "No orders are available.")
         self.assertQuerysetEqual(response.context['latest_order_list'], [])
 
@@ -200,7 +200,7 @@ class OrderViewTests(OrderBaseTests):
         """
         self.create_order_default(order_text="Past order.", days=-30)
         self.create_order_default(order_text="Future order.", days=30)
-        response = self.client.get(reverse('zipline_app:blotter-concealed'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-concealed'))
         self.assertQuerysetEqual(
             response.context['latest_order_list'],
             ['<Order: A1, B, 10.0 (TEST01, Past order.)>']
@@ -212,7 +212,7 @@ class OrderViewTests(OrderBaseTests):
         """
         self.create_order_default(order_text="Past order 1.", days=-30)
         self.create_order_default(order_text="Past order 2.", days=-5)
-        response = self.client.get(reverse('zipline_app:blotter-concealed'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-concealed'))
         self.assertQuerysetEqual(
             response.context['latest_order_list'],
             ['<Order: A1, B, 10.0 (TEST01, Past order 2.)>', '<Order: A1, B, 10.0 (TEST01, Past order 1.)>']
@@ -230,7 +230,7 @@ class OrderViewTests(OrderBaseTests):
         f1 = create_fill_from_order(order=o1, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
         f2 = create_fill_from_order(order=o2, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
         sleep(0.05)
-        response = self.client.get(reverse('zipline_app:blotter-sideBySide'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-sideBySide'))
 
         pointer = response.context['combined'][1]
         self.assertEqual(
@@ -268,12 +268,12 @@ class OrderViewTests(OrderBaseTests):
 
         time = o1b.pub_date
         sleep(0.05)
-        response = self.client.get(reverse('zipline_app:blotter-sideBySide'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-sideBySide'))
         self.assertContains(response, time.strftime("%Y-%m-%d"))
 
         o1b.delete()
         sleep(0.05)
-        response = self.client.get(reverse('zipline_app:blotter-sideBySide'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-sideBySide'))
         self.assertNotContains(response, time.strftime("%Y-%m-%d"))
 
     @skip("This test is not capturing the messages queue for some reason, and I couldnt get it to work")
@@ -303,17 +303,17 @@ class OrderViewTests(OrderBaseTests):
         o1 = self.create_order_default(days=-10, order_qty_unsigned=5)
         o2 = self.create_order_default(days=-10, order_qty_unsigned=5)
         sleep(0.05)
-        response = self.client.get(reverse('zipline_app:blotter-sideBySide'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-sideBySide'))
         self.assertEqual(response.context['fills_required_per_asset'], {self.a1a:10})
         self.assertContains(response, "Assets with required fills")
         self.assertContains(response, self.a1a.asset_symbol+": 10")
 
         cust = create_custodian("c1", "c1 name")
         f1 = create_fill_from_order(order=o1, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
-        response = self.client.get(reverse('zipline_app:blotter-sideBySide'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-sideBySide'))
         self.assertEqual(response.context['fills_required_per_asset'], {self.a1a:5})
 
         f2 = create_fill_from_order(order=o2, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
-        response = self.client.get(reverse('zipline_app:blotter-sideBySide'))
+        response = self.client.get(reverse('zipline_app:blotter-deprecated-sideBySide'))
         self.assertEqual(response.context['fills_required_per_asset'], {})
         self.assertNotContains(response, "Assets with required fills")

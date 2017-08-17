@@ -13,7 +13,7 @@ class BlotterConcealedViewsTests(FillBaseTests):
     order = self.create_order_default(order_text="random order")
     f1 = self.create_fill_from_order_default(order=order, fill_text="test fill", fill_price=2)
 
-    url = reverse('zipline_app:blotter-concealed')
+    url = reverse('zipline_app:blotter-deprecated-concealed')
     response = self.client.get(url, follow=True)
     self.assertContains(response, "random order")
     self.assertNotContains(response, "test fill")
@@ -26,7 +26,7 @@ class BlotterConcealedViewsTests(FillBaseTests):
     f_l = self.create_fill_from_order_default(order=o_l, fill_text="test fill buy", fill_price=2)
     f_s = self.create_fill_from_order_default(order=o_s, fill_text="test fill sell", fill_price=2)
 
-    url = reverse('zipline_app:blotter-concealed')
+    url = reverse('zipline_app:blotter-deprecated-concealed')
     response = self.client.get(url, follow=True)
     self.assertContains(response, "buy order")
     self.assertContains(response, "sell order")
@@ -34,7 +34,7 @@ class BlotterConcealedViewsTests(FillBaseTests):
     self.assertNotContains(response, "test fill sell")
 
   def test_no_fill_create_button(self):
-    url = reverse('zipline_app:blotter-concealed')
+    url = reverse('zipline_app:blotter-deprecated-concealed')
     response = self.client.get(url, follow=True)
     self.assertNotContains(response, 'data-target="#fills-new"')
 
@@ -53,7 +53,7 @@ class BlotterConcealedViewsTests(FillBaseTests):
     order.clean()
     order.save()
 
-    url = reverse('zipline_app:blotter-concealed')
+    url = reverse('zipline_app:blotter-deprecated-concealed')
     response = self.client.get(url, follow=True)
     self.assertContains(response, "test order")
     self.assertContains(response, "Cancelled")
@@ -61,10 +61,10 @@ class BlotterConcealedViewsTests(FillBaseTests):
   def test_sorting_filtering_shows_note_on_top(self):
     o_l = self.create_order_default(order_text="buy order")
 
-    url = reverse('zipline_app:blotter-concealed')
+    url = reverse('zipline_app:blotter-deprecated-concealed')
     response = self.client.get(url, follow=True)
     self.assertNotContains(response, "Sorted by")
 
-    url = reverse('zipline_app:blotter-concealed')+'?sort=account__account_name'
+    url = reverse('zipline_app:blotter-deprecated-concealed')+'?sort=account__account_name'
     response = self.client.get(url, follow=True)
     self.assertContains(response, "Sorted by")

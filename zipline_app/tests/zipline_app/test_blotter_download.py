@@ -16,7 +16,7 @@ class BlotterDownloadViewsTests(FillBaseTests):
 
     # django test file download
     # http://stackoverflow.com/a/39655502/4126114
-    url = reverse('zipline_app:blotter-download')
+    url = reverse('zipline_app:blotter-deprecated-download')
     response = self.client.get(url, follow=True)
     content = BytesIO(b"".join(response.streaming_content))
 

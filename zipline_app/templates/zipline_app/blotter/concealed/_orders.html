@@ -30,7 +30,7 @@
       <div class="col-xs-2">{{order.get_order_side_display}}</div>
       <div class="col-xs-4" title="{{order.account.account_name}} ({{order.account.account_origin}})">
         {% ifchanged order.account order.pub_date.date %}
-          <a href="{% url 'zipline_app:blotter-concealed' %}?account={{order.account.id}}{% if sort %}&sort={{sort}}{% endif %}{% if filter_asset %}&asset={{filter_asset.id}}{% endif %}">
+          <a href="{% url 'zipline_app:blotter-deprecated-concealed' %}?account={{order.account.id}}{% if sort %}&sort={{sort}}{% endif %}{% if filter_asset %}&asset={{filter_asset.id}}{% endif %}">
             {{order.account.account_symbol}}
           </a>
         {% endifchanged %}
@@ -48,7 +48,7 @@
 
   <div class="col-xs-1">
     {% ifchanged order.asset order.pub_date.date %}
-    <a href="{% url 'zipline_app:blotter-concealed' %}?asset={{order.asset.id}}{% if sort %}&sort={{sort}}{% endif %}{% if filter_account %}&account={{filter_account.id}}{% endif %}" title="{{order.asset.asset_name}} ({{order.asset.asset_origin}})">
+    <a href="{% url 'zipline_app:blotter-deprecated-concealed' %}?asset={{order.asset.id}}{% if sort %}&sort={{sort}}{% endif %}{% if filter_account %}&account={{filter_account.id}}{% endif %}" title="{{order.asset.asset_name}} ({{order.asset.asset_origin}})">
 
       {{order.asset.asset_symbol}}
     </a>

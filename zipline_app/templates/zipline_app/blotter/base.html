@@ -4,7 +4,7 @@
  {% include 'zipline_app/blotter/_create_modals.html' %}
   <div class='row'>
     <div class='pull-right btn-group'>
-      <a class='btn btn-default' href="{% url 'zipline_app:orders-new' %}?source=blotter-concealed">
+      <a class='btn btn-default' href="{% url 'zipline_app:orders-new' %}?source=blotter-deprecated-concealed">
         Order
         <span class="glyphicon glyphicon-plus"></span>
       </a>
@@ -15,14 +15,14 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
           <li>
-            <a href="{% url 'zipline_app:blotter-sideBySide' %}">Side-by-side</a>
+            <a href="{% url 'zipline_app:blotter-deprecated-sideBySide' %}">Side-by-side</a>
           </li>
           <li>
-            <a href="{% url 'zipline_app:blotter-concealed' %}">Concealed</a>
+            <a href="{% url 'zipline_app:blotter-deprecated-concealed' %}">Concealed</a>
           </li>
         </ul>
       </div>
-      <a class="btn btn-default" href="{% url 'zipline_app:blotter-download' %}">Download</a>
+      <a class="btn btn-default" href="{% url 'zipline_app:blotter-deprecated-download' %}">Download</a>
     </div>
   </div>
 

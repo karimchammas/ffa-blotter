@@ -8,7 +8,7 @@ from ...utils import myTestLogin
 class BlotterSideBySideViewsTests(OrderBaseTests):
   def test_one_order(self):
     order = self.create_order_default(order_text="random order")
-    url = reverse('zipline_app:blotter-sideBySide')
+    url = reverse('zipline_app:blotter-deprecated-sideBySide')
     response = self.client.get(url, follow=True)
     self.assertContains(response, "random order")
 
@@ -16,7 +16,7 @@ class BlotterSideBySideViewsTests(OrderBaseTests):
     o_l = self.create_order_default(order_text="buy order", order_side=BUY)
     o_s = self.create_order_default(order_text="sell order", order_side=SELL)
 
-    url = reverse('zipline_app:blotter-sideBySide')
+    url = reverse('zipline_app:blotter-deprecated-sideBySide')
     response = self.client.get(url, follow=True)
     self.assertContains(response, "buy order")
     self.assertContains(response, "sell order")
