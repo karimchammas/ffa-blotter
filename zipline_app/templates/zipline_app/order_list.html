@@ -69,9 +69,14 @@
         {% endif %}
         &nbsp;
         {% if filters_actual.order_side %}
-        <span class='btn btn-default btn-xs btn-info'>
-        Side: {{filters_actual.order_side}}
-        </span>
+          <span class='btn btn-default btn-xs'>
+            Side:
+            {{filters_actual.order_side}}
+            &nbsp;
+            <a href="#" name="anchor_filter" data-filter-field="order_side" data-filter-value="">
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </span>
         {% endif %}
         &nbsp;
         <a href='{{ request.path }}' class='btn btn-warning btn-xs' >Clear</a>
