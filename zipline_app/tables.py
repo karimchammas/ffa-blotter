@@ -44,7 +44,7 @@ class OrderTable(tables.Table):
     class Meta:
         # copy from https://github.com/bradleyayers/django-tables2/blob/2bf8fd326b697d4e0e4a70ed39aeb3df6ed81865/example/app/tables.py
         # add class="paleblue" to <table> tag
-        attrs = {'class': 'table table-bordered table-striped table-hover'}
+        attrs = {'class': 'table table-bordered table-striped table-hover table-condensed'}
         model = Order
         sequence = OrderForm.field_order + ['fill', 'make_placement', 'make_fill']
         exclude=[
@@ -74,9 +74,10 @@ class OrderTable(tables.Table):
 
     def render_fill(self, record, value):
       out = format_html(
-        "<a href='%s'># %s</a>"%(
+        "<a href='%s'># %s</a> (%s)"%(
           reverse_lazy('zipline_app:fills-detail', args=(value.id,)),
-          value.id
+          value.id,
+          record.user.username
         )
       )
       return out
