@@ -63,6 +63,7 @@ class OrderList(FilteredSingleTableView):
   table_class = OrderTable
   model = Order
   filter_class = OrderFilter
+  ordering = ['-pub_date']
 
   def get_context_data(self, **kwargs):
     context = super(OrderList, self).get_context_data(**kwargs)
