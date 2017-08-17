@@ -28,36 +28,43 @@
       </a>
 
       {% for stat in stats_orders %}
-      <a href="{% url 'zipline_app:orders-list' %}?order_status={{stat.key}}" class='btn btn-xs {% if stat.display == filters_actual.order_status %}btn-primary{% else %}{% if not filters_actual and stat.display == 'All' %}btn-primary{%else%}btn-default{% endif %}{%endif%}'>
+      <a href="#" class='btn btn-xs {% if stat.display == filters_actual.order_status %}btn-primary{% else %}{% if not filters_actual.order_status and stat.display == 'All' %}btn-primary{%else%}btn-default{% endif %}{%endif%}' name="anchor_stats_orders" data-status="{{stat.key}}">
         <span>
         {{stat.display}}: {{stat.value}}
         </span>
       </a>
       {% endfor %}
 
+      <script>
+        $("a[name='anchor_stats_orders']").click(function() {
+              $("#filterModal form select[id='id_order_status']").val($(this).data("status"));
+              $("#filterModal form").submit();
+        });
+      </script>
+
       {%if filters_actual %}
         {% if filters_actual.asset %}
-        <a class='btn btn-default btn-xs btn-primary' href="{% url 'zipline_app:assets-detail' filters_actual.asset.id %}">
-        Security: {{filters_actual.asset}}
+        <a class='btn btn-default btn-xs btn-info' href="{% url 'zipline_app:assets-detail' filters_actual.asset.id %}" title="{{filters_actual.asset.asset_name}} ({{filters_actual.asset.asset_origin}})">
+        Security: {{filters_actual.asset.asset_symbol}}
         </a>
         {% endif %}
         &nbsp;
         {% if filters_actual.account %}
-        <a class='btn btn-default btn-xs btn-primary' href="{% url 'zipline_app:accounts-detail' filters_actual.account.id %}">
-        Client: {{filters_actual.account}}
+        <a class='btn btn-default btn-xs btn-info' href="{% url 'zipline_app:accounts-detail' filters_actual.account.id %}" title="{{filters_actual.account.account_name}} ({{filters_actual.account.account_origin}})">
+        Client: {{filters_actual.account.account_symbol}}
         </a>
         {% endif %}
         &nbsp;
         {% if filters_actual.order_side %}
-        <span class='btn btn-default btn-xs btn-primary'>
+        <span class='btn btn-default btn-xs btn-info'>
         Side: {{filters_actual.order_side}}
         </span>
         {% endif %}
         &nbsp;
-        <!-- <a href='{{ request.path }}' class='btn btn-warning btn-xs' >Clear</a> -->
+        <a href='{{ request.path }}' class='btn btn-warning btn-xs' >Clear</a>
       {%endif%}
-
     </div>
+
     <div clas='row'>
       <small>Showing {{ filter.qs.count }} of {{ filter.queryset.count }} items</small>
     </div>
