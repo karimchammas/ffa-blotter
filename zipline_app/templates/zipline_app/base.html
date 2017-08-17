@@ -39,7 +39,7 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            {% if request.user.username == 'admin' %}<li><a href="{% url 'zipline_app:blotter-deprecated-concealed' %}">Blotter</a></li>{% endif %}
+            {% if request.user.username == 'admin' %}<li><a href="{% url 'zipline_app:blotter-deprecated-concealed' %}">Blotter (deprecated)</a></li>{% endif %}
             <li><a href="{% url 'zipline_app:accounts-list' %}">Clients</a></li>
             <li><a href="{% url 'zipline_app:assets-list' %}">Assets</a></li>
             <li><a href="{% url 'zipline_app:custodians-list' %}">Custodians</a></li>
