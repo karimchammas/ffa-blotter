@@ -105,6 +105,18 @@
 .table-container { width:100%; }
 </style>
 
+{% for stat in stats_orders %}
+{% if stat.key %}
+<a href="{% url 'zipline_app:orders-list' %}?order_status={{stat.key}}">
+{% endif %}
+  <span class='btn btn-xs {% if stat.key %}btn-default{% endif %}'>
+  {{stat.display}}: {{stat.value}}
+  </span>
+{% if stat.key %}
+</a>
+{% endif %}
+{% endfor %}
+
 {% render_table table "django_tables2/bootstrap.html" %}
 
 {{ filter.form.media.js }}

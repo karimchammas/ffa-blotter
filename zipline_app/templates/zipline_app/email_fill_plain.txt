@@ -3,7 +3,7 @@
 Fill Details
 
 Date: {{fill.pub_date}}
-Security: {{fill.asset.asset_symbol}}
+Security: {{fill.asset.asset_symbol}} ({{fill.asset.asset_name}})
 Side: {{fill.get_fill_side_display}}
 {% if fill.fill_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{fill.fill_qty_unsigned|intcomma}} {{fill.my_get_fill_unit_display}}
 Price: {{fill.fill_price}}
@@ -13,3 +13,12 @@ Comment: {% if fill.fill_text %}{{ fill.fill_text }}{% else %}None{% endif %}
 Category: {{ fill.get_category_display }}
 Is {{fill.get_is_internal_display}}
 Trade date: {{fill.trade_date|date:"Y-m-d"}}
+
+
+Orders summary
+{% for stat in stats_orders %}
+{{stat.display}}: {{stat.value}}
+{% endfor %}
+
+
+Published at {{domain}}{% url 'zipline_app:fills-detail' fill.id %}

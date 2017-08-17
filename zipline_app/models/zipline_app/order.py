@@ -237,7 +237,7 @@ class Order(AbstractOrder):
       self.order_status = OPEN
       self.save()
 
-    def my_get_order_unit_display(self, field):
+    def my_get_order_unit_display(self):
       if self.order_unit==SHARE: return "share"
       return self.asset.asset_currency
 

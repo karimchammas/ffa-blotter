@@ -3,9 +3,9 @@
 
 <h2>Order Details</h2>
 <ul>
-  <li>Date: {{order.pub_date}}</li>
-  <li>Security: {{order.asset.asset_symbol}}</li>
-  <li>Client: {{order.account.account_symbol}}</li>
+  <li>Date: {{order.pub_date|date:'Y-m-d H:i'}}</li>
+  <li>Security: {{order.asset.asset_symbol}} ({{order.asset.asset_name}})</li>
+  <li>Client: {{order.account.account_symbol}} ({{order.account.account_name}})</li>
   <li>AM Type: {{order.get_am_type_display}}</li>
   <li>Execution: {{order.get_order_type_display}}</li>
   {% if order.order_type == 'L' %}
@@ -45,10 +45,16 @@
       No
     {% endif %}
   </li>
-
 </ul>
 
 {% if domain %}
+Orders summary
+<ul>
+{% for stat in stats_orders %}
+  <li>{{stat.display}}: {{stat.value}}</li>
+{% endfor %}
+</ul>
+
 <p>
   Published in
   <a href="{{domain}}{% url 'zipline_app:orders-list' %}">blotter</a>

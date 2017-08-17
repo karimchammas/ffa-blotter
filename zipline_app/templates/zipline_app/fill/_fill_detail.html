@@ -3,16 +3,14 @@
 
 <h2>Fill Details</h2>
 <ul>
-  <li>Date: {{fill.pub_date}}</li>
-  <li>Security: {{fill.asset.asset_symbol}}</li>
-  <li>Side: {{fill.get_fill_side_display}}</li>
-  <li>Qty: {{fill.fill_qty_unsigned|intcomma}} {{fill.my_get_fill_unit_display}}</li>
-  <li>Price: {{fill.fill_price}} {{fill.asset.asset_currency}}/share</li>
-  <li>TT order key: {% if fill.tt_order_key %}{{fill.tt_order_key}}{% else %}None{% endif %}</li>
+  <li>Date: {{fill.pub_date|date:'Y-m-d H:i'}}</li>
   <li>
     Dedicated to order:
     {% include 'zipline_app/fill/_fill_dedicated_to_order.html' %}
   </li>
+  <li>Qty: {{fill.fill_qty_unsigned|intcomma}} {{fill.my_get_fill_unit_display}}</li>
+  <li>Price: {{fill.fill_price}} {{fill.asset.asset_currency}}/share</li>
+  <li>TT order key: {% if fill.tt_order_key %}{{fill.tt_order_key}}{% else %}None{% endif %}</li>
   <li>Category: {{ fill.get_category_display }}</li>
   <li>{{ fill.get_is_internal_display }}</li>
   <li>Trade date: {{ fill.trade_date|date:"Y-m-d" }}</li>
@@ -22,6 +20,13 @@
 </ul>
 
 {% if domain %}
+Orders summary
+<ul>
+{% for stat in stats_orders %}
+  <li>{{stat.display}}: {{stat.value}}</li>
+{% endfor %}
+</ul>
+
 <p>
   Published in
   <a href="{{domain}}{% url 'zipline_app:orders-list' %}">blotter</a>

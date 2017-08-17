@@ -6,4 +6,11 @@ Date: {{placement.date}}
 Order: #{{placement.order.id}}
 User: {{placement.user.username}}
 
+
+Orders summary
+{% for stat in stats_orders %}
+{{stat.display}}: {{stat.value}}
+{% endfor %}
+
+
 Published at {{domain}}{% url 'zipline_app:orders-list' %}

@@ -57,6 +57,31 @@ class FilteredSingleTableView(SingleTableView):
     context['filter'] = self.filter
     return context
 
+def get_stats_orders():
+  out = [
+    {
+      'display': 'Total',
+      # 'key': 'T',
+      'value': Order.objects.all().count()
+    },
+    {
+      'display': 'Open',
+      'key': 'O',
+      'value': Order.objects.filter(fill__isnull=True, placement__isnull=True).count()
+    },
+    {
+      'display': 'Placed',
+      # 'key': 'P',
+      'value': Order.objects.filter(fill__isnull=True, placement__isnull=False).count()
+    },
+    {
+      'display': 'Filled',
+      'key': 'F',
+      'value': Order.objects.filter(fill__isnull=False).count()
+    },
+  ]
+  return out
+
 class OrderList(FilteredSingleTableView):
   #template_name = 'zipline_app/order/order_list.html'
   # template_name = 'zipline_app/order_filter.html'
@@ -69,6 +94,9 @@ class OrderList(FilteredSingleTableView):
   def get_context_data(self, **kwargs):
     context = super(OrderList, self).get_context_data(**kwargs)
     context['filters_actual'] = self._get_filters_actual()
+
+    context['stats_orders'] = get_stats_orders()
+
     return context
 
   def _get_filters_actual(self):
@@ -102,7 +130,6 @@ class OrderList(FilteredSingleTableView):
       filters['order_side'] = temp.get_order_side_display()
 
     return filters
-
 
 class OrderDelete(generic.DeleteView):
   model = Order

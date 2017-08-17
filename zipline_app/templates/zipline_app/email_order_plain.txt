@@ -2,9 +2,9 @@
 
 Order Details
 
-Date: {{order.pub_date}}
-Security: {{order.asset.asset_symbol}}
-Client: {{order.account.account_symbol}}
+Date: {{order.pub_date|date:'Y-m-d H:i'}}
+Security: {{order.asset.asset_symbol}} ({{order.asset.asset_name}})
+Client: {{order.account.account_symbol}} ({{order.account.account_name}})
 AM Type: {{order.get_am_type_display}}
 Execution: {{order.get_order_type_display}}
 {% if order.order_type == 'L' %}
@@ -31,5 +31,10 @@ None
 {% endif %}
 
 Placed: {% if order.placement %}{{order.placement.date|date:"Y-m-d H:i"}}{% else %}No{% endif %}
+
+Orders summary
+{% for stat in stats_orders %}
+{{stat.display}}: {{stat.value}}
+{% endfor %}
 
 Published at {{domain}}{% url 'zipline_app:orders-detail' order.id %}

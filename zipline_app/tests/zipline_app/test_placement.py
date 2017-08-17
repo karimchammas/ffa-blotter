@@ -19,6 +19,9 @@ class PlacementModelTests(PlacementBaseTests):
     self.assertEqual(len(mail.outbox), 2)
     self.assertTrue("New order" in mail.outbox[0].subject)
     self.assertTrue("Placement for order" in mail.outbox[1].subject)
+    self.assertTrue("Open: 0" in mail.outbox[1].body)
+    self.assertTrue("Placed: 1" in mail.outbox[1].body)
+    self.assertTrue("Filled: 0" in mail.outbox[1].body)
 
 class PlacementCreateViewTests(PlacementBaseTests):
   def test_new(self):

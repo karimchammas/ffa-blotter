@@ -9,6 +9,13 @@
 </ul>
 
 {% if domain %}
+Orders summary
+<ul>
+{% for stat in stats_orders %}
+  <li>{{stat.display}}: {{stat.value}}</li>
+{% endfor %}
+</ul>
+
 <p>
   Published in
   <a href="{{domain}}{% url 'zipline_app:orders-list' %}">blotter</a>

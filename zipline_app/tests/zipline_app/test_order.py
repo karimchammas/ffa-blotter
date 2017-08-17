@@ -100,6 +100,11 @@ class OrderModelTests(OrderBaseTests):
         self.assertEqual(len(mail.outbox), 1)
         self.assertTrue("New order" in mail.outbox[0].subject)
 
+        # check appended summary
+        self.assertTrue("Open: 1" in mail.outbox[0].body)
+        self.assertTrue("Placed: 0" in mail.outbox[0].body)
+        self.assertTrue("Filled: 0" in mail.outbox[0].body)
+
     def test_commission(self):
         o1 = self.create_order_default(commission=0.5)
         self.assertEqual(0.5, o1.commission)

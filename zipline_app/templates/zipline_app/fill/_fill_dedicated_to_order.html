@@ -1,5 +1,11 @@
 {% if fill.dedicated_to_order is not None %}
 <a href="{{domain}}{% url 'zipline_app:orders-detail' fill.dedicated_to_order.id %}">#{{ fill.dedicated_to_order.id }}</a>
+<ul>
+  <li>Side: {{fill.dedicated_to_order.get_order_side_display}}</li>
+  <li>Client: <a href="{% url 'zipline_app:accounts-detail' fill.dedicated_to_order.account.id %}">{{fill.dedicated_to_order.account.account_symbol}}</a> ({{fill.dedicated_to_order.account.account_name}})</li>
+  <li>Security: <a href="{% url 'zipline_app:assets-detail' fill.dedicated_to_order.asset.id %}">{{fill.dedicated_to_order.asset.asset_symbol}}</a> ({{fill.dedicated_to_order.asset.asset_name}})</li>
+
+</ul>
 {% else %}
 -
 {% endif %}

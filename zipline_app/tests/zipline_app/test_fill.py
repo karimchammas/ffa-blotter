@@ -100,6 +100,10 @@ class FillModelTests(FillBaseTests):
     self.assertTrue("New order" in mail.outbox[0].subject)
     self.assertTrue("New fill" in mail.outbox[1].subject)
 
+    # check appended summary
+    self.assertTrue("Open: 0" in mail.outbox[1].body)
+    self.assertTrue("Placed: 0" in mail.outbox[1].body)
+    self.assertTrue("Filled: 1" in mail.outbox[1].body)
 
 class FillGeneralViewsTests(FillBaseTests):
     def setUp(self):
