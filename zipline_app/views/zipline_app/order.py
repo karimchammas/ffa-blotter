@@ -17,6 +17,8 @@ from ...tables import OrderTable
 from django_tables2 import SingleTableView
 from django_filters.views import FilterView
 from ...filters import OrderFilter
+from ...models.zipline_app.asset import Asset
+from ...models.zipline_app.account import Account
 
 class OrderCreate(generic.CreateView):
   model = Order
@@ -61,6 +63,36 @@ class OrderList(FilteredSingleTableView):
   table_class = OrderTable
   model = Order
   filter_class = OrderFilter
+
+  def get_context_data(self, **kwargs):
+    context = super(OrderList, self).get_context_data(**kwargs)
+    context['filters_actual'] = self._get_filters_actual()
+    return context
+
+  def _get_filters_actual(self):
+    # append variable for filters
+    # self.filters yields OrderFilter
+    terms = self.filter.Meta.fields
+    filters = {x: self.request.GET.get(x,None) for x in terms}
+    filters = {k: filters[k] for k in filters if filters[k]}
+    if 'asset' in filters:
+      filters['asset'] = Asset.objects.get(id=filters['asset'])
+
+    if 'account' in filters:
+      filters['account'] = Account.objects.get(id=filters['account'])
+
+    if 'order_status' in filters:
+      temp = Order()
+      temp.order_status = filters['order_status']
+      filters['order_status'] = temp.get_order_status_display()
+
+    if 'order_side' in filters:
+      temp = Order()
+      temp.order_side = filters['order_side']
+      filters['order_side'] = temp.get_order_side_display()
+
+    return filters
+
 
 class OrderDelete(generic.DeleteView):
   model = Order

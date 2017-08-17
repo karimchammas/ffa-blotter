@@ -14,23 +14,58 @@
 .select2-container { width: 100% !important; }
 </style>
 
-<h1>
-  <div class='row'>
-    <div class='col-xs-6'>Orders</div>
-    <div class='col-xs-6'>
-      <div class='btn-group pull-right'>
-        <a class='btn btn-default' href="{% url 'zipline_app:orders-new' %}">
-          New
-          <span class="glyphicon glyphicon-plus"></span>
-        </a>
-        <a class='btn {% if request.path == request.get_full_path %}btn-default{% else %}btn-warning{%endif%}' href="#" data-toggle="modal" data-target="#filterModal">
-          Filter
-          <span class="glyphicon glyphicon-filter"></span>
-        </a>
+<div class='row'>
+  <div class='col-xs-2 h1'>Orders</div>
+  <div class='col-xs-8'>
+    {%if filters_actual %}
+    <small>
+      <div class='alert alert-warning'>
+        Filtered for {{ filter.qs.count }} of {{ filter.queryset.count }} items:
+        &nbsp;
+        {% if filters_actual.asset %}
+        <span class='btn btn-default btn-xs'>
+        Asset: <a href="{% url 'zipline_app:assets-detail' filters_actual.asset.id %}">{{filters_actual.asset}}</a>
+        </span>
+        {% endif %}
+        &nbsp;
+        {% if filters_actual.account %}
+        <span class='btn btn-default btn-xs'>
+        Account: <a href="{% url 'zipline_app:accounts-detail' filters_actual.account.id %}">{{filters_actual.account}}</a>
+        </span>
+        {% endif %}
+        &nbsp;
+        {% if filters_actual.order_status %}
+        <span class='btn btn-default btn-xs'>
+        Status: {{filters_actual.order_status}}
+        </span>
+        {% endif %}
+        &nbsp;
+        {% if filters_actual.order_side %}
+        <span class='btn btn-default btn-xs'>
+        Side: {{filters_actual.order_side}}
+        </span>
+        {% endif %}
+        &nbsp;
+        <a href='{{ request.path }}' class='btn btn-warning btn-xs' >Clear</a>
+
       </div>
+    </small>
+    {%endif%}
+  </div>
+  <div class='col-xs-2'>
+    <div class='btn-group pull-right'>
+      <a class='btn btn-default' href="{% url 'zipline_app:orders-new' %}">
+        New
+        <span class="glyphicon glyphicon-plus"></span>
+      </a>
+      <a class='btn {% if filters_actual %}btn-warning{% else %}btn-default{%endif%}' href="#" data-toggle="modal" data-target="#filterModal">
+        Filter
+        <span class="glyphicon glyphicon-filter"></span>
+      </a>
     </div>
   </div>
-</h1>
+</div>
+
 <!-- Modal -->
 <div id="filterModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -64,15 +99,7 @@
 </div
 
 <br>
-{%if request.path != request.get_full_path %}
-          <div class='text-center alert alert-warning'>
-            Displaying {{ filter.qs.count }} of {{ filter.queryset.count }} items.
 
-            <a href='{{ request.path }}' class='btn btn-warning btn-xs' >Clear</a>
-
-          </div>
-<br>
-{%endif%}
 
 <style>
 .table-container { width:100%; }
