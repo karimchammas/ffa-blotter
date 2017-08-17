@@ -15,7 +15,7 @@ Validity: {{order.get_order_validity_display}}
 ({{order.validity_date}})
 {% endif %}
 Side: {{order.get_order_side_display}}
-{% if order.order_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{order.order_qty_unsigned|intcomma}} {{order.get_order_unit_display}}
+{% if order.order_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{order.order_qty_unsigned|intcomma}} {{order.my_get_order_unit_display}}
 Comment: {% if order.order_text %}{{ order.order_text }}{% else %}None{% endif %}
 Commission (%): {{order.commission}}
 

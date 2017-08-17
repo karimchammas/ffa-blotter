@@ -18,7 +18,7 @@
     {% endif %}
   </li>
   <li>Side: {{order.get_order_side_display}}</li>
-  <li>{% if order.order_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{order.order_qty_unsigned|intcomma}} {{order.get_order_unit_display}}{% if order.order_unit == 'S' %}{{ order.order_qty_unsigned|pluralize:",s" }}{% endif %}</li>
+  <li>{% if order.order_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{order.order_qty_unsigned|intcomma}} {{order.my_get_order_unit_display}}{% if order.order_unit == 'S' %}{{ order.order_qty_unsigned|pluralize:",s" }}{% endif %}</li>
   <li>Comment: {% if order.order_text %}{{ order.order_text }}{% else %}None{% endif %}</li>
   <li>Commission (%): {{order.commission}}</li>
 

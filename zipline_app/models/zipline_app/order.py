@@ -237,12 +237,9 @@ class Order(AbstractOrder):
       self.order_status = OPEN
       self.save()
 
-    def _get_FIELD_display(self, field):
-      f_name = field.name
-      if f_name == 'order_unit':
-        if self.order_unit==SHARE: return "share"
-        return self.asset.asset_currency
-      return super(Order, self)._get_FIELD_display(field=field)
+    def my_get_order_unit_display(self, field):
+      if self.order_unit==SHARE: return "share"
+      return self.asset.asset_currency
 
 #####################
 # Model History in Django

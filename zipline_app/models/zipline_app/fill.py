@@ -107,10 +107,6 @@ class Fill(models.Model):
 #      return reverse('zipline_app:fills-list', kwargs={'pk': self.pk})
 
     # copy from order
-    def _get_FIELD_display(self, field):
-      f_name = field.name
-      if f_name == 'fill_unit':
-        if self.fill_unit==SHARE: return "share"
-        return self.asset.asset_currency
-      return super(Fill, self)._get_FIELD_display(field=field)
-
+    def my_get_fill_unit_display(self):
+      if self.fill_unit==SHARE: return "share"
+      return self.asset.asset_currency

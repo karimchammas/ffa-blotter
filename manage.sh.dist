@@ -23,7 +23,7 @@ export BASE_URL=http://hosted.django.com:1234
 # Comment out for regular verbosity
 # Ref: https://docs.djangoproject.com/en/1.10/topics/logging/#loggers
 # (default in `settings.py` is INFO)
-# POLLS_LOG_LEVEL=DEBUG
+# export POLLS_LOG_LEVEL=DEBUG
 
 ###############################
 # DO NOT EDIT UNDER THIS LINE #

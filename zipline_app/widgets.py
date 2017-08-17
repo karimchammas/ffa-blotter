@@ -96,7 +96,7 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
       order_link,
       order.get_order_side_display(),
       str(order.order_qty_unsigned),
-      order.get_order_unit_display(),
+      order.my_get_order_unit_display(),
       account_link
     )
     return out

@@ -5,7 +5,7 @@ Fill Details
 Date: {{fill.pub_date}}
 Security: {{fill.asset.asset_symbol}}
 Side: {{fill.get_fill_side_display}}
-{% if fill.fill_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{fill.fill_qty_unsigned|intcomma}} {{fill.get_fill_unit_display}}
+{% if fill.fill_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{fill.fill_qty_unsigned|intcomma}} {{fill.my_get_fill_unit_display}}
 Price: {{fill.fill_price}}
 TT order key: {% if fill.tt_order_key %}{{fill.tt_order_key}}{% else %}None{% endif %}
 Dedicated to order: {% if fill.dedicated_to_order is not None %}Order #{{ fill.dedicated_to_order.id }}{% else %}None{% endif %}
