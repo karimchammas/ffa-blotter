@@ -35,9 +35,9 @@ class OrderTable(tables.Table):
       attrs={"td": {"align": "right"}}
     )
     asset_currency = tables.Column(accessor='asset.asset_currency', verbose_name='Ccy')
-    asset = tables.TemplateColumn(template_code='<a href="#" title="{{record.asset.asset_name}} ({{record.asset.asset_origin}})" data-filter="{{record.asset.asset_symbol}}">{{record.asset.asset_symbol}}</a>')
+    asset = tables.TemplateColumn(template_code='<a href="#" title="{{record.asset.asset_name}} ({{record.asset.asset_origin}})" data-filter-field="asset" data-filter-value="{{record.asset.asset_symbol}}">{{record.asset.asset_symbol}}</a>')
     account = tables.TemplateColumn(
-      template_code='<a href="#" title="{{record.account.account_name}} ({{record.account.account_origin}})" data-filter="{{record.account.account_symbol}}">{{record.account.account_symbol}}</a>'
+      template_code='<a href="#" title="{{record.account.account_name}} ({{record.account.account_origin}})" data-filter-field="account" data-filter-value="{{record.account.account_symbol}}">{{record.account.account_symbol}}</a>'
     )
 
     class Meta:
