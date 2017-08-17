@@ -45,6 +45,7 @@ class OrderCreate(generic.CreateView):
 
 class FilteredSingleTableView(SingleTableView):
   filter_class = None
+  table_pagination = {'per_page': 15}
 
   def get_table_data(self):
     data = super(FilteredSingleTableView, self).get_table_data()
@@ -74,8 +75,16 @@ class OrderList(FilteredSingleTableView):
     # append variable for filters
     # self.filters yields OrderFilter
     terms = self.filter.Meta.fields
-    filters = {x: self.request.GET.get(x,None) for x in terms}
+
+    # Instead of accessing GET directly, use self.filter.data
+    # http://stackoverflow.com/questions/20886293/ddg#20909497
+    # filters = {x: self.request.GET.get(x,None) for x in terms}
+    filters = {x: self.filter.data.get(x) for x in terms}
+
+    # drop empty filtering
     filters = {k: filters[k] for k in filters if filters[k]}
+
+    # convert from keys to model objects or displayable strings
     if 'asset' in filters:
       filters['asset'] = Asset.objects.get(id=filters['asset'])
 
