@@ -28,23 +28,12 @@
       </a>
 
       {% for stat in stats_orders %}
-      <a href="#" class='btn btn-xs {% if stat.display == filters_actual.order_status %}btn-primary{% else %}{% if not filters_actual.order_status and stat.display == 'All' %}btn-primary{%else%}btn-default{% endif %}{%endif%}' name="anchor_stats_orders" data-status="{{stat.key}}">
+      <a href="#" class='btn btn-xs {% if stat.display == filters_actual.order_status %}btn-primary{% else %}{% if not filters_actual.order_status and stat.display == 'All' %}btn-primary{%else%}btn-default{% endif %}{%endif%}' name="anchor_stats_orders" data-filter="{{stat.key}}">
         <span>
         {{stat.display}}: {{stat.value}}
         </span>
       </a>
       {% endfor %}
-
-      <script>
-        $("a[name='anchor_stats_orders']").click(function(e) {
-            e.preventDefault();
-            current = $("#filterModal form select[id='id_order_status']").val();
-            newVal = $(this).data("status");
-            if(current == newVal) newVal = '';
-            $("#filterModal form select[id='id_order_status']").val(newVal);
-            $("#filterModal form").submit();
-        });
-      </script>
 
       {%if filters_actual %}
         {% if filters_actual.asset %}
@@ -123,11 +112,47 @@
 .table-container { width:100%; }
 </style>
 
-
-
 <div class='row'>
 {% render_table table "django_tables2/bootstrap.html" %}
 </div>
+
+<script>
+  function filterByAnchor(field, element) {
+      current = $("#filterModal form select[name='"+field+"']").val();
+      newVal = $(element).data("filter");
+      switch(field) {
+        case "order_status":
+          if(current == newVal) newVal = '';
+          $("#filterModal form select[name='"+field+"']").val(newVal);
+          break;
+        default:
+          // https://github.com/select2/select2/issues/2830#issuecomment-87647138
+          selector = $("#filterModal form select[name='"+field+"']");
+          selector.select2('destroy');
+          selector.append(
+            $("<option>").attr('value', newVal).text('bla')
+          );
+          selector.val(newVal);
+          break;
+      }
+      $("#filterModal form").submit();
+  }
+
+  $("a[name='anchor_stats_orders']").click(function(e) {
+      e.preventDefault();
+      filterByAnchor('order_status', this);
+  });
+
+  $("table td[class='account'] a").click(function(e) {
+      e.preventDefault();
+      filterByAnchor('account', this);
+  });
+
+  $("table td[class='asset'] a").click(function(e) {
+      e.preventDefault();
+      filterByAnchor('asset', this);
+  });
+</script>
 
 {{ filter.form.media.js }}
 {% endblock %}
