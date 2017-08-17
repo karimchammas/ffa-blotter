@@ -8,6 +8,7 @@ from django_tables2.utils import A  # alias for Accessor
 
 class OrderTable(tables.Table):
     fill = tables.Column(verbose_name='Fill')
+    user = tables.Column(verbose_name='Placed by')
     # https://stackoverflow.com/q/6157101/4126114
     id = tables.LinkColumn(
       'zipline_app:orders-detail',
@@ -34,9 +35,9 @@ class OrderTable(tables.Table):
       attrs={"td": {"align": "right"}}
     )
     asset_currency = tables.Column(accessor='asset.asset_currency', verbose_name='Ccy')
-    asset = tables.TemplateColumn(template_code='<a href="{% url \'zipline_app:assets-detail\' record.asset.id %}" title="{{record.asset}}">{{record.asset.asset_symbol}}</a>')
+    asset = tables.TemplateColumn(template_code='<a href="{% url \'zipline_app:assets-detail\' record.asset.id %}" title="{{record.asset.asset_name}} ({{record.asset.asset_origin}})">{{record.asset.asset_symbol}}</a>')
     account = tables.TemplateColumn(
-      template_code='<a href="{% url \'zipline_app:accounts-detail\' record.account.id %}" title="{{record.account}}">{{record.account.account_symbol}}</a>',
+      template_code='<a href="{% url \'zipline_app:accounts-detail\' record.account.id %}" title="{{record.account.account_name}} ({{record.account.account_origin}})">{{record.account.account_symbol}}</a>',
       verbose_name='Client'
     )
 
@@ -45,7 +46,7 @@ class OrderTable(tables.Table):
         # add class="paleblue" to <table> tag
         attrs = {'class': 'table table-bordered table-striped table-hover'}
         model = Order
-        sequence = OrderForm.field_order + ['fill', 'make_fill', 'make_placement']
+        sequence = OrderForm.field_order + ['fill', 'make_placement', 'make_fill']
         exclude=[
           'order_unit',
           'order_status',
@@ -58,7 +59,7 @@ class OrderTable(tables.Table):
           'order_qty_unsigned',
           'am_type',
         ]
-        fields = OrderForm.field_order + ['fill', 'make_fill', 'make_placement']
+        fields = OrderForm.field_order + ['fill', 'make_placement', 'make_fill']
         empty_text='No data'
 
     def render_pub_date(self, value):
