@@ -9,6 +9,11 @@
 
 {{ filter.form.media.css }}
 
+<style>
+/* https://stackoverflow.com/a/28785837/4126114 */
+.select2-container { width: 100% !important; }
+</style>
+
 <h1>
   <div class='row'>
     <div class='col-xs-6'>Orders</div>
@@ -41,14 +46,12 @@
       </div>
       <div class="modal-body">
             <div class='row'>
-            <div class='col-xs-10'>
             {% bootstrap_form filter.form layout='horizontal' %}
-            </div>
             </div>
       </div>
       <div class="modal-footer">
         <div class='row'>
-          <div class='col-md-6 btn-grp'>
+          <div class='col-md-6 btn-grp pull-right'>
             <button type='submit' class='btn btn-primary'>Filter</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
