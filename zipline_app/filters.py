@@ -5,6 +5,7 @@ from .models.zipline_app.asset import Asset
 from .models.zipline_app.account import Account
 from .forms import OrderForm
 from .widgets import AssetModelSelect2Widget
+from .models.zipline_app.side import ORDER_STATUS_CHOICES
 
 class OrderFilter(django_filters.FilterSet):
   asset = django_filters.ModelChoiceFilter(
@@ -16,8 +17,16 @@ class OrderFilter(django_filters.FilterSet):
       queryset = Account.objects.exclude(order__isnull=True),
       widget=OrderForm.Meta.widgets['account']
   )
+  order_status = django_filters.ChoiceFilter(
+    choices = ORDER_STATUS_CHOICES,
+    label='Order status',
+    method='filter_order_status'
+  )
 
   class Meta:
     model = Order
-    fields = ['order_status', 'asset', 'account', 'order_side']
+    fields = ['asset', 'account', 'order_side']
 
+  def filter_order_status(self, queryset, name, value):
+    filtered_ids = [x.id for x in queryset if x.order_status == value]
+    return queryset.filter(id__in = filtered_ids)

@@ -66,14 +66,12 @@ class PositiveFloatFieldModel(models.FloatField):
 OPEN = 'O'
 FILLED = 'F'
 CANCELLED = 'C'
-REJECTED = 'R'
-HELD = 'H'
+PLACED = 'P'
 ORDER_STATUS_CHOICES = (
   (OPEN, 'Open'),
   (FILLED, 'Filled'),
   (CANCELLED, 'Cancelled'),
-  (REJECTED, 'Rejected'),
-  (HELD, 'Held'),
+  (PLACED, 'Placed'),
 )
 
 # order validity

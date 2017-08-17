@@ -6,7 +6,7 @@ from .test_fill import FillBaseTests
 from ...utils import myTestLogin, chopSeconds
 from django.utils import timezone
 import datetime
-from ...models.zipline_app.order import Order, OrderManager
+from ...models.zipline_app.order import Order
 
 class BlotterConcealedViewsTests(FillBaseTests):
   def test_one_order(self):

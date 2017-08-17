@@ -2,7 +2,7 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from ...models.zipline_app.order import Order, OrderManager, SHARE, NONE
+from ...models.zipline_app.order import Order, SHARE, NONE
 from .test_zipline_app import create_a1, create_order, create_account, a1, create_custodian, OrderBaseTests
 from ...models.zipline_app.fill import Fill
 from ...models.zipline_app.side import BUY, SELL, MARKET, GTC, GTD, DAY, OPEN, CANCELLED
@@ -86,10 +86,6 @@ class OrderModelTests(OrderBaseTests):
     def test_validity_DAY_new_then_old(self):
       o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=self.user)
       o2 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now() + datetime.timedelta(days=-1), user=self.user)
-      om = OrderManager()
-      om.process()
-      o1.refresh_from_db()
-      o2.refresh_from_db()
       self.assertEqual(o2.order_status,CANCELLED)
       self.assertEqual(o1.order_status,OPEN)
 

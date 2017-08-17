@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger("zipline_app") #__name__)
 
-from .models.zipline_app.order import OrderManager
 from .models.zipline_app.fill import Fill
 from .utils import email_ctx
 from .views.zipline_app.order import get_stats_orders
@@ -25,8 +24,6 @@ class SignalProcessor:
         subject = None
         if instance.dedicated_to_order is not None:
           order = instance.dedicated_to_order
-          if order.filled() == order.order_qty_signed():
-            order.setFilled()
           subject = "New fill #%s (fills order #%s)" % (instance.id, order.id)
         else:
           subject = "New fill #%s (%s x %s)" % (instance.id, instance.fill_qty_signed(), instance.asset.asset_name)
@@ -66,17 +63,3 @@ class SignalProcessor:
           subject,
           logger
         )
-
-  def post_delete(sender, instance, **kwargs):
-    logger.debug("Signal: %s, %s" % ("post_delete", sender))
-    if sender.__name__=="Fill":
-      order = instance.dedicated_to_order
-      if order is not None:
-        logger.debug("reopen order %s" % (order))
-        order.setOpen()
-    # if sender.__name__=="Order": ZlModel.delete_order(instance)
-
-  def request_started(sender, **kwargs):
-    logger.debug("Signal: %s, %s" % ("request_started", sender))
-    om = OrderManager()
-    om.process()

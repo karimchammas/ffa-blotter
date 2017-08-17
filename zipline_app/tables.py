@@ -48,7 +48,6 @@ class OrderTable(tables.Table):
         sequence = OrderForm.field_order + ['fill', 'make_placement', 'make_fill']
         exclude=[
           'order_unit',
-          'order_status',
           'order_type',
           'limit_price',
           'order_validity',

@@ -19,6 +19,7 @@ from django_filters.views import FilterView
 from ...filters import OrderFilter
 from ...models.zipline_app.asset import Asset
 from ...models.zipline_app.account import Account
+from ...models.zipline_app.side import OPEN, FILLED, CANCELLED, PLACED
 
 class OrderCreate(generic.CreateView):
   model = Order
@@ -58,25 +59,26 @@ class FilteredSingleTableView(SingleTableView):
     return context
 
 def get_stats_orders():
+  temp = Order()
   out = [
     {
-      'display': 'Total',
-      # 'key': 'T',
+      'display': 'All',
+      'key': '',
       'value': Order.objects.all().count()
     },
     {
-      'display': 'Open',
-      'key': 'O',
+      'display': temp.get_order_status_display(OPEN),
+      'key': OPEN,
       'value': Order.objects.filter(fill__isnull=True, placement__isnull=True).count()
     },
     {
-      'display': 'Placed',
-      # 'key': 'P',
+      'display': temp.get_order_status_display(PLACED),
+      'key': PLACED,
       'value': Order.objects.filter(fill__isnull=True, placement__isnull=False).count()
     },
     {
-      'display': 'Filled',
-      'key': 'F',
+      'display': temp.get_order_status_display(FILLED),
+      'key': FILLED,
       'value': Order.objects.filter(fill__isnull=False).count()
     },
   ]
@@ -101,13 +103,13 @@ class OrderList(FilteredSingleTableView):
 
   def _get_filters_actual(self):
     # append variable for filters
-    # self.filters yields OrderFilter
-    terms = self.filter.Meta.fields
 
     # Instead of accessing GET directly, use self.filter.data
     # http://stackoverflow.com/questions/20886293/ddg#20909497
     # filters = {x: self.request.GET.get(x,None) for x in terms}
-    filters = {x: self.filter.data.get(x) for x in terms}
+    # self.filters yields OrderFilter
+    # filters = {x: self.filter.data.get(x) for x in terms}
+    filters = self.filter.data
 
     # drop empty filtering
     filters = {k: filters[k] for k in filters if filters[k]}
@@ -121,8 +123,7 @@ class OrderList(FilteredSingleTableView):
 
     if 'order_status' in filters:
       temp = Order()
-      temp.order_status = filters['order_status']
-      filters['order_status'] = temp.get_order_status_display()
+      filters['order_status'] = temp.get_order_status_display(filters['order_status'])
 
     if 'order_side' in filters:
       temp = Order()

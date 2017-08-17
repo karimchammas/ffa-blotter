@@ -106,15 +106,11 @@
 </style>
 
 {% for stat in stats_orders %}
-{% if stat.key %}
 <a href="{% url 'zipline_app:orders-list' %}?order_status={{stat.key}}">
-{% endif %}
-  <span class='btn btn-xs {% if stat.key %}btn-default{% endif %}'>
+  <span class='btn btn-xs {% if stat.display == filters_actual.order_status %}btn-primary{% else %}{% if not filters_actual and stat.display == 'All' %}btn-primary{%else%}btn-default{% endif %}{%endif%}'>
   {{stat.display}}: {{stat.value}}
   </span>
-{% if stat.key %}
 </a>
-{% endif %}
 {% endfor %}
 
 {% render_table table "django_tables2/bootstrap.html" %}

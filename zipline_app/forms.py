@@ -70,7 +70,7 @@ class OrderForm(forms.ModelForm):
 
   class Meta:
     model=Order
-    exclude=['user','order_status']
+    exclude=['user']
     widgets = {
       'pub_date': ReadOnlyWidgetSimple(),
       'asset': AssetModelSelect2Widget(),

@@ -11,13 +11,15 @@ from .side import BUY, FILL_SIDE_CHOICES, \
   validate_nonzero, \
   MARKET, ORDER_TYPE_CHOICES, \
   PositiveFloatFieldModel, \
-  ORDER_STATUS_CHOICES, OPEN, CANCELLED, FILLED, \
+  ORDER_STATUS_CHOICES, OPEN, CANCELLED, FILLED, PLACED, \
   ORDER_VALIDITY_CHOICES, GTC, GTD, DAY
 
 from numpy import average
 from django.core.validators import MaxValueValidator, MinValueValidator
 from ...utils import now_minute, chopSeconds
 from django.contrib.auth.models import User
+
+from django.utils.encoding import force_text
 
 # types that are specific to FFA AM
 NONE = 'N'
@@ -76,12 +78,6 @@ class AbstractOrder(models.Model):
       null=True,
       blank=True
     )
-    order_status = models.CharField(
-      max_length=1,
-      choices=ORDER_STATUS_CHOICES,
-      default=OPEN,
-      verbose_name="Status"
-    )
     order_validity = models.CharField(
       max_length=1,
       choices=ORDER_VALIDITY_CHOICES,
@@ -107,6 +103,24 @@ class AbstractOrder(models.Model):
       blank=True
     )
 
+    @property
+    def order_status(self):
+      if hasattr(self,'fill'): return FILLED
+      if hasattr(self,'placement'): return PLACED
+      if self.order_validity == GTD:
+        if now_minute() > self.validity_date:
+          return CANCELLED
+      if self.order_validity == DAY:
+        if now_minute().strftime("%Y-%m-%d") > self.pub_date.strftime("%Y-%m-%d"):
+          return CANCELLED
+      return OPEN
+
+    # Copied from /home/shadi/.local/share/virtualenvs/FFA_BLOTTER/lib/python3.5/site-packages/django/db/models/base.py
+    def get_order_status_display(self, value=None):
+      if value is None: value = self.order_status # getattr(self, field.attname)
+      field_flatchoices = ORDER_STATUS_CHOICES
+      return force_text(dict(field_flatchoices).get(value, value), strings_only=True)
+
     def diff(self, other):
       if other is None:
         return []
@@ -115,7 +129,7 @@ class AbstractOrder(models.Model):
         'order_text', 'pub_date', 'asset',
         'order_qty_unsigned', 'order_unit',
         'account', 'order_side', 'order_type',
-        'limit_price', 'order_status',
+        'limit_price', 'fill', 'placement',
         'order_validity', 'validity_date', 'am_type',
         'commission'
       ]
@@ -225,18 +239,6 @@ class Order(AbstractOrder):
     def history(self):
       return self.orderhistory_set.exclude(previous=None).order_by('-ed_date')
 
-    def cancel(self):
-      self.order_status = CANCELLED
-      self.save()
-
-    def setFilled(self):
-      self.order_status = FILLED
-      self.save()
-
-    def setOpen(self):
-      self.order_status = OPEN
-      self.save()
-
     def my_get_order_unit_display(self):
       if self.order_unit==SHARE: return "share"
       return self.asset.asset_currency
@@ -254,29 +256,3 @@ class OrderHistory(AbstractOrder):
 
   def diffPrevious(self):
     return self.diff(self.previous)
-
-################
-# Class that cancels day orders opened in the past 
-#
-# https://stackoverflow.com/a/37635851/4126114
-# from django.db.models import F
-class OrderManager:
-  def process(self):
-    # set status for filled orders
-    #qs = Order.objects.filter(order_status=OPEN)
-    #for order in qs:
-    #  if order.filled() == order.order_qty_signed():
-    #    raise Exception("Found filled order with status=OPEN")
-    #    # order.setFilled()
-
-    # cancel DAY orders from the past
-    midnight = timezone.now().replace(hour=0, minute=0, second=0)
-    qs = Order.objects.filter(order_validity=DAY, pub_date__lt=midnight, order_status=OPEN)
-    for order in qs:
-      order.cancel()
-
-    # cancel GTD orders not filled yet and which expired
-    now = timezone.now()
-    qs = Order.objects.filter(order_validity=GTD, validity_date__lt=now, order_status=OPEN)
-    for order in qs:
-      order.cancel()
