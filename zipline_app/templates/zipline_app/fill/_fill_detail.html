@@ -4,7 +4,7 @@
 <h2>Fill Details</h2>
 <ul>
   <li>Date: {{fill.pub_date}}</li>
-  <li>Asset: {{fill.asset.asset_symbol}}</li>
+  <li>Security: {{fill.asset.asset_symbol}}</li>
   <li>Side: {{fill.get_fill_side_display}}</li>
   <li>Qty: {{fill.fill_qty_unsigned|intcomma}} {{fill.get_fill_unit_display}}</li>
   <li>Price: {{fill.fill_price}} {{fill.asset.asset_currency}}/share</li>

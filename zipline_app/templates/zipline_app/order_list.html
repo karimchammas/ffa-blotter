@@ -24,13 +24,13 @@
         &nbsp;
         {% if filters_actual.asset %}
         <span class='btn btn-default btn-xs'>
-        Asset: <a href="{% url 'zipline_app:assets-detail' filters_actual.asset.id %}">{{filters_actual.asset}}</a>
+        Security: <a href="{% url 'zipline_app:assets-detail' filters_actual.asset.id %}">{{filters_actual.asset}}</a>
         </span>
         {% endif %}
         &nbsp;
         {% if filters_actual.account %}
         <span class='btn btn-default btn-xs'>
-        Account: <a href="{% url 'zipline_app:accounts-detail' filters_actual.account.id %}">{{filters_actual.account}}</a>
+        Client: <a href="{% url 'zipline_app:accounts-detail' filters_actual.account.id %}">{{filters_actual.account}}</a>
         </span>
         {% endif %}
         &nbsp;

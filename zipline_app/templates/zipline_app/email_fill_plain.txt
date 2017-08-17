@@ -3,7 +3,7 @@
 Fill Details
 
 Date: {{fill.pub_date}}
-Asset: {{fill.asset.asset_symbol}}
+Security: {{fill.asset.asset_symbol}}
 Side: {{fill.get_fill_side_display}}
 {% if fill.fill_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{fill.fill_qty_unsigned|intcomma}} {{fill.get_fill_unit_display}}
 Price: {{fill.fill_price}}

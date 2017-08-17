@@ -39,7 +39,7 @@ ORDER_UNIT_CHOICES = (
 class AbstractOrder(models.Model):
     order_text = models.CharField(max_length=200, blank=True)
     pub_date = models.DateTimeField('Date',default=now_minute)
-    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, null=True)
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, null=True, verbose_name="Security")
     # 2017-08-04: https://github.com/shadiakiki1986/ffa-blotter/issues/73
     #             Allow decimals (for shares)
     # order_qty_unsigned = models.PositiveIntegerField(
@@ -56,7 +56,7 @@ class AbstractOrder(models.Model):
       default=SHARE,
       verbose_name="Unit"
     )
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name="Client")
     order_side = models.CharField(
       max_length=1,
       choices=FILL_SIDE_CHOICES,

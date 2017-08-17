@@ -37,8 +37,7 @@ class OrderTable(tables.Table):
     asset_currency = tables.Column(accessor='asset.asset_currency', verbose_name='Ccy')
     asset = tables.TemplateColumn(template_code='<a href="{% url \'zipline_app:assets-detail\' record.asset.id %}" title="{{record.asset.asset_name}} ({{record.asset.asset_origin}})">{{record.asset.asset_symbol}}</a>')
     account = tables.TemplateColumn(
-      template_code='<a href="{% url \'zipline_app:accounts-detail\' record.account.id %}" title="{{record.account.account_name}} ({{record.account.account_origin}})">{{record.account.account_symbol}}</a>',
-      verbose_name='Client'
+      template_code='<a href="{% url \'zipline_app:accounts-detail\' record.account.id %}" title="{{record.account.account_name}} ({{record.account.account_origin}})">{{record.account.account_symbol}}</a>'
     )
 
     class Meta:

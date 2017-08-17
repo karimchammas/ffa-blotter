@@ -3,8 +3,8 @@
 Order Details
 
 Date: {{order.pub_date}}
-Asset: {{order.asset.asset_symbol}}
-Account: {{order.account.account_symbol}}
+Security: {{order.asset.asset_symbol}}
+Client: {{order.account.account_symbol}}
 AM Type: {{order.get_am_type_display}}
 Execution: {{order.get_order_type_display}}
 {% if order.order_type == 'L' %}

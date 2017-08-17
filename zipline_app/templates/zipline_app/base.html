@@ -41,7 +41,7 @@
           <ul class="nav navbar-nav">
             {% if request.user.username == 'admin' %}<li><a href="{% url 'zipline_app:blotter-deprecated-concealed' %}">Blotter (deprecated)</a></li>{% endif %}
             <li><a href="{% url 'zipline_app:accounts-list' %}">Clients</a></li>
-            <li><a href="{% url 'zipline_app:assets-list' %}">Assets</a></li>
+            <li><a href="{% url 'zipline_app:assets-list' %}">Securities</a></li>
             <li><a href="{% url 'zipline_app:custodians-list' %}">Custodians</a></li>
             <li class="active"><a href="{% url 'zipline_app:orders-list' %}">Orders</a></li>
             <li><a href="{% url 'zipline_app:fills-list' %}">Fills</a></li>
