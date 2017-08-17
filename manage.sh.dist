@@ -2,17 +2,37 @@
 # Usage: ./manage.sh runserver ...
 #        ./manage.sh migrate ...
 
+########################
+# EDIT THESE VARIABLES #
+########################
+
+# Email displayed as "From: " in sent emails
 export DEFAULT_FROM_EMAIL=from@email.com
+
+# variables for sending emails through FFA's MS Outlook server
+# (SMTP server with NTLM3 authentication)
 export EMAIL_HOST=mail.ip.com
 export EMAIL_PORT=1234
 export EMAIL_HOST_USER=domain\\user # NTLM3 authentication
 export EMAIL_HOST_PASSWORD=pass
-export BASE_URL=http://hosted.django.com:1234 # for email links
 
+# URL prefix used in email links
+export BASE_URL=http://hosted.django.com:1234
+
+# Use DEBUG for higher django log level
+# Comment out for regular verbosity
+# Ref: https://docs.djangoproject.com/en/1.10/topics/logging/#loggers
+# (default in `settings.py` is INFO)
+# POLLS_LOG_LEVEL=DEBUG
+
+###############################
+# DO NOT EDIT UNDER THIS LINE #
+###############################
 # Getting the source directory of a Bash script from within
 # https://stackoverflow.com/a/337006/4126114
 #DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DIR=`dirname $0`
+
 # If FFA_BLOTTER doesn't exist, use `pew new FFA_BLOTTER` and install requirements
 # Check README for more info
 /usr/local/bin/pew in FFA_BLOTTER python $DIR/manage.py "$@"

@@ -1,19 +1,28 @@
 #!/bin/sh
-# Usage: ./importMarketflow.sh --debug
-#        ./importMarketflow.sh
+# Usage: ./importMarketflow.sh
+#        ./importMarketflow.sh --debug
 
+#####################
+# EDIT THIS SECTION #
+#####################
+
+# Connection credentials for FFA Marketflow Lebanon
 export PYMSSQL_LB_SERVER=123.123.123.123
 export PYMSSQL_LB_PORT=4444
 export PYMSSQL_LB_USERNAME=user
 export PYMSSQL_LB_PASSWORD=pass
 export PYMSSQL_LB_DB=dbname1
 
+# Connection credentials for FFA Marketflow Dubai
 export PYMSSQL_AE_SERVER=321.321.321.321
 export PYMSSQL_AE_PORT=33333
 export PYMSSQL_AE_USERNAME=user
 export PYMSSQL_AE_PASSWORD=pass
 export PYMSSQL_AE_DB=dbname2
 
+###############################
+# DO NOT EDIT UNDER THIS LINE #
+###############################
 
 # Getting the source directory of a Bash script from within
 # https://stackoverflow.com/a/337006/4126114
