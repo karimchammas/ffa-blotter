@@ -153,14 +153,16 @@ def get_revision_diffs(order):
   revisions = Version.objects.get_for_object(order)
   if len(revisions)<=1: return []
   diffs = []
-  initial = None
+  nextVer = None
+  # note that revisions is an array sorted in reverse cronological order
+  # i.e. newest edits first
   for version in revisions:
-    if initial is None:
-      initial = version
+    if nextVer is None:
+      nextVer = version
       continue
 
     # https://github.com/ZoomerAnalytics/jsondiff#quickstart
-    newDiff_D = diff(initial.field_dict, version.field_dict, syntax='symmetric')
+    newDiff_D = diff(nextVer.field_dict, version.field_dict, syntax='symmetric')
     newDiff_S = []
     for k1,v1 in newDiff_D.items():
       if k1=='insert':
@@ -180,12 +182,12 @@ def get_revision_diffs(order):
         newDiff_S.append("Changed %s from '%s' to '%s'"%(k1, v1[1], v1[0]))
 
     diffs.append(
-      { 'date_created': version.revision.date_created,
+      { 'date_created': nextVer.revision.date_created,
         'diff': ', '.join(newDiff_S)
       }
      )
 
-    initial = version
+    nextVer = version
 
   return diffs
 
