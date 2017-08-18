@@ -20,7 +20,22 @@
   <li>Side: {{order.get_order_side_display}}</li>
   <li>{% if order.order_unit == 'S' %}Qty{% else %}Amount{% endif %}: {{order.order_qty_unsigned|intcomma}} {{order.my_get_order_unit_display}}{% if order.order_unit == 'S' %}{{ order.order_qty_unsigned|pluralize:",s" }}{% endif %}</li>
   <li>Comment: {% if order.order_text %}{{ order.order_text }}{% else %}None{% endif %}</li>
-  <li>Commission (%): {{order.commission}}</li>
+  <li>
+    Commission:
+    {% if not order.dedicated_fill %}
+    {{order.commission}} %
+    {%elif order.commission != order.fill.commission %}
+    <strike>{{ order.commission }} %</strike>
+    &nbsp;
+    {% endif %}
+    {{ order.fill.commission }} %
+    (
+      corrected by fill
+      <a href="{% url 'zipline_app:fills-detail' order.fill.id %}">
+        #{{order.fill.id}}
+      </a>
+    )
+  </li>
 
   <!-- non-user input -->
 

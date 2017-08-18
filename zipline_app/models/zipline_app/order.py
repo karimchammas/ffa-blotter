@@ -129,11 +129,13 @@ class AbstractOrder(models.Model):
         'order_text', 'pub_date', 'asset',
         'order_qty_unsigned', 'order_unit',
         'account', 'order_side', 'order_type',
-        'limit_price', 'fill', 'placement',
+        'limit_price',
         'order_validity', 'validity_date', 'am_type',
         'commission'
       ]
       for attr in attrs:
+        if not hasattr(self, attr): continue
+        if not hasattr(other, attr): continue
         if getattr(self, attr) != getattr(other, attr):
           messages.append(
             "Changed %s from '%s' to '%s'" %
@@ -228,7 +230,6 @@ class Order(AbstractOrder):
         user = self.user,
         order_type = self.order_type,
         limit_price = self.limit_price,
-        order_status = self.order_status,
         order_validity = self.order_validity,
         validity_date = self.validity_date,
         am_type = self.am_type,
@@ -237,7 +238,9 @@ class Order(AbstractOrder):
 
     # excluding the first entry with previous=None since this is available regardless of edits made
     def history(self):
-      return self.orderhistory_set.exclude(previous=None).order_by('-ed_date')
+      out = self.orderhistory_set.exclude(previous=None).order_by('-ed_date')
+      out = [x for x in out if x.diffPrevious()]
+      return out
 
     def my_get_order_unit_display(self):
       if self.order_unit==SHARE: return "share"

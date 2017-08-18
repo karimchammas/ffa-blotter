@@ -4,7 +4,7 @@
   <li>Side: {{fill.dedicated_to_order.get_order_side_display}}</li>
   <li>Client: <a href="{% url 'zipline_app:accounts-detail' fill.dedicated_to_order.account.id %}">{{fill.dedicated_to_order.account.account_symbol}}</a> ({{fill.dedicated_to_order.account.account_name}})</li>
   <li>Security: <a href="{% url 'zipline_app:assets-detail' fill.dedicated_to_order.asset.id %}">{{fill.dedicated_to_order.asset.asset_symbol}}</a> ({{fill.dedicated_to_order.asset.asset_name}})</li>
-
+  <li>Commission (%): {% if fill.dedicated_to_order.commission != fill.commission %}<strike>{{ fill.dedicated_to_order.commission }}</strike>&nbsp;{% endif %}{{ fill.commission }}</li>
 </ul>
 {% else %}
 -

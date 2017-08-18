@@ -92,12 +92,13 @@ class ReadOnlyWidgetOrder(ReadOnlyWidgetModel):
     url = reverse('zipline_app:assets-detail', args=(order.account.id,))
     account_link = "<a href='"+url+"'>"+order.account.account_symbol+"</a>"
 
-    out = "<p>%s: %s %s %s for %s</p>" % (
+    out = "<p>%s: %s %s %s for %s (Commission = %g %%)</p>" % (
       order_link,
       order.get_order_side_display(),
       str(order.order_qty_unsigned),
       order.my_get_order_unit_display(),
-      account_link
+      account_link,
+      order.commission
     )
     return out
 

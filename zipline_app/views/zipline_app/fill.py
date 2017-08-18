@@ -34,6 +34,7 @@ class FillCreate(generic.CreateView):
     initial['asset'] = order.asset
     initial['source'] = self.request.GET.get('source',None)
     initial['fill_unit'] = SHARE if order.order_unit!=SHARE else CURRENCY
+    initial['commission'] = order.commission
     return initial
 
 class FillList(generic.ListView):

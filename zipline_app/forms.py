@@ -15,7 +15,8 @@ class FillForm(forms.ModelForm):
   field_order = [
     'pub_date', 'dedicated_to_order', 'fill_side', 'asset', 'fill_qty_unsigned', 'fill_unit',
     'fill_price', 'category', 'is_internal', 'trade_date', 'settlement_date',
-    'custodian', 'fill_text'
+    'custodian', 'fill_text',
+    'commission'
   ]
   class Meta:
     model=Fill
@@ -78,7 +79,6 @@ class OrderForm(forms.ModelForm):
     }
   def clean_pub_date(self): return self.initial['pub_date'] #.strftime("%Y-%m-%d %H:%i:%s")
   def clean_source(self): return self.initial['source'] if 'source' in self.initial else None
-
 
 class PlacementForm(forms.ModelForm):
   class Meta:

@@ -13,6 +13,7 @@ Comment: {% if fill.fill_text %}{{ fill.fill_text }}{% else %}None{% endif %}
 Category: {{ fill.get_category_display }}
 Is {{fill.get_is_internal_display}}
 Trade date: {{fill.trade_date|date:"Y-m-d"}}
+Commission: {{ fill.commission }} %
 
 
 Orders summary

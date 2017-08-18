@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from ...utils import now_minute, chopSeconds
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Fill(models.Model):
     # 2017-03-17: relink fill to order as a "dedicated to order" field
@@ -59,6 +60,13 @@ class Fill(models.Model):
       choices=ORDER_UNIT_CHOICES,
       default=SHARE,
       verbose_name="Unit"
+    )
+
+    commission = PositiveFloatFieldModel(
+      default=0,
+      validators=[MaxValueValidator(100), MinValueValidator(0)],
+      null=True,
+      blank=True
     )
 
     def get_is_internal_display(self):
