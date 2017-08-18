@@ -2,13 +2,13 @@
 {% load pagination_tags %}
 
 {% block content %}
-<h1>Securities</h1>
+<h1>
+Securities
+<a href="{% url 'zipline_app:assets-new' %}" class='btn btn-default'>
+New <span class='glyphicon glyphicon-plus'></span>
+</a>
+</h1>
 
-<a href="{% url 'zipline_app:assets-new' %}">New</a>
-
-{# {% include "zipline_app/asset/_asset_form_builtin.html" %} #}
-{# {% include "zipline_app/asset/_asset_form_bootstrap_vanilla.html" %} #}
-{% include "zipline_app/asset/_asset_form_bootstrap_django.html" %}
 
 {% autopaginate asset_list %}
 

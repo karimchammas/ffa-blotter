@@ -12,7 +12,7 @@ Security Details
   <li>Origin: {{asset.asset_origin}}</li>
 </ul>
 
-<a href="{% url 'zipline_app:assets-update' asset.id %}">Edit</a>
-<a href="{% url 'zipline_app:assets-delete' asset.id %}">Delete</a>
+<a class='btn btn-default' href="{% url 'zipline_app:assets-update' asset.id %}">Edit</a>
+<a class='btn btn-danger' href="{% url 'zipline_app:assets-delete' asset.id %}">Delete</a>
 
 {% endblock %}

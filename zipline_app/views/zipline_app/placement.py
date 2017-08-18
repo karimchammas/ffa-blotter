@@ -16,6 +16,7 @@ class PlacementCreate(generic.CreateView):
   def get(self, *args, **kwargs):
     return self.post(*args, **kwargs)
 
+  # cannot move this into form_valid because the "order" field needs to be in a bound form
   def get_form(self, form_class=None):
     return PlacementForm({
       'order': self.kwargs['order']

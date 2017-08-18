@@ -1,7 +1,17 @@
 {% extends "zipline_app/base.html" %}
 
+{# Load the tag library #}
+{% load bootstrap3 %}
+
 {% block content %}
-{# {% include "zipline_app/asset/_asset_form_builtin.html" %} #}
-{# {% include "zipline_app/asset/_asset_form_bootstrap_vanilla.html" %} #}
-{% include "zipline_app/asset/_asset_form_bootstrap_django.html" %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# based on https://github.com/dyve/django-bootstrap3#example-template #}
+<form action="" method="post" class="form">
+  {% csrf_token %}
+  {% bootstrap_form form layout='horizontal' %}
+  {% bootstrap_button content="Save" icon="plus" button_type="submit" button_class="btn-primary" %}
+</form>
 {% endblock %}

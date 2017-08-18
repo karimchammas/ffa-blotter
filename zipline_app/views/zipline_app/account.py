@@ -23,13 +23,6 @@ class AccountList(generic.ListView):
   def get_queryset(self):
     return Account.objects.all()
 
-  def get_context_data(self, *args, **kwargs):
-    context = super(AccountList, self).get_context_data(*args, **kwargs)
-    view = AccountCreate()
-    form = view.get_form_class()
-    context["account_form"]=form
-    return context
-
 class AccountDelete(generic.DeleteView):
     model = Account
     success_url = reverse_lazy('zipline_app:accounts-list')

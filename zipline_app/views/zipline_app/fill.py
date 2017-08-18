@@ -43,12 +43,6 @@ class FillList(generic.ListView):
   def get_queryset(self):
     return Fill.objects.all()
 
-  def get_context_data(self, *args, **kwargs):
-    context = super(FillList, self).get_context_data(*args, **kwargs)
-    form = FillCreate()
-    context["fill_form"]=form.get_form_class()
-    return context
-
 class FillDelete(generic.DeleteView):
   model = Fill
   template_name = 'zipline_app/fill/fill_confirm_delete.html'

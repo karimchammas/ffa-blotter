@@ -7,7 +7,7 @@ Client Details
   <li>{{account.account_symbol}}: {{account.account_name}} ({{account.account_origin}})</li>
 </ul>
 
-<a href="{% url 'zipline_app:accounts-update' account.id %}">Edit</a>
-<a href="{% url 'zipline_app:accounts-delete' account.id %}">Delete</a>
+<a class='btn btn-default' href="{% url 'zipline_app:accounts-update' account.id %}">Edit</a>
+<a class='btn btn-danger' href="{% url 'zipline_app:accounts-delete' account.id %}">Delete</a>
 
 {% endblock %}
