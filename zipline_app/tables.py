@@ -58,7 +58,7 @@ class OrderTable(tables.Table):
           'am_type',
         ]
         fields = OrderForm.field_order + ['fill', 'make_placement', 'make_fill']
-        empty_text='No data'
+        empty_text='No orders are available.'
 
     def render_pub_date(self, value):
       # https://stackoverflow.com/a/11909289/4126114

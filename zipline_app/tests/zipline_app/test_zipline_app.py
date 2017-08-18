@@ -167,7 +167,7 @@ class OrderViewTests(OrderBaseTests):
         response = self.client.get(reverse('zipline_app:orders-list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No orders are available.")
-        self.assertQuerysetEqual(response.context['latest_order_list'], [])
+        self.assertQuerysetEqual(response.context['object_list'], [])
         # 2017-07-08: cannot create fills directly, but only via order
         # self.assertContains(response, "New fill")
 
@@ -179,10 +179,11 @@ class OrderViewTests(OrderBaseTests):
         self.create_order_default(order_text="Past order.", days=-30)
         response = self.client.get(reverse('zipline_app:orders-list'))
         self.assertQuerysetEqual(
-            response.context['latest_order_list'],
+            response.context['object_list'],
             ['<Order: A1, B, 10.0 (TEST01, Past order.)>']
         )
 
+    # EDIT 2017-08-18 No longer filtering for past/future orders
     def test_blotter_concealed_view_with_a_future_order(self):
         """
         Orders with a pub_date in the future should not be displayed on
@@ -190,8 +191,11 @@ class OrderViewTests(OrderBaseTests):
         """
         self.create_order_default(order_text="Future order.", days=30)
         response = self.client.get(reverse('zipline_app:orders-list'))
-        self.assertContains(response, "No orders are available.")
-        self.assertQuerysetEqual(response.context['latest_order_list'], [])
+        #self.assertContains(response, "No orders are available.")
+        self.assertQuerysetEqual(
+            response.context['object_list'],
+            ['<Order: A1, B, 10.0 (TEST01, Future order.)>']
+        )
 
     def test_blotter_concealed_view_with_future_order_and_past_order(self):
         """
@@ -202,8 +206,11 @@ class OrderViewTests(OrderBaseTests):
         self.create_order_default(order_text="Future order.", days=30)
         response = self.client.get(reverse('zipline_app:orders-list'))
         self.assertQuerysetEqual(
-            response.context['latest_order_list'],
-            ['<Order: A1, B, 10.0 (TEST01, Past order.)>']
+            response.context['object_list'],
+            [
+              '<Order: A1, B, 10.0 (TEST01, Future order.)>',
+              '<Order: A1, B, 10.0 (TEST01, Past order.)>',
+            ]
         )
 
     def test_blotter_concealed_view_with_two_past_orders(self):
@@ -214,48 +221,49 @@ class OrderViewTests(OrderBaseTests):
         self.create_order_default(order_text="Past order 2.", days=-5)
         response = self.client.get(reverse('zipline_app:orders-list'))
         self.assertQuerysetEqual(
-            response.context['latest_order_list'],
+            response.context['object_list'],
             ['<Order: A1, B, 10.0 (TEST01, Past order 2.)>', '<Order: A1, B, 10.0 (TEST01, Past order 1.)>']
         )
 
-    def test_index_view_combined_general(self):
-        """
-        This test sometimes fails and then passes when re-run
-        .. not sure why yet
-        .. seems to be solved by sleep 50 ms
-        """
-        o1 = self.create_order_default(order_text="Past order 1.", days=-30)
-        o2 = self.create_order_default(order_text="Past order 2.", days=-5)
-        cust = create_custodian("c1", "c1 name")
-        f1 = create_fill_from_order(order=o1, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
-        f2 = create_fill_from_order(order=o2, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
-        sleep(0.05)
-        response = self.client.get(reverse('zipline_app:orders-list'))
-
-        pointer = response.context['combined'][1]
-        self.assertEqual(
-            pointer["minute"],
-            pd.Timestamp(o1.pub_date,tz='utc').floor('1Min')
-        )
-
-        pointer = pointer["duos"][0]
-        self.assertEqual(
-          pointer["asset"],
-          o1.asset
-        )
-
-        self.assertQuerysetEqual(
-            pointer['orders'],
-            [
-              '<Order: A1, B, 10.0 (TEST01, Past order 1.)>',
-            ]
-        )
-        self.assertQuerysetEqual(
-            pointer['fills'],
-            [
-              '<Fill: A1, B 10.0, 2.0 (, test?) - dedicated to A1, B, 10.0 (TEST01, Past order 1.)>',
-            ]
-        )
+    # EDIT 2017-08-18 dropped combined view
+#    def test_index_view_combined_general(self):
+#        """
+#        This test sometimes fails and then passes when re-run
+#        .. not sure why yet
+#        .. seems to be solved by sleep 50 ms
+#        """
+#        o1 = self.create_order_default(order_text="Past order 1.", days=-30)
+#        o2 = self.create_order_default(order_text="Past order 2.", days=-5)
+#        cust = create_custodian("c1", "c1 name")
+#        f1 = create_fill_from_order(order=o1, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
+#        f2 = create_fill_from_order(order=o2, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
+#        sleep(0.05)
+#        response = self.client.get(reverse('zipline_app:orders-list'))
+#
+#        pointer = response.context['combined'][1]
+#        self.assertEqual(
+#            pointer["minute"],
+#            pd.Timestamp(o1.pub_date,tz='utc').floor('1Min')
+#        )
+#
+#        pointer = pointer["duos"][0]
+#        self.assertEqual(
+#          pointer["asset"],
+#          o1.asset
+#        )
+#
+#        self.assertQuerysetEqual(
+#            pointer['orders'],
+#            [
+#              '<Order: A1, B, 10.0 (TEST01, Past order 1.)>',
+#            ]
+#        )
+#        self.assertQuerysetEqual(
+#            pointer['fills'],
+#            [
+#              '<Fill: A1, B 10.0, 2.0 (, test?) - dedicated to A1, B, 10.0 (TEST01, Past order 1.)>',
+#            ]
+#        )
 
     def test_index_view_deleted_order_implies_deleted_minute(self):
         # be careful that with days=0 this test will fail
@@ -299,21 +307,22 @@ class OrderViewTests(OrderBaseTests):
 #        ac1=create_account("test")
 #        get_assert_contains(self,"Successfully created account")
 
-    def test_fills_required_per_asset(self):
-        o1 = self.create_order_default(days=-10, order_qty_unsigned=5)
-        o2 = self.create_order_default(days=-10, order_qty_unsigned=5)
-        sleep(0.05)
-        response = self.client.get(reverse('zipline_app:orders-list'))
-        self.assertEqual(response.context['fills_required_per_asset'], {self.a1a:10})
-        self.assertContains(response, "Assets with required fills")
-        self.assertContains(response, self.a1a.asset_symbol+": 10")
-
-        cust = create_custodian("c1", "c1 name")
-        f1 = create_fill_from_order(order=o1, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
-        response = self.client.get(reverse('zipline_app:orders-list'))
-        self.assertEqual(response.context['fills_required_per_asset'], {self.a1a:5})
-
-        f2 = create_fill_from_order(order=o2, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
-        response = self.client.get(reverse('zipline_app:orders-list'))
-        self.assertEqual(response.context['fills_required_per_asset'], {})
-        self.assertNotContains(response, "Assets with required fills")
+    # Edit 2017-08-18 dropped blotter views in favor of orders-list, which doesn't have "fills required per asset" ATM
+#    def test_fills_required_per_asset(self):
+#        o1 = self.create_order_default(days=-10, order_qty_unsigned=5)
+#        o2 = self.create_order_default(days=-10, order_qty_unsigned=5)
+#        sleep(0.05)
+#        response = self.client.get(reverse('zipline_app:orders-list'))
+#        self.assertEqual(response.context['fills_required_per_asset'], {self.a1a:10})
+#        self.assertContains(response, "Assets with required fills")
+#        self.assertContains(response, self.a1a.asset_symbol+": 10")
+#
+#        cust = create_custodian("c1", "c1 name")
+#        f1 = create_fill_from_order(order=o1, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
+#        response = self.client.get(reverse('zipline_app:orders-list'))
+#        self.assertEqual(response.context['fills_required_per_asset'], {self.a1a:5})
+#
+#        f2 = create_fill_from_order(order=o2, fill_text="test?", fill_price=2, tt_order_key="", user=self.user, custodian=cust)
+#        response = self.client.get(reverse('zipline_app:orders-list'))
+#        self.assertEqual(response.context['fills_required_per_asset'], {})
+#        self.assertNotContains(response, "Assets with required fills")

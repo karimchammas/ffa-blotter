@@ -107,6 +107,7 @@ class FillModelTests(FillBaseTests):
 
 class FillGeneralViewsTests(FillBaseTests):
     def setUp(self):
+      super(FillGeneralViewsTests, self).setUp()
       self.url_new = reverse('zipline_app:fills-new', kwargs={'order': self.o1.id})
 
     def test_list(self):

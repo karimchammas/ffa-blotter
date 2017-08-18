@@ -58,13 +58,14 @@ class BlotterConcealedViewsTests(FillBaseTests):
     self.assertContains(response, "test order")
     self.assertContains(response, "Cancelled")
 
-  def test_sorting_filtering_shows_note_on_top(self):
-    o_l = self.create_order_default(order_text="buy order")
-
-    url = reverse('zipline_app:orders-list')
-    response = self.client.get(url, follow=True)
-    self.assertNotContains(response, "Sorted by")
-
-    url = reverse('zipline_app:orders-list')+'?sort=account__account_name'
-    response = self.client.get(url, follow=True)
-    self.assertContains(response, "Sorted by")
+  # Edit 2017-08-18 sorting moved out of my custom one to the django-tables2 module
+#  def test_sorting_filtering_shows_note_on_top(self):
+#    o_l = self.create_order_default(order_text="buy order")
+#
+#    url = reverse('zipline_app:orders-list')
+#    response = self.client.get(url, follow=True)
+#    self.assertNotContains(response, "Sorted by")
+#
+#    url = reverse('zipline_app:orders-list')+'?sort=account__account_name'
+#    response = self.client.get(url, follow=True)
+#    self.assertContains(response, "Sorted by")
