@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .test_zipline_app import OrderBaseTests
 from ...models.zipline_app.side import BUY
-from ...views.zipline_app._download_builder import DownloadBuilder
+from ...download_builder import DownloadBuilder
 from pandas import DataFrame
 import tempfile
 from os.path import exists

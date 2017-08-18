@@ -90,9 +90,13 @@
   </div>
   <div class='col-xs-2'>
     <div class='btn-group pull-right'>
-      <a class='btn btn-default' href="{% url 'zipline_app:orders-new' %}">
+      <a class='btn btn-xs btn-default' href="{% url 'zipline_app:orders-new' %}">
         New
         <span class="glyphicon glyphicon-plus"></span>
+      </a>
+      <a class="btn btn-xs btn-default" href="{% url 'zipline_app:orders-download' %}">
+        Download
+        <span class="glyphicon glyphicon-download"></span>
       </a>
     </div>
   </div>

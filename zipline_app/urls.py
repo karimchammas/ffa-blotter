@@ -3,7 +3,6 @@ from django.conf.urls import url
 from .views.zipline_app import zipline_app as views
 from .views.zipline_app import order, asset, fill, account, autocomplete, custodian, placement
 
-from .views.zipline_app import blotter
 from django.views.generic import RedirectView
 from django.urls import  reverse_lazy
 
@@ -13,15 +12,8 @@ urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
 
     # EDIT 2017-08-16: redirect all traffic to "/blotter/.../" to orders-list
-    # ex: /<root>/blotter-deprecated/sideBySide
-    url(r'^blotter-deprecated/sideBySide/$', blotter.BlotterSideBySideView.as_view(), name='blotter-deprecated-sideBySide'),
-    # ex: /<root>/blotter-deprecated/concealed/
-    url(r'^blotter-deprecated/concealed/$', blotter.BlotterConcealedView.as_view(), name='blotter-deprecated-concealed'),
-    # ex: /<root>/blotter-deprecated/download/
-    url(r'^blotter-deprecated/download/$', blotter.BlotterDownloadView.as_view(), name='blotter-deprecated-download'),
     url(r'^blotter/sideBySide/$', RedirectView.as_view(url=reverse_lazy('zipline_app:orders-list')), name='blotter-sideBySide'),
     url(r'^blotter/concealed/$', RedirectView.as_view(url=reverse_lazy('zipline_app:orders-list')), name='blotter-concealed'),
-    url(r'^blotter/download/$', RedirectView.as_view(url=reverse_lazy('zipline_app:orders-list')), name='blotter-download'),
 
     # ex: /<root>/accounts/
     url(r'^accounts/$', account.AccountList.as_view(), name='accounts-list'),
@@ -77,6 +69,8 @@ urlpatterns = [
     url(r'^orders/(?P<pk>[0-9]+)/delete/$', order.OrderDelete.as_view(), name='orders-delete'),
     # ex: /<root>/orders/5/update/
     url(r'^orders/(?P<pk>[0-9]+)/update/$', order.OrderUpdateView.as_view(), name='orders-update'),
+    # ex: /<root>/orders/download/
+    url(r'^orders/download/$', order.OrderDownloadView.as_view(), name='orders-download'),
 
     # Autocomplete Input Field In Django Template with Jquery-UI
     # http://blog.appliedinformaticsinc.com/autocomplete-input-field-in-django-template-with-jquery-ui/

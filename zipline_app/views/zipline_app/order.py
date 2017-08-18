@@ -20,6 +20,7 @@ from ...filters import OrderFilter
 from ...models.zipline_app.asset import Asset
 from ...models.zipline_app.account import Account
 from ...models.zipline_app.side import OPEN, FILLED, CANCELLED, PLACED
+from ...download_builder import DownloadBuilder
 
 class OrderCreate(generic.CreateView):
   model = Order
@@ -170,3 +171,11 @@ class OrderUpdateView(RevisionMixin, generic.UpdateView):
       raise PermissionDenied
     return obj
 
+class OrderDownloadView(generic.ListView):
+  def get(self, *args, **kwargs):
+    orders = Order.objects.all()
+    builder = DownloadBuilder()
+    df = builder.orders2df(orders)
+    full_name = builder.df2xlsx(df)
+    response = builder.fn2response(full_name)
+    return response
