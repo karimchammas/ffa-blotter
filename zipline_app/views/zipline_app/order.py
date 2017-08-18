@@ -170,7 +170,14 @@ def get_revision_diffs(order):
         for k2,v2 in v1.items():
           newDiff_S.append("Deleted %s: %s"%(k2,v2))
       else:
-        newDiff_S.append("Changed %s from %s to %s"%(k1, v1[1], v1[0]))
+        if k1=='account_id':
+          k1='account'
+          v1=[Account.objects.get(id=x) for x in v1]
+        elif k1=='asset_id':
+          k1='security'
+          v1=[Asset.objects.get(id=x) for x in v1]
+
+        newDiff_S.append("Changed %s from '%s' to '%s'"%(k1, v1[1], v1[0]))
 
     diffs.append(
       { 'date_created': version.revision.date_created,

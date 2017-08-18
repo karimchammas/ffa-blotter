@@ -306,4 +306,15 @@ class OrderViewsMiscTests(OrderBaseTests):
     version = revisions[0]
     self.assertIn('date_created', version)
     self.assertIn('diff', version)
-    self.assertEqual('Changed order_side from B to S', version['diff'])
+    self.assertEqual("Changed order_side from 'B' to 'S'", version['diff'])
+
+    acc2 = create_account(symbol="TEST02")
+    with reversion.create_revision():
+      o1.account = acc2
+      o1.save()
+
+    revisions = get_revision_diffs(o1)
+    self.assertEqual(2, len(revisions))
+
+    version = revisions[0]
+    self.assertEqual("Changed account from 'TEST01:  (Manual)' to 'TEST02:  (Manual)'", version['diff'])
