@@ -20,6 +20,7 @@ from ...utils import now_minute, chopSeconds
 from django.contrib.auth.models import User
 
 from django.utils.encoding import force_text
+import reversion
 
 # types that are specific to FFA AM
 NONE = 'N'
@@ -151,6 +152,8 @@ class AbstractOrder(models.Model):
       abstract=True
 
 #---------------------------
+# http://stackoverflow.com/a/14282776/4126114
+@reversion.register()
 class Order(AbstractOrder):
     def order_qty_signed(self):
       return self.order_qty_unsigned * (+1 if self.order_side==BUY else -1)
@@ -248,7 +251,6 @@ class Order(AbstractOrder):
 
 #####################
 # Model History in Django
-# http://stackoverflow.com/a/14282776/4126114
 class OrderHistory(AbstractOrder):
   order = models.ForeignKey(Order)
   previous = models.ForeignKey('self', null=True)

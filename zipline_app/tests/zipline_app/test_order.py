@@ -282,3 +282,27 @@ class OrderDetailViewTests(OrderBaseTests):
     def test_del_only_for_owner(self):
       o1 = self.create_order_default()
       url_permission(self, 'zipline_app:orders-delete', o1.id)
+
+from ...views.zipline_app.order import get_revision_diffs
+import reversion
+class OrderViewsMiscTests(OrderBaseTests):
+  def test_get_revision_diffs(self):
+    # https://django-reversion.readthedocs.io/en/stable/api.html#creating-revisions
+    # https://stackoverflow.com/a/26006433/4126114
+    o1 = self.create_order_default()
+    with reversion.create_revision():
+      o1.save()
+
+    revisions = get_revision_diffs(o1)
+    self.assertEqual(0, len(revisions))
+
+    with reversion.create_revision():
+      o1.order_side = 'S'
+      o1.save()
+
+    revisions = get_revision_diffs(o1)
+    self.assertEqual(1, len(revisions))
+
+    version = revisions[0]
+    self.assertNotNull(version['date_created'])
+    self.assertEqual({'order_side': ['B', 'S']}, version['diff'])

@@ -23,18 +23,18 @@
   <li>
     Commission:
     {% if not order.dedicated_fill %}
-    {{order.commission}} %
+      {{order.commission}} %
     {%elif order.commission != order.fill.commission %}
-    <strike>{{ order.commission }} %</strike>
-    &nbsp;
+      <strike>{{ order.commission }} %</strike>
+      &nbsp;
+      {{ order.fill.commission }} %
+      (
+        corrected by fill
+        <a href="{% url 'zipline_app:fills-detail' order.fill.id %}">
+          #{{order.fill.id}}
+        </a>
+      )
     {% endif %}
-    {{ order.fill.commission }} %
-    (
-      corrected by fill
-      <a href="{% url 'zipline_app:fills-detail' order.fill.id %}">
-        #{{order.fill.id}}
-      </a>
-    )
   </li>
 
   <!-- non-user input -->

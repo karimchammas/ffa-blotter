@@ -39,6 +39,14 @@ To import marketflow accounts assets
 - `./manage.sh help importMarketflow`
 - `./importMarketflow.sh ...`
 
+To initialize model versions with [django-reversion](https://django-reversion.readthedocs.io/en/stable/commands.html)
+- `./manage.sh createinitialrevisions zipline_app.Order --comment="Initial revision."`
+  - will output something like "Created 29 revisions" (where 29 is the number of instances)
+  - "Whenever you register a model with django-reversion, run createinitialrevisions." ([ref](https://django-reversion.readthedocs.io/en/stable/api.html))
+
+To trim model versions
+- `./manage.sh deleterevisions zipline_app.Order --keep=3 --days=30`
+
 
 ## Development / Testing
 
@@ -64,6 +72,9 @@ To access a deeper namespace, use
 - django-tables2
 - django-filters
 - pymssql
+- [django-reversion](https://django-reversion.readthedocs.io/)
+- jsondiff
+  - alternative: [json-delta](http://json-delta.readthedocs.io/en/latest/index.html)
 - ...
 
 ### Django cheatsheet

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_select2',
     'django_tables2',
     'django_filters',
+    'reversion',
 ]
 
 MIDDLEWARE = [
