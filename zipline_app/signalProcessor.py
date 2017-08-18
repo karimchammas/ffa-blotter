@@ -38,7 +38,6 @@ class SignalProcessor:
         )
 
     if sender.__name__=="Order":
-      instance.append_history()
       logger.debug("post_save order %s"%created)
       if created:
         subject = "New order #%s (%s x %s)" % (instance.id, instance.order_qty_signed(), instance.asset.asset_name)

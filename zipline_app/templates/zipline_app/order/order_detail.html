@@ -47,22 +47,11 @@
 <ul>
   {% for history in order.history %}
   <li>
-    {{history.ed_date}}: {{history}}
+    {{history.date_created|date:"Y-m-d H:i"}}: {{history.diff}}
   </li>
   {% empty %}
   <li>No history</li>
   {% endfor %}
 </ul>
 
-{##########################################}
-<h2>Revisions</h2>
-<ul>
-  {% for version in revisions %}
-  <li>
-    {{version.date_created|date:"Y-m-d H:i"}}: {{version.diff}}
-  </li>
-  {% empty %}
-  <li>None</li>
-  {% endfor %}
-</ul>
 {% endblock %}

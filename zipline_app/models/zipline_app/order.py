@@ -16,7 +16,8 @@ from .side import BUY, FILL_SIDE_CHOICES, \
 
 from numpy import average
 from django.core.validators import MaxValueValidator, MinValueValidator
-from ...utils import now_minute, chopSeconds
+from ...utils import now_minute, chopSeconds, get_revision_diffs
+
 from django.contrib.auth.models import User
 
 from django.utils.encoding import force_text
@@ -211,53 +212,10 @@ class Order(AbstractOrder):
     was_published_recently.boolean = True
     was_published_recently.short_description = 'Published recently?'
 
-    def append_history(self):
-      history = OrderHistory.objects.filter(order=self)
-      previous = None
-      if history.count()>0:
-        previous = history.latest('id')
-        diff = self.diff(previous)
-        if len(diff)==0:
-          return
-
-      OrderHistory.objects.create(
-        order=self,
-        previous = previous,
-        order_text = self.order_text,
-        pub_date = self.pub_date,
-        asset = self.asset,
-        order_qty_unsigned = self.order_qty_unsigned,
-        order_unit = self.order_unit,
-        account = self.account,
-        order_side = self.order_side,
-        user = self.user,
-        order_type = self.order_type,
-        limit_price = self.limit_price,
-        order_validity = self.order_validity,
-        validity_date = self.validity_date,
-        am_type = self.am_type,
-        commission = self.commission
-      )
-
     # excluding the first entry with previous=None since this is available regardless of edits made
     def history(self):
-      out = self.orderhistory_set.exclude(previous=None).order_by('-ed_date')
-      out = [x for x in out if x.diffPrevious()]
-      return out
+      return get_revision_diffs(self)
 
     def my_get_order_unit_display(self):
       if self.order_unit==SHARE: return "share"
       return self.asset.asset_currency
-
-#####################
-# Model History in Django
-class OrderHistory(AbstractOrder):
-  order = models.ForeignKey(Order)
-  previous = models.ForeignKey('self', null=True)
-  ed_date = models.DateTimeField('date edited',default=timezone.now)
-
-  def __str__(self):
-    return ', '.join(self.diffPrevious())
-
-  def diffPrevious(self):
-    return self.diff(self.previous)

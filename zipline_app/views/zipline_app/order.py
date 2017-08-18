@@ -146,66 +146,9 @@ class OrderDelete(generic.DeleteView):
       raise PermissionDenied
     return obj
 
-from reversion.models import Version
-from jsondiff import diff
-def get_revision_diffs(order):
-  # https://django-reversion.readthedocs.io/en/stable/api.html#loading-revisions
-  revisions = Version.objects.get_for_object(order)
-  if len(revisions)<=1: return []
-  diffs = []
-  nextVer = None
-  # note that revisions is an array sorted in reverse cronological order
-  # i.e. newest edits first
-  for version in revisions:
-    if nextVer is None:
-      nextVer = version
-      continue
-
-    # https://github.com/ZoomerAnalytics/jsondiff#quickstart
-    newDiff_D = diff(nextVer.field_dict, version.field_dict, syntax='symmetric')
-    newDiff_S = []
-    for k1,v1 in newDiff_D.items():
-      if k1=='insert':
-        for k2,v2 in v1.items():
-          newDiff_S.append("Added %s: %s"%(k2,v2))
-      elif k1=='delete':
-        for k2,v2 in v1.items():
-          newDiff_S.append("Deleted %s: %s"%(k2,v2))
-      else:
-        if k1=='account_id':
-          k1='account'
-          v1=[Account.objects.get(id=x) for x in v1]
-        elif k1=='asset_id':
-          k1='security'
-          v1=[Asset.objects.get(id=x) for x in v1]
-
-        newDiff_S.append("Changed %s from '%s' to '%s'"%(k1, v1[1], v1[0]))
-
-    diffs.append(
-      { 'date_created': nextVer.revision.date_created,
-        'diff': ', '.join(newDiff_S)
-      }
-     )
-
-    nextVer = version
-
-  return diffs
-
 class OrderDetailView(generic.DetailView):
     model = Order
     template_name = 'zipline_app/order/order_detail.html'
-#    def get_queryset(self):
-#        """
-#        Excludes any orders that aren't published yet.
-#        """
-#        return Order.objects.filter(pub_date__lte=timezone.now())
-
-    def get_context_data(self, **kwargs):
-      context = super(OrderDetailView, self).get_context_data(**kwargs)
-      context['revisions'] = get_revision_diffs(context['order'])
-      return context
-
-
 
 # https://django-reversion.readthedocs.io/en/stable/views.html#reversion-views-revisionmixin
 from reversion.views import RevisionMixin
