@@ -11,6 +11,7 @@ from ...utils import myTestLogin
 from django.contrib.auth.models import User
 from django.core import mail
 from django.core.exceptions import ValidationError
+import reversion
 
 class OrderModelTests(OrderBaseTests):
     def test_buy(self):
@@ -40,11 +41,13 @@ class OrderModelTests(OrderBaseTests):
       o1 = self.create_order_default(order_qty_unsigned=1, order_text="order 1")
 
     def test_history(self):
-      o1 = self.create_order_default()
-      self.assertEqual(o1.history().count(), 0)
-      o1.order_side=SELL
-      o1.save()
-      self.assertEqual(o1.history().count(), 1)
+      with reversion.create_revision():
+        o1 = self.create_order_default()
+      self.assertEqual(len(o1.history()), 0)
+      with reversion.create_revision():
+        o1.order_side=SELL
+        o1.save()
+      self.assertEqual(len(o1.history()), 1)
 
     def test_clean(self):
       order = self.create_order_default(order_text="random order")
@@ -184,12 +187,13 @@ class OrderGeneralViewsTests(OrderBaseTests):
         #self.assertFormError(response, 'form', 'amount', 'Enter a valid date/time.')
         #self.assertFormError(response, 'form', 'account', 'Select a valid choice. That choice is not one of the available choices.')
 
+    # 2017-08-18: no longer requiring max number
     def test_quantity_large_does_not_trigger_error_integer_too_large(self):
         time = '2015-01-01 00:00:00' #timezone.now() + datetime.timedelta(days=-0.5)
         url = reverse('zipline_app:orders-new')
         largeqty=100000000000000000000000000000
         response = self.client.post(url, {'pub_date':time, 'asset':self.a1a.id, 'order_side': BUY, 'order_qty_unsigned':largeqty, 'account':self.acc1.id})
-        self.assertContains(response,"Ensure this value is less than or equal to")
+        self.assertNotContains(response,"Ensure this value is less than or equal to")
 
     def test_new_order_timezone(self):
         url = reverse('zipline_app:orders-new')
@@ -218,6 +222,7 @@ class OrderGeneralViewsTests(OrderBaseTests):
         self.assertEqual(b''.join(list(response)).count(b"john"),2)
 
 class OrderDetailViewTests(OrderBaseTests):
+
     def test_detail_view_with_a_future_order(self):
         """
         The detail view of a order with a pub_date in the future should
@@ -226,7 +231,8 @@ class OrderDetailViewTests(OrderBaseTests):
         future_order = self.create_order_default(order_text='Future order.', days=5)
         url = reverse('zipline_app:orders-detail', args=(future_order.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
+        # 2017-08-18: no longer error on future orders since not checking anymore
+        self.assertEqual(response.status_code, 200) # 404
 
     def test_detail_view_with_a_past_order(self):
         """
@@ -246,12 +252,15 @@ class OrderDetailViewTests(OrderBaseTests):
         self.assertEqual(response.status_code, 200)
 
     def test_detail_view_history(self):
-      order = self.create_order_default(order_text='original order.', days=-5)
+      with reversion.create_revision():
+        order = self.create_order_default(order_text='original order.', days=-5)
+
       url = reverse('zipline_app:orders-detail', args=(order.id,))
       response = self.client.get(url, follow=True)
       self.assertContains(response, "No history")
-      order.order_side=SELL
-      order.save()
+      with reversion.create_revision():
+        order.order_side=SELL
+        order.save()
       response = self.client.get(url, follow=True)
       self.assertContains(response, "Changed order_side from")
 

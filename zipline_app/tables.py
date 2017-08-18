@@ -9,12 +9,6 @@ from django_tables2.utils import A  # alias for Accessor
 class OrderTable(tables.Table):
     fill = tables.Column(verbose_name='Fill')
     user = tables.Column(verbose_name='Placed by')
-    # https://stackoverflow.com/q/6157101/4126114
-    id = tables.LinkColumn(
-      'zipline_app:orders-detail',
-      args=(A('id'),),
-      text=lambda record: '# %s'%(record.id)
-    )
     make_fill = tables.LinkColumn(
       'zipline_app:fills-new',
       verbose_name='',
@@ -87,3 +81,15 @@ class OrderTable(tables.Table):
     def render_order_amount(self, value, record):
       if record.order_unit!=SHARE: return record.order_qty_unsigned
       return ""
+
+    def render_id(self,value,record):
+      out = format_html(
+        "<a href='%s' title='%s'># %s%s</a>"%(
+          reverse_lazy('zipline_app:orders-detail', args=(record.id,)),
+          record.order_text,
+          record.id, # value
+          ' *' if record.order_text else ''
+        )
+      )
+      return out
+

@@ -141,16 +141,17 @@ class FillGeneralViewsTests(FillBaseTests):
           'dedicated_to_order': self.o1.id
         }
         response = self.client.post( self.url_new, in1)
+        # 2017-08-18: dropped filtering on large qty
         # 2017-08-04: fill qty is not independent of order qty, and can represent shares if order represents currency, and vice versa
         # 2017-07-04: this now is supposed to pass instead of throw error because the form qty is taken from the order
         #   make sure we get a 302 return code
         # print(list(response))
         # self.assertEqual(response.status_code, 302)
-        self.assertContains(response,"Ensure this value is less than or equal to")
+        self.assertNotContains(response,"Ensure this value is less than or equal to")
         in1['fill_qty_unsigned'] = 1
         in1['fill_price'] = largeqty
-        response = self.client.post(url, in1, follow=True)
-        self.assertContains(response,"Ensure this value is less than or equal to")
+        response = self.client.post(self.url_new, in1, follow=True)
+        self.assertNotContains(response,"Ensure this value is less than or equal to")
 
     def test_update_get(self):
         f1 = self.create_fill_from_order_default()
@@ -238,7 +239,7 @@ class FillGeneralViewsTests(FillBaseTests):
         self.assertContains(response, expected)
 
         # check that username is showing up
-        self.assertEqual(b''.join(list(response)).count(b"john"),2)
+        self.assertEqual(b''.join(list(response)).count(b"john"),3)
 
     def test_new_fill_user_not_dedicated(self):
       # intentionally do not pass order here
