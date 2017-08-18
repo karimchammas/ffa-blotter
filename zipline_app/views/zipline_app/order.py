@@ -149,20 +149,18 @@ class OrderDelete(generic.DeleteView):
 from reversion.models import Version
 from jsondiff import diff
 def get_revision_diffs(order):
+  # https://django-reversion.readthedocs.io/en/stable/api.html#loading-revisions
   revisions = Version.objects.get_for_object(order)
-  print('rev',revisions)
   if len(revisions)<=1: return []
   diffs = []
   initial = None
-  for i, version in enumerate(revisions):
-    if i==0:
+  for version in revisions:
+    if initial is None:
       initial = version
       continue
 
-    print('init ser d', initial.serialized_data)
-    print('ver ser d', version.serialized_data)
-    newDiff_D = diff(initial.serialized_data['fields'], version.serialized_data['fields'], syntax='symmetric')
-    print('diff d', newDiff_D)
+    # https://github.com/ZoomerAnalytics/jsondiff#quickstart
+    newDiff_D = diff(initial.field_dict, version.field_dict, syntax='symmetric')
     newDiff_S = []
     for k1,v1 in newDiff_D.items():
       if k1=='insert':
@@ -172,7 +170,7 @@ def get_revision_diffs(order):
         for k2,v2 in v1.items():
           newDiff_S.append("Deleted %s: %s"%(k2,v2))
       else:
-        newDiff_S.append("Changed %s from %s to %s"%(k1, v1[0], v1[1]))
+        newDiff_S.append("Changed %s from %s to %s"%(k1, v1[1], v1[0]))
 
     diffs.append(
       { 'date_created': version.revision.date_created,
@@ -182,7 +180,7 @@ def get_revision_diffs(order):
 
     initial = version
 
-  return revisions
+  return diffs
 
 class OrderDetailView(generic.DetailView):
     model = Order

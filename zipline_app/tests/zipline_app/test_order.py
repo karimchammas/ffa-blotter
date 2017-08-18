@@ -304,5 +304,6 @@ class OrderViewsMiscTests(OrderBaseTests):
     self.assertEqual(1, len(revisions))
 
     version = revisions[0]
-    self.assertNotNull(version['date_created'])
-    self.assertEqual({'order_side': ['B', 'S']}, version['diff'])
+    self.assertIn('date_created', version)
+    self.assertIn('diff', version)
+    self.assertEqual('Changed order_side from B to S', version['diff'])
