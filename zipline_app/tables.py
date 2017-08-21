@@ -6,6 +6,9 @@ from django.utils import timezone
 from django.urls import  reverse_lazy
 from django_tables2.utils import A  # alias for Accessor
 
+# http://www.andrewtremblay.com/articles/thousands-separator-in-django-tables2/
+from django.contrib.humanize.templatetags.humanize import intcomma
+
 class OrderTable(tables.Table):
     fill = tables.Column(verbose_name='Fill')
     user = tables.Column(verbose_name='Placed by')
@@ -29,9 +32,9 @@ class OrderTable(tables.Table):
       attrs={"td": {"align": "right"}}
     )
     asset_currency = tables.Column(accessor='asset.asset_currency', verbose_name='Ccy')
-    asset = tables.TemplateColumn(template_code='<a href="#" title="{{record.asset.asset_name}} ({{record.asset.asset_origin}})" data-filter-field="asset" data-filter-value="{{record.asset.asset_symbol}}">{{record.asset.asset_symbol}}</a>')
+    asset = tables.TemplateColumn(template_code='<a href="#" title="{{record.asset.asset_name}} ({{record.asset.asset_origin}})" data-filter-field="asset" data-filter-value="{{record.asset.id}}">{{record.asset.asset_symbol}}</a>')
     account = tables.TemplateColumn(
-      template_code='<a href="#" title="{{record.account.account_name}} ({{record.account.account_origin}})" data-filter-field="account" data-filter-value="{{record.account.account_symbol}}">{{record.account.account_symbol}}</a>'
+      template_code='<a href="#" title="{{record.account.account_name}} ({{record.account.account_origin}})" data-filter-field="account" data-filter-value="{{record.account.id}}">{{record.account.account_symbol}}</a>'
     )
 
     class Meta:
@@ -75,11 +78,11 @@ class OrderTable(tables.Table):
       return out
 
     def render_order_qty(self, value, record):
-      if record.order_unit==SHARE: return record.order_qty_unsigned
+      if record.order_unit==SHARE: return intcomma(record.order_qty_unsigned)
       return ""
 
     def render_order_amount(self, value, record):
-      if record.order_unit!=SHARE: return record.order_qty_unsigned
+      if record.order_unit!=SHARE: return intcomma(record.order_qty_unsigned)
       return ""
 
     def render_id(self,value,record):
