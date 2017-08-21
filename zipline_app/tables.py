@@ -36,13 +36,14 @@ class OrderTable(tables.Table):
     account = tables.TemplateColumn(
       template_code='<a href="#" title="{{record.account.account_name}} ({{record.account.account_origin}})" data-filter-field="account" data-filter-value="{{record.account.id}}">{{record.account.account_symbol}}</a>'
     )
+    asset__asset_isin = tables.Column(accessor='asset.asset_isin')
 
     class Meta:
         # copy from https://github.com/bradleyayers/django-tables2/blob/2bf8fd326b697d4e0e4a70ed39aeb3df6ed81865/example/app/tables.py
         # add class="paleblue" to <table> tag
         attrs = {'class': 'table table-bordered table-striped table-hover table-condensed'}
         model = Order
-        sequence = OrderForm.field_order + ['fill', 'make_placement', 'make_fill']
+        sequence = OrderForm.field_order + ['fill', 'make_placement', 'make_fill', 'asset__asset_isin']
         exclude=[
           'order_unit',
           'order_type',
