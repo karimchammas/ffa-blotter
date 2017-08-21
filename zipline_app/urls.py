@@ -36,6 +36,8 @@ urlpatterns = [
     url(r'^custodians/(?P<pk>[0-9]+)/update/$', custodian.CustodianUpdateView.as_view(), name='custodians-update'),
     # ex: /<root>/custodians/1/delete/
     url(r'^custodians/(?P<pk>[0-9]+)/delete/$', custodian.CustodianDelete.as_view(), name='custodians-delete'),
+    # ex: /<root>/custodians/search/
+    url(r'^custodians/search/$', custodian.custodian_search, name='custodians-search'),
 
     # ex: /<root>/assets/
     url(r'^assets/$', asset.AssetList.as_view(), name='assets-list'),

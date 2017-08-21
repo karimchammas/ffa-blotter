@@ -1,0 +1,25 @@
+{% extends "zipline_app/base.html" %}
+{% load bootstrap3 %}
+{% load static %}
+
+{% block content %}
+
+  <form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Search</button> 
+  </form>
+
+      {% for custodian in filter.qs %}
+      <div class="row">
+        <div class="col-xs-1 text-right">
+          <a href="{% url 'zipline_app:custodians-detail' custodian.id %}">#{{ custodian.id }}</a>
+        </div>
+        <div class="col-xs-3">{{ custodian.custodian_symbol }}</div>
+        <div class="col-xs-3">{{ custodian.custodian_name }}</div>
+        <div class="col-xs-3">{{ custodian.custodian_origin }}</div>
+      </div>
+  {% empty %}
+      <div class="alert alert-info">No custodians yet.</div>
+  {% endfor %}
+
+{% endblock %}

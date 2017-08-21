@@ -30,3 +30,12 @@ class OrderFilter(django_filters.FilterSet):
   def filter_order_status(self, queryset, name, value):
     filtered_ids = [x.id for x in queryset if x.order_status == value]
     return queryset.filter(id__in = filtered_ids)
+
+
+from .models.zipline_app.custodian import Custodian
+class CustodianFilter(django_filters.FilterSet):
+  custodian_name = django_filters.CharFilter(lookup_expr='icontains')
+
+  class Meta:
+    model = Custodian
+    fields = ['custodian_name', ]

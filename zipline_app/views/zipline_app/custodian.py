@@ -23,3 +23,11 @@ class CustodianUpdateView(generic.UpdateView):
   model = Custodian
   fields = ['custodian_symbol','custodian_name']
   success_url = reverse_lazy('zipline_app:custodians-list')
+
+# copied from https://github.com/minerva22/ffa-jobs-settings/blob/master/emailffa/views.py
+from ...filters import CustodianFilter
+from django.shortcuts import render
+def custodian_search(request):
+  custodian_list = Custodian.objects.all()
+  custodian_filter = CustodianFilter(request.GET, queryset=custodian_list)
+  return render(request, 'zipline_app/custodian_search.html', {'filter': custodian_filter})

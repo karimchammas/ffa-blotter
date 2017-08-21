@@ -15,6 +15,10 @@
   </div>
 </div>
 
+<a href="{% url 'zipline_app:custodians-search' %}">
+Search
+</a>
+
 {% autopaginate object_list %}
     {% for custodian in object_list %}
     <div class="row">
