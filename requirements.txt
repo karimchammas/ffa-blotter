@@ -40,5 +40,5 @@ git+https://github.com/shadiakiki1986/python-ntlm3.git@feature_smtp
 django-tables2
 django-filter
 
-django-reversions
+django-reversion
 jsondiff
