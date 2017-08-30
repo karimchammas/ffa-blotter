@@ -15,6 +15,7 @@ Is {{fill.get_is_internal_display}}
 Trade date: {{fill.trade_date|date:"Y-m-d"}}
 Commission: {{ fill.commission }} %
 
+User: {{fill.user.username}}
 
 Orders summary
 {% for stat in stats_orders %}

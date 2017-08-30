@@ -17,6 +17,10 @@
   <li>Settlement date: {{ fill.settlement_date|date:"Y-m-d" }}</li>
   <li>Custodian: {%if fill.custodian%}{{fill.custodian}}{%else%}None{%endif%}</li>
   <li>Comment: {% if fill.fill_text %}{{ fill.fill_text }}{% else %}None{% endif %}</li>
+
+  <!-- non-user input -->
+  <li>User: {{fill.user.username}}</li>
+
 </ul>
 
 {% if domain %}

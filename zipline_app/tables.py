@@ -73,7 +73,7 @@ class OrderTable(tables.Table):
         "<a href='%s'># %s</a> (%s)"%(
           reverse_lazy('zipline_app:fills-detail', args=(value.id,)),
           value.id,
-          record.user.username
+          value.user.username
         )
       )
       return out
