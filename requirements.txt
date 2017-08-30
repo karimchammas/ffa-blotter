@@ -31,8 +31,13 @@ xlrd==1.0.0
 # eventhough the fork repository is around 2MB and the upstream is around 14MB.
 # Maybe that's just because it's on EC2. Maybe the speedup would be visible on my local laptop
 # Will test later. For now, keeping my fork (shrug)
+#
+# EDIT 2017-08-30 trying the above on my local laptop yielded the same runtime using both the upstream and my fork
+#                 so will just use the upstream
+#
+####### git+https://github.com/shadiakiki1986/pymssql.git
 
-git+https://github.com/shadiakiki1986/pymssql.git
+git+https://github.com/pymssql/pymssql.git
 
 # until https://github.com/trustrachel/python-ntlm3/pull/24 is closed
 git+https://github.com/shadiakiki1986/python-ntlm3.git@feature_smtp
