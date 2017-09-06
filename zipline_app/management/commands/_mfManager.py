@@ -65,11 +65,13 @@ class MfManager:
 
   #----------------------------
   # Queries by Minerva
+  # EDIT shadi 2017-09-04: 3: bank, 4: financial institution
+  #                        Added bank for ALLFUNDS BANK
   def custodiansCount(self):
     cursor = self._execute("""
       SELECT count(*) as n
       from CLIENT_ENTITY
-      where CLIENT_ENTITY.ENT_TYPE=4
+      where CLIENT_ENTITY.ENT_TYPE in (3,4)
     """)
     res = cursor.fetchall()
     return res[0]['n']
@@ -78,6 +80,6 @@ class MfManager:
     return self._execute("""
       select CLIENT_ENTITY.ENT_COD, ENT_FULL_NAME
       from CLIENT_ENTITY
-      where CLIENT_ENTITY.ENT_TYPE=4
+      where CLIENT_ENTITY.ENT_TYPE in (3,4)
     """)
 
