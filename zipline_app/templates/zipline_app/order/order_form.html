@@ -29,12 +29,35 @@
 </div>
 </div>
 
+<br><br>
+
+  <div>Documents:
+    {% for d in order.documents %}
+    <a href="{{d.url}}download/">{{d.label}}</a>
+    <a href="{% url 'zipline_app:orders-document-delete' order_id=order.id doc_id=d.id %}" class='btn btn-xs btn-danger' name="del-doc">
+      <span class='glyphicon glyphicon-remove'></span>
+    </a>
+    &nbsp;&nbsp;
+    {% empty %}
+    None
+    {% endfor %}
+
+    {% include 'zipline_app/order/order_document_upload.html' %}
+
+  </div>
+
 <script type="text/javascript">
 $(function() {
   // disable the submit button when the form is submitted to avoid having the user clicking multiple times during page reload (and hence submitting duplicates)
-  $("form").submit(function(e) {
+  $("form[name='main-form']").submit(function(e) {
     $("form[name='main-form'] button[type='submit']").prop("disabled","disabled");
+    $("form[name='docs-form'] button[type='submit']").prop("disabled","disabled");
     $("form[name='main-form'] button[type='submit']").html("Saving order...");
+  });
+  $("form[name='docs-form']").submit(function(e) {
+    $("form[name='main-form'] button[type='submit']").prop("disabled","disabled");
+    $("form[name='docs-form'] button[type='submit']").prop("disabled","disabled");
+    $("form[name='docs-form'] button[type='submit']").html("Uploading...");
   });
 
   // order limit price disabled when order type = market

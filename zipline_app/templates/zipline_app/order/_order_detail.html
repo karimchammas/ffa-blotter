@@ -60,6 +60,14 @@
       No
     {% endif %}
   </li>
+  <li>Documents:
+    {% for d in order.documents %}
+    <a href="{{d.url}}download/">{{d.label}}</a>
+    &nbsp;&nbsp;
+    {% empty %}
+    None
+    {% endfor %}
+  </li>
 </ul>
 
 {% if domain %}

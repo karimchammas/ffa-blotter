@@ -221,6 +221,7 @@ class OrderGeneralViewsTests(OrderBaseTests):
         # check that "john" shows up twice, once for the "logged in as john", and once for the order author
         self.assertEqual(b''.join(list(response)).count(b"john"),2)
 
+from unittest.mock import patch
 class OrderDetailViewTests(OrderBaseTests):
 
     def test_detail_view_with_a_future_order(self):
@@ -291,6 +292,50 @@ class OrderDetailViewTests(OrderBaseTests):
     def test_del_only_for_owner(self):
       o1 = self.create_order_default()
       url_permission(self, 'zipline_app:orders-delete', o1.id)
+
+    def test_order_details_with_docs(self):
+      patcher = patch('zipline_app.models.zipline_app.order.MayanManager')
+      mock = patcher.start()
+      instance = mock.return_value
+      instance.docs_by_tag.return_value = [
+        {'label':'test doc 1','url':'http://test1','id':1},
+        {'label':'test doc 2','url':'http://test2','id':2},
+      ]
+
+      o1 = self.create_order_default()
+      self.assertEqual(2, len(o1.documents()))
+
+      url = reverse('zipline_app:orders-detail', args=(o1.id,))
+      response = self.client.get(url)
+      #print(list(response))
+
+      self.assertContains(response, "test doc 1")
+      self.assertContains(response, "test doc 2")
+
+class DeleteDocViewTests(OrderBaseTests):
+  def test_del_order_doc(self):
+    patcher1 = patch('zipline_app.views.zipline_app.order.MayanManager')
+    mock1 = patcher1.start()
+    patcher2 = patch('zipline_app.models.zipline_app.order.MayanManager')
+    mock2 = patcher2.start()
+
+    o1 = self.create_order_default()
+
+    url = reverse('zipline_app:orders-document-delete', args=(o1.id,1))
+    response = self.client.get(url, follow=False)
+    self.assertEqual(response.status_code, 302) # assert is redirect
+
+class OrderDocumentUploadViewTests(OrderBaseTests):
+  def test_post(self):
+    patcher1 = patch('zipline_app.views.zipline_app.order.MayanManager')
+    mock1 = patcher1.start()
+    patcher2 = patch('zipline_app.models.zipline_app.order.MayanManager')
+    mock2 = patcher2.start()
+
+    o1 = self.create_order_default()
+    url = reverse('zipline_app:orders-document-upload', args=(o1.id,))
+    response = self.client.post(url, follow=False)
+    self.assertEqual(response.status_code, 200) # assert is not a redirect, due to some unknown error ATM
 
 #--------------------------------------
 from ...models.zipline_app.fill import Fill

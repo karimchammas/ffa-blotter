@@ -73,6 +73,8 @@ urlpatterns = [
     url(r'^orders/(?P<pk>[0-9]+)/update/$', order.OrderUpdateView.as_view(), name='orders-update'),
     # ex: /<root>/orders/download/
     url(r'^orders/download/$', order.OrderDownloadView.as_view(), name='orders-download'),
+    url(r'^orders/(?P<pk>[0-9]+)/upload-document/$', order.OrderDocumentUploadView.as_view(), name='orders-document-upload'),
+    url(r'^orders/(?P<order_id>[0-9]+)/documents/(?P<doc_id>[0-9]+)/delete/$', order.delete_doc_view, name='orders-document-delete'),
 
     # Autocomplete Input Field In Django Template with Jquery-UI
     # http://blog.appliedinformaticsinc.com/autocomplete-input-field-in-django-template-with-jquery-ui/

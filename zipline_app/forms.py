@@ -84,3 +84,10 @@ class PlacementForm(forms.ModelForm):
   class Meta:
     model=Placement
     exclude = ["date", "user"]
+
+
+class OrderDocumentForm(forms.Form):
+  docfile = forms.FileField(
+    widget=forms.ClearableFileInput(attrs={'multiple': True}),
+    label='Select file(s)'
+  )

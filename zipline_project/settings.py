@@ -178,3 +178,8 @@ else:
 
 #
 BASE_URL = os.getenv("BASE_URL", "")
+
+# Mayan EDMS credentials
+MAYAN_HOST           = os.getenv("MAYAN_HOST",           None)
+MAYAN_ADMIN_USER     = os.getenv("MAYAN_ADMIN_USER",     None)
+MAYAN_ADMIN_PASSWORD = os.getenv("MAYAN_ADMIN_PASSWORD", None)

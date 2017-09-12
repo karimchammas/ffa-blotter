@@ -39,6 +39,9 @@ ORDER_UNIT_CHOICES = (
   (SHARE, 'Share'),
   (CURRENCY, 'Currency')
 )
+
+from ..._mayanManager import MayanManager
+
 #-----------
 class AbstractOrder(models.Model):
     order_text = models.CharField(max_length=200, blank=True)
@@ -154,6 +157,7 @@ class AbstractOrder(models.Model):
 
 #---------------------------
 # http://stackoverflow.com/a/14282776/4126114
+from django.conf import settings
 @reversion.register()
 class Order(AbstractOrder):
     def order_qty_signed(self):
@@ -219,3 +223,12 @@ class Order(AbstractOrder):
     def my_get_order_unit_display(self):
       if self.order_unit==SHARE: return "share"
       return self.asset.asset_currency
+
+    def documents(self):
+      mayanMan = MayanManager(
+        host=settings.MAYAN_HOST,
+        username=settings.MAYAN_ADMIN_USER,
+        password=settings.MAYAN_ADMIN_PASSWORD
+      )
+      if mayanMan.api is None: return []
+      return mayanMan.docs_by_tag(mayanMan.order_id_to_tag(self.id))

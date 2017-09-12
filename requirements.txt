@@ -47,3 +47,5 @@ django-filter
 
 django-reversion
 jsondiff
+
+mayan-api_client

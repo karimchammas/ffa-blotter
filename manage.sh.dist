@@ -25,6 +25,10 @@ export BASE_URL=http://hosted.django.com:1234
 # (default in `settings.py` is INFO)
 # export POLLS_LOG_LEVEL=DEBUG
 
+export MAYAN_HOST=http://123.123.123:4444
+export MAYAN_ADMIN_USER=admin
+export MAYAN_ADMIN_PASSWORD=pass
+
 ###############################
 # DO NOT EDIT UNDER THIS LINE #
 ###############################

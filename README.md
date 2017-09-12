@@ -114,3 +114,29 @@ Shell example
 >>> Asset.objects.filter(asset_symbol='0.01 HKD').count()
 1
 ```
+
+## Enable file upload
+
+Here are the steps to run a [mayan edms](https://hub.docker.com/r/mayanedms/mayanedms/) docker service
+
+- install docker using the [instructions](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#uninstall-docker-ce)
+- enable non-sudo usage of docker with [this](http://askubuntu.com/questions/477551/ddg#477554)
+  - `sudo groupadd docker; sudo gpasswd -a $USER docker; docker run hello-world`
+- run the mayan docker image
+
+```
+docker pull mayanedms/mayanedms:2.7.3
+docker run -d --name mayan-edms --restart=always -p 8000:80 -v mayan_data:/var/lib/mayan mayanedms/mayanedms:2.7.3
+docker ps # will show health status = starting
+# wait a minute
+docker ps # should show health status = healthy
+# for debugging, run docker logs <container id> (get container id from "docker ps")
+```
+- if on aws ec2, make sure that the security group allows port "8000" as selected above
+- test that "http://ip:8000" is up
+- set the env variables `MAYAN_HOST`, `MAYAN_ADMIN_USER`, and `MAYAN_ADMIN_PASSWORD`
+
+For further administration
+- go to "http://ip:8000" and log in with the admin the first time
+- edit the admin details from top right: "user / edit details" and add admin email
+- create tag in mayan-edms: ffa-blotter
