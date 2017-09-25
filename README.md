@@ -115,6 +115,12 @@ Shell example
 1
 ```
 
+To "unplace" order 133 for example
+```
+>>> from zipline_app.models.zipline_app.placement import Placement
+>>> Placement.objects.filter(order_id=133).delete()
+```
+
 ## Enable file upload
 
 Here are the steps to run a [mayan edms](https://hub.docker.com/r/mayanedms/mayanedms/) docker service
@@ -140,3 +146,9 @@ For further administration
 - go to "http://ip:8000" and log in with the admin the first time
 - edit the admin details from top right: "user / edit details" and add admin email
 - create tag in mayan-edms: ffa-blotter
+
+## Docker
+A Dockerfile is delivered in this repository.
+To build it manually: `> docker build -t ffapb/ffa-blotter .`
+Otherwise, use the [docker-blotter](https://github.com/ffapb/docker-blotter) repository
+which has this repository as a git submodule
