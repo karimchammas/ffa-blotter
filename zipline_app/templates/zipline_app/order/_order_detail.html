@@ -62,7 +62,7 @@
   </li>
   <li>Documents:
     {% for d in order.documents %}
-    <a href="{{d.url}}download/">{{d.label}}</a>
+    <a href="{% url 'zipline_app:document-download' d.id %}">{{d.label}}</a>
     &nbsp;&nbsp;
     {% empty %}
     None

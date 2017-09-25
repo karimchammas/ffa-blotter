@@ -1,0 +1,23 @@
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '8rk=0@$^cy6^)2j=@p^^o@4%4wa2%nt05efp0zp9p0)(jx8ais'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+# Email displayed as "From: " in sent emails
+DEFAULT_FROM_EMAIL="from@email.com"
+
+# variables for sending emails through FFA's MS Outlook server
+# (SMTP server with NTLM3 authentication)
+EMAIL_HOST="mail.ip.com"
+EMAIL_PORT=1234
+EMAIL_HOST_USER="domain\\user"
+EMAIL_HOST_PASSWORD="pass"
+
+# URL prefix used in email links
+BASE_URL="http://hosted.django.com:1234"
+
+# Mayan EDMS credentials
+MAYAN_HOST           = "http://hosted.mayan.com:1234"
+MAYAN_ADMIN_USER     = "admin"
+MAYAN_ADMIN_PASSWORD = "pass"

@@ -21,8 +21,8 @@ RUN pew new \
   -i pandas==0.18.1 \
   -i progressbar33==2.4 \
   -i xlrd==1.0.0 \
-  -i git+https://github.com/pymssql/pymssql.git
-  -i git+https://github.com/shadiakiki1986/python-ntlm3.git@feature_smtp
+  -i git+https://github.com/pymssql/pymssql.git \
+  -i git+https://github.com/shadiakiki1986/python-ntlm3.git@feature_smtp \
   -i django-tables2 \
   -i django-filter \
   -i django-reversion \

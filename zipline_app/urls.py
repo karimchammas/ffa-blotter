@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from .views.zipline_app import zipline_app as views
-from .views.zipline_app import order, asset, fill, account, autocomplete, custodian, placement
+from .views.zipline_app import order, asset, fill, account, autocomplete, custodian, placement, document
 
 from django.views.generic import RedirectView
 from django.urls import  reverse_lazy
@@ -73,8 +73,10 @@ urlpatterns = [
     url(r'^orders/(?P<pk>[0-9]+)/update/$', order.OrderUpdateView.as_view(), name='orders-update'),
     # ex: /<root>/orders/download/
     url(r'^orders/download/$', order.OrderDownloadView.as_view(), name='orders-download'),
-    url(r'^orders/(?P<pk>[0-9]+)/upload-document/$', order.OrderDocumentUploadView.as_view(), name='orders-document-upload'),
-    url(r'^orders/(?P<order_id>[0-9]+)/documents/(?P<doc_id>[0-9]+)/delete/$', order.delete_doc_view, name='orders-document-delete'),
+
+    url(r'^orders/(?P<pk>[0-9]+)/upload-document/$', document.OrderDocumentUploadView.as_view(), name='orders-document-upload'),
+    url(r'^orders/(?P<order_id>[0-9]+)/documents/(?P<doc_id>[0-9]+)/delete/$', document.delete_doc_view, name='orders-document-delete'),
+    url(r'^documents/(?P<pk>[0-9]+)/$', document.DocumentDownloadView.as_view(), name='document-download'),
 
     # Autocomplete Input Field In Django Template with Jquery-UI
     # http://blog.appliedinformaticsinc.com/autocomplete-input-field-in-django-template-with-jquery-ui/

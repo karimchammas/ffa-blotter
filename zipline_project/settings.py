@@ -19,14 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '8rk=0@$^cy6^)2j=@p^^o@4%4wa2%nt05efp0zp9p0)(jx8ais'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -162,24 +155,13 @@ LOGIN_REDIRECT_URL = '/'
 
 # sending email with django
 # https://docs.djangoproject.com/en/1.10/topics/email/
-DEFAULT_FROM_EMAIL  = os.getenv("DEFAULT_FROM_EMAIL", None)
 EMAIL_SUBJECT_PREFIX= "[Blotter] "
 if False:
   EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
   # EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
   EMAIL_BACKEND       = 'django_smtp_ntlm_backend.NTLMEmail'
-  EMAIL_HOST          = os.getenv("EMAIL_HOST", None)
-  EMAIL_PORT          = os.getenv("EMAIL_PORT", None)
-  EMAIL_HOST_USER     = os.getenv("EMAIL_HOST_USER", None)
-  EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", None)
   EMAIL_USE_TLS       = False
   EMAIL_USE_SSL       = False
 
-#
-BASE_URL = os.getenv("BASE_URL", "")
-
-# Mayan EDMS credentials
-MAYAN_HOST           = os.getenv("MAYAN_HOST",           None)
-MAYAN_ADMIN_USER     = os.getenv("MAYAN_ADMIN_USER",     None)
-MAYAN_ADMIN_PASSWORD = os.getenv("MAYAN_ADMIN_PASSWORD", None)
+from .settings_production import *

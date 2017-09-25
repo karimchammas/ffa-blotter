@@ -48,4 +48,5 @@ django-filter
 django-reversion
 jsondiff
 
+# https://gitlab.com/mayan-edms/python_api_client
 mayan-api_client

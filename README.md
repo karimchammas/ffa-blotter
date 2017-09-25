@@ -26,7 +26,9 @@ pew new --python=python3 -d -r requirements.txt FFA_BLOTTER
 
 To run the development server
 
+- Copy `zipline_project/settings_production.py.dist` to `zipline_project/settings_production.py` and modify variables
 - Copy `manage.sh.dist` to `manage.sh` and modify variables inside
+  - this file is mostly migrated into `zipline_project/settings_production.py`
 - The variables are explained in-line in `manage.sh.dist`
 - They're mostly the email server credentials
 - `./manage.sh runserver 0.0.0.0:8000`

@@ -1,11 +1,14 @@
 from mayan_api_client import API
 from django.contrib.auth.models import User
+import os
+# fileresponse from django.views.static import serve
+from django.http import FileResponse
 
 # https://gitlab.com/mayan-edms/python_api_client
 class MayanManager:
   api = None
   def __init__(self, host, username, password):
-    if host is None or user is None or password is None:
+    if host is None or username is None or password is None:
       return
 
     self.api = API(
@@ -22,10 +25,10 @@ class MayanManager:
     sub = [x for x in tags['results'] if x['label']==tag_label]
 
     if len(sub)>1:
-      raise Exception("More than one tag with label=%s"%(tag))
+      raise Exception("More than one tag with label=%s"%(tag_label))
 
     if len(sub)==0:
-      response = self.api.tags.tags.post({'label': tag, 'color': '#777777'})
+      response = self.api.tags.tags.post({'label': tag_label, 'color': '#777777'})
       return response
 
     sub = sub[0]
@@ -103,3 +106,23 @@ class MayanManager:
       'last_name':''
     })
 
+  # copied from zipline_app.download_builder#DownloadBuilder.fn2response
+  # and from https://gitlab.com/mayan-edms/python_api_client
+  # section "Downloading a document:"
+  def download_doc(self, document_id):
+    root = os.path.join('/', 'tmp', 'blotter')
+    if not os.path.exists(root):
+      os.mkdir(root)
+
+    document = self.api.documents.documents(document_id).get()
+    target = os.path.join(root, document['label'])
+    with open(target, 'wb') as file_object:
+      file_object.write(self.api.documents.documents(document_id).download.get())
+
+    # print(document)
+    response = FileResponse(
+      open(target, 'rb'),
+      content_type=document['latest_version']['mimetype']
+    )
+    response['Content-Disposition'] = 'attachment; filename="%s"'%document['label']
+    return response

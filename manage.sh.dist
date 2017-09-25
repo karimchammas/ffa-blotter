@@ -6,28 +6,13 @@
 # EDIT THESE VARIABLES #
 ########################
 
-# Email displayed as "From: " in sent emails
-export DEFAULT_FROM_EMAIL=from@email.com
-
-# variables for sending emails through FFA's MS Outlook server
-# (SMTP server with NTLM3 authentication)
-export EMAIL_HOST=mail.ip.com
-export EMAIL_PORT=1234
-export EMAIL_HOST_USER=domain\\user # NTLM3 authentication
-export EMAIL_HOST_PASSWORD=pass
-
-# URL prefix used in email links
-export BASE_URL=http://hosted.django.com:1234
-
 # Use DEBUG for higher django log level
 # Comment out for regular verbosity
 # Ref: https://docs.djangoproject.com/en/1.10/topics/logging/#loggers
 # (default in `settings.py` is INFO)
 # export POLLS_LOG_LEVEL=DEBUG
 
-export MAYAN_HOST=http://123.123.123:4444
-export MAYAN_ADMIN_USER=admin
-export MAYAN_ADMIN_PASSWORD=pass
+ENV_NAME=FFA_BLOTTER
 
 ###############################
 # DO NOT EDIT UNDER THIS LINE #
@@ -39,4 +24,4 @@ DIR=`dirname $0`
 
 # If FFA_BLOTTER doesn't exist, use `pew new FFA_BLOTTER` and install requirements
 # Check README for more info
-/usr/local/bin/pew in FFA_BLOTTER python $DIR/manage.py "$@"
+/usr/local/bin/pew in $ENV_NAME python $DIR/manage.py "$@"
