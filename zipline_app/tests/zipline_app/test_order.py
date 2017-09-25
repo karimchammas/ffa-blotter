@@ -314,7 +314,7 @@ class OrderDetailViewTests(OrderBaseTests):
 
 class DeleteDocViewTests(OrderBaseTests):
   def test_del_order_doc(self):
-    patcher1 = patch('zipline_app.views.zipline_app.order.MayanManager')
+    patcher1 = patch('zipline_app.views.zipline_app.document.MayanManager')
     mock1 = patcher1.start()
     patcher2 = patch('zipline_app.models.zipline_app.order.MayanManager')
     mock2 = patcher2.start()
@@ -327,7 +327,7 @@ class DeleteDocViewTests(OrderBaseTests):
 
 class OrderDocumentUploadViewTests(OrderBaseTests):
   def test_post(self):
-    patcher1 = patch('zipline_app.views.zipline_app.order.MayanManager')
+    patcher1 = patch('zipline_app.views.zipline_app.document.MayanManager')
     mock1 = patcher1.start()
     patcher2 = patch('zipline_app.models.zipline_app.order.MayanManager')
     mock2 = patcher2.start()
