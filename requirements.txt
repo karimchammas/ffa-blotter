@@ -5,7 +5,10 @@ django-bootstrap3==8.1.0
 django-pagination-bootstrap==1.2
 Django-Select2==5.8.10
 django-smtp-ntlm-backend==0.0.3
-numpy==1.12.0
+
+# numpy is already a dependency of pandas
+# numpy==1.12.0
+
 openpyxl==2.4.5
 pandas==0.18.1
 progressbar33==2.4
