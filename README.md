@@ -27,33 +27,31 @@ pew new --python=python3 -d -r requirements.txt FFA_BLOTTER
 To run the development server
 
 - Copy `zipline_project/settings_production.py.dist` to `zipline_project/settings_production.py` and modify variables
-- Copy `manage.sh.dist` to `manage.sh` and modify variables inside
-  - this file is mostly migrated into `zipline_project/settings_production.py`
-- The variables are explained in-line in `manage.sh.dist`
 - They're mostly the email server credentials
-- `./manage.sh runserver 0.0.0.0:8000`
+- `pew in FFA_BLOTTER ./manage.py runserver 0.0.0.0:8000`
+  - all `manage.py` commands below are shown without the `pew in FFA_BLOTTER` prefix for brevity
 
 
 To import marketflow accounts assets
 
 - copy `importMarketflow.sh.dist` to `importMarketflow.sh` and modify variables inside
   - the variables are the hostname, port number, username, password, and database name
-- `./manage.sh help importMarketflow`
+- `./manage.py help importMarketflow`
 - `./importMarketflow.sh ...`
 
 To initialize model versions with [django-reversion](https://django-reversion.readthedocs.io/en/stable/commands.html)
-- `./manage.sh createinitialrevisions zipline_app.Order --comment="Initial revision."`
+- `./manage.py createinitialrevisions zipline_app.Order --comment="Initial revision."`
   - will output something like "Created 29 revisions" (where 29 is the number of instances)
   - "Whenever you register a model with django-reversion, run createinitialrevisions." ([ref](https://django-reversion.readthedocs.io/en/stable/api.html))
 
 To trim model versions
-- `./manage.sh deleterevisions zipline_app.Order --keep=3 --days=30`
+- `./manage.py deleterevisions zipline_app.Order --keep=3 --days=30`
 
 
 ## Development / Testing
 
-- Copy `manage.sh.dist` and `importMarketflow.sh.dist` as indicated in the `Usage` section
-- Run the tests with `./manage.sh test zipline_app.tests`
+- Copy `importMarketflow.sh.dist` as indicated in the `Usage` section
+- Run the tests with `./manage.py test zipline_app.tests`
 
 If running tests manually, could benefit from
 - http://stackoverflow.com/questions/24011428/django-core-exceptions-improperlyconfigured-requested-setting-caches-but-setti#27455703
@@ -61,12 +59,12 @@ If running tests manually, could benefit from
 
 To access a deeper namespace, use
 ```bash
-> ./manage.sh test zipline_app       # will not test anything because I dont use tests.py anymore
-> ./manage.sh test zipline_app.tests # will test everything
+> ./manage.py test zipline_app       # will not test anything because I dont use tests.py anymore
+> ./manage.py test zipline_app.tests # will test everything
 
-> ./manage.sh test zipline_app.tests.zipline_app.test_asset # will test only asset
-> ./manage.sh test zipline_app.tests.zipline_app.test_zipline_app
-> ./manage.sh test ...
+> ./manage.py test zipline_app.tests.zipline_app.test_asset # will test only asset
+> ./manage.py test zipline_app.tests.zipline_app.test_zipline_app
+> ./manage.py test ...
 ```
 ## Under the hood
 - [django](https://www.djangoproject.com/)
@@ -108,7 +106,7 @@ python manage.py makemigrations zipline_app
 python manage.py migrate
 ```
 
-To squash migrations: `> ./manage.sh squashmigrations zipline_app 0003 0005`
+To squash migrations: `> ./manage.py squashmigrations zipline_app 0003 0005`
 
 Shell example
 ```

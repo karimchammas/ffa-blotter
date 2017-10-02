@@ -33,7 +33,12 @@ RUN pew in FFA_BLOTTER pip install git+https://github.com/pymssql/pymssql.git
 
 WORKDIR /var/lib/blotter
 COPY . .
-RUN test -f manage.sh && test -f importMarketflow.sh
+
+# required manual files. Check README.md for more details
+RUN test -f importMarketflow.sh
+RUN test -f zipline_project/settings_production.py
+
+# continue
 RUN chmod +x /var/lib/blotter/docker-entry.sh
 
 ENTRYPOINT /var/lib/blotter/docker-entry.sh
