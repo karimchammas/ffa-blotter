@@ -21,17 +21,12 @@ class MayanManager:
   Create a tag if not already there
   """
   def create_tag_if_not(self, tag_label:str):
-    tags = self.api.tags.tags.get()
-    sub = [x for x in tags['results'] if x['label']==tag_label]
+    sub = self.find_tag(tag_label)
 
-    if len(sub)>1:
-      raise Exception("More than one tag with label=%s"%(tag_label))
-
-    if len(sub)==0:
+    if sub is None:
       response = self.api.tags.tags.post({'label': tag_label, 'color': '#777777'})
       return response
 
-    sub = sub[0]
     keys = ['label', 'color', 'id']
     result = {k: sub[k] for k in keys}
     return result
@@ -67,10 +62,7 @@ class MayanManager:
     })
 
 
-  """
-  List docs with a specific tag
-  """
-  def docs_by_tag(self, tag:str):
+  def find_tag(self, tag:str):
     tags = {'count': 99999}
     sub = []
     count = 0
@@ -81,10 +73,16 @@ class MayanManager:
       sub += [x for x in tags['results'] if x['label']==tag]
       count += len(tags['results'])
 
-    if len(sub)==0: return []
+    if len(sub)==0: return None
     if len(sub)>1: raise Exception("More than one tag found")
+    return sub[0]
 
-    sub = sub[0]
+  """
+  List docs with a specific tag
+  """
+  def docs_by_tag(self, tag:str):
+    sub = self.find_tag(tag)
+    if sub is None: return []
     docs = self.api.tags.tags(sub['id']).documents.get()
     keys = ['label', 'url', 'id']
     result = [{k: x[k] for k in keys} for x in docs['results']]
