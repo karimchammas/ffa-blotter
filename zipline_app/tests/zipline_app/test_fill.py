@@ -97,8 +97,8 @@ class FillModelTests(FillBaseTests):
   def test_create_fill_sends_email(self):
     f1 = self.create_fill_from_order_default(fill_price=1, fill_text="fill 1")
     self.assertEqual(len(mail.outbox), 1+1) # 1 email for order, and another for the fill
-    self.assertTrue("New order" in mail.outbox[0].subject)
-    self.assertTrue("New fill" in mail.outbox[1].subject)
+    self.assertTrue("Funds order" in mail.outbox[0].subject)
+    self.assertTrue("Funds fill" in mail.outbox[1].subject)
 
     # check appended summary
     self.assertTrue("Open: 0" in mail.outbox[1].body)
