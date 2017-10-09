@@ -71,8 +71,16 @@ class MayanManager:
   List docs with a specific tag
   """
   def docs_by_tag(self, tag:str):
-    tags = self.api.tags.tags.get()
-    sub = [x for x in tags['results'] if x['label']==tag]
+    tags = {'count': 99999}
+    sub = []
+    count = 0
+    page = 0
+    while tags['count'] > count:
+      page += 1
+      tags = self.api.tags.tags.get(page=page)
+      sub += [x for x in tags['results'] if x['label']==tag]
+      count += len(tags['results'])
+
     if len(sub)==0: return []
     if len(sub)>1: raise Exception("More than one tag found")
 
