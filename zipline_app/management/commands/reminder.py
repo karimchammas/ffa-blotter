@@ -23,7 +23,7 @@ class Command(BaseCommand):
     if options['debug']:
       logger.setLevel(logging.DEBUG)
 
-    pending = [o for o in Order.objects.all() if o.dedicated_fill() is None or o.filled()!=o.order_qty_signed()]
+    pending = [o for o in Order.objects.all() if o.dedicated_fill() is None and not hasattr(o, 'placement')]
     if len(pending)==0:
       logger.debug("No pending orders")
       self.closeLogger(h1, logger)

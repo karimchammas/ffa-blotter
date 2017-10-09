@@ -5,14 +5,36 @@ SECRET_KEY = '8rk=0@$^cy6^)2j=@p^^o@4%4wa2%nt05efp0zp9p0)(jx8ais'
 DEBUG = True
 
 # Email displayed as "From: " in sent emails
-DEFAULT_FROM_EMAIL="from@email.com"
+BLOTTER_EMAILS={
+  "order": {
+    "from": "from@email.com",
+    "reply-to": ["reply@email.com"],
+    "to": ["to@email.com"],
+    "user": "domain\\user",
+    "password": "pass",
+  },
+  "fill": {
+    "from": "from@email.com",
+    "reply-to": ["reply@email.com"],
+    "to": ["to@email.com"],
+    "user": "domain\\user",
+    "password": "pass",
+  },
+  "pending": {
+    "from": "from@email.com",
+    "reply-to": ["reply@email.com"],
+    "to": ["to@email.com"],
+    "user": "domain\\user",
+    "password": "pass",
+  },
+}
 
 # variables for sending emails through FFA's MS Outlook server
 # (SMTP server with NTLM3 authentication)
+# sending email with django
+# https://docs.djangoproject.com/en/1.10/topics/email/
 EMAIL_HOST="mail.ip.com"
 EMAIL_PORT=1234
-EMAIL_HOST_USER="domain\\user"
-EMAIL_HOST_PASSWORD="pass"
 
 # URL prefix used in email links
 BASE_URL="http://hosted.django.com:1234"

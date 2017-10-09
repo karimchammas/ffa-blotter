@@ -21,12 +21,8 @@ class SignalProcessor:
     context = {'stats_orders': get_stats_orders()}
     if sender.__name__=="Fill":
       if created:
-        subject = None
-        if instance.dedicated_to_order is not None:
-          order = instance.dedicated_to_order
-          subject = "New fill #%s (fills order #%s)" % (instance.id, order.id)
-        else:
-          subject = "New fill #%s (%s x %s)" % (instance.id, instance.fill_qty_signed(), instance.asset.asset_name)
+        order = instance.dedicated_to_order
+        subject = "Funds fill #%s - %s" % (instance.id, instance.asset.asset_name)
 
         context['fill'] = instance
         email_ctx(
@@ -40,7 +36,7 @@ class SignalProcessor:
     if sender.__name__=="Order":
       logger.debug("post_save order %s"%created)
       if created:
-        subject = "New order #%s (%s x %s)" % (instance.id, instance.order_qty_signed(), instance.asset.asset_name)
+        subject = "Funds order #%s - %s" % (instance.id, instance.asset.asset_name)
         context['order'] = instance
         email_ctx(
           context,
@@ -50,15 +46,15 @@ class SignalProcessor:
           logger
         )
 
-    if sender.__name__=="Placement":
-      logger.debug("post_save placement %s"%created)
-      if created:
-        subject = "Placement for order #%s" % (instance.order.id)
-        context['placement'] = instance
-        email_ctx(
-          context,
-          'zipline_app/email_placement.txt',
-          'zipline_app/email_placement.html',
-          subject,
-          logger
-        )
+#    if sender.__name__=="Placement":
+#      logger.debug("post_save placement %s"%created)
+#      if created:
+#        subject = "Placement for order #%s" % (instance.order.id)
+#        context['placement'] = instance
+#        email_ctx(
+#          context,
+#          'zipline_app/email_placement.txt',
+#          'zipline_app/email_placement.html',
+#          subject,
+#          logger
+#        )

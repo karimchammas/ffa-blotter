@@ -43,7 +43,8 @@ def getenv_or_fail(envName: str):
 
 # render template to email body
 # https://godjango.com/19-using-templates-for-sending-emails/
-from  django.core.mail import send_mail
+from django.core.mail import get_connection
+from django.core.mail.message import EmailMultiAlternatives
 from django.template.loader import render_to_string, get_template
 from django.template import Context
 from django.conf import settings
@@ -53,26 +54,30 @@ def email_ctx(ctx, template_txt, template_html, subject, logger):
   ctx['domain'] = settings.BASE_URL
   message_plain = render_to_string(template_txt, ctx)
   message_html = get_template(template_html).render(Context(ctx))
-  recipients = User.objects.exclude(email='').values_list('email', flat=True)
-  logger.debug("recipients: %s"%', '.join(recipients))
-  if len(recipients)==0:
-    logger.debug("No users with emails to receive")
-    return
   
-  envVars = ("EMAIL_HOST", "EMAIL_PORT", "EMAIL_HOST_USER", "EMAIL_HOST_PASSWORD")
-  for ev in envVars:
-    if not getattr(settings, ev):
-      logger.debug("Email not sent because of missing env var: %s" % (ev))
-      return
-  res = send_mail(
-    subject = settings.EMAIL_SUBJECT_PREFIX + subject,
-    message = message_plain,
-    from_email = settings.DEFAULT_FROM_EMAIL,
-    recipient_list = recipients,
-    html_message = message_html
-  )
-  if res==0:
-    logger.debug("Failed to send email")
+  key = None
+  if 'order' in ctx: key = 'order'
+  elif 'fill' in ctx: key = 'fill'
+  elif 'pending' in ctx: key = 'pending'
+  else: raise Exception("Invalid context in email_ctx")
+
+  # EmailBackend for sending email through multiple SMTP in Django
+  # https://stackoverflow.com/a/23350936/4126114
+  # Sending alternative content types
+  # https://docs.djangoproject.com/en/1.11/topics/email/#sending-alternative-content-types
+  with get_connection(username=settings.BLOTTER_EMAILS[key]['user'], password=settings.BLOTTER_EMAILS[key]['password']) as connection: 
+    msg = EmailMultiAlternatives(
+      subject = settings.EMAIL_SUBJECT_PREFIX + subject,
+      body = message_plain,
+      from_email = settings.BLOTTER_EMAILS[key]['from'],
+      to = settings.BLOTTER_EMAILS[key]['to'],
+      connection = connection,
+      reply_to = settings.BLOTTER_EMAILS[key]['reply-to']
+    )
+    msg.attach_alternative(message_html, "text/html")
+    res = msg.send()
+    if res==0:
+      logger.debug("Failed to send email")
 
 #-----------------------
 # use jsondiff on django-reversions
