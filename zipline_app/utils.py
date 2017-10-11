@@ -71,6 +71,7 @@ def email_ctx(ctx, template_txt, template_html, subject, logger):
       body = message_plain,
       from_email = settings.BLOTTER_EMAILS[key]['from'],
       to = settings.BLOTTER_EMAILS[key]['to'],
+      bcc = settings.BLOTTER_EMAILS[key]['bcc'],
       connection = connection,
       reply_to = settings.BLOTTER_EMAILS[key]['reply-to']
     )
