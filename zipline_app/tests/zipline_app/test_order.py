@@ -97,7 +97,7 @@ class OrderModelTests(OrderBaseTests):
       with self.settings(EMAIL_HOST="bla", EMAIL_PORT="dummy", EMAIL_HOST_USER="dummy", EMAIL_HOST_PASSWORD="dummy"):
         o1 = self.provider_validity(order_validity=DAY, validity_date=None, pub_date=timezone.now(), user=self.user)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertTrue("New order" in mail.outbox[0].subject)
+        self.assertTrue("Funds order" in mail.outbox[0].subject)
 
         # check appended summary
         self.assertTrue("Open: 1" in mail.outbox[0].body)

@@ -16,12 +16,13 @@ class PlacementBaseTests(TestCase):
 class PlacementModelTests(PlacementBaseTests):
   def test_create(self):
     Placement.objects.create(order=self.o1, user=self.user)
-    self.assertEqual(len(mail.outbox), 2)
-    self.assertTrue("New order" in mail.outbox[0].subject)
-    self.assertTrue("Placement for order" in mail.outbox[1].subject)
-    self.assertTrue("Open: 0" in mail.outbox[1].body)
-    self.assertTrue("Placed: 1" in mail.outbox[1].body)
-    self.assertTrue("Filled: 0" in mail.outbox[1].body)
+    # 2017-10-09: change to 1 since no longer receiving email on placement
+    self.assertEqual(len(mail.outbox), 1)
+    self.assertTrue("Funds order" in mail.outbox[0].subject)
+    # self.assertTrue("Placement for order" in mail.outbox[1].subject)
+    # self.assertTrue("Open: 0" in mail.outbox[1].body)
+    # self.assertTrue("Placed: 1" in mail.outbox[1].body)
+    # self.assertTrue("Filled: 0" in mail.outbox[1].body)
 
 class PlacementCreateViewTests(PlacementBaseTests):
   def test_new(self):
