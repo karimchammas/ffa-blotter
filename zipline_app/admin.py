@@ -2,6 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from .models.zipline_app.zipline_app import Fill, Order, Account, Asset
+from .models.zipline_app.placement import Placement
 
 #class AssetInline(admin.TabularInline):
 #    model = Asset
@@ -24,3 +25,4 @@ admin.site.register(Order,OrderAdmin)
 admin.site.register(Fill)
 admin.site.register(Asset)
 admin.site.register(Account)
+admin.site.register(Placement)
