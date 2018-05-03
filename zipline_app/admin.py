@@ -11,13 +11,13 @@ from .models.zipline_app.custodian import Custodian
 
 class OrderAdmin(admin.ModelAdmin):
     fieldSets = [
-        (None,               {'fields': ['order_text', 'asset', 'order_side', 'order_qty_unsigned']}),
+        (None,               {'fields': ['pk', 'order_text', 'asset', 'order_side', 'order_qty_unsigned']}),
         ('Date information', {'fields': ['pub_date']}),
     ]
     #inlines = [AssetInline]
-    list_display = ('order_text', 'pub_date', 'was_published_recently', 'asset', 'order_side', 'order_qty_unsigned')
+    list_display = ('pk', 'order_text', 'pub_date', 'was_published_recently', 'asset', 'order_side', 'order_qty_unsigned')
     list_filter = ['pub_date']
-    search_fields = ['order_text', 'asset.asset_symbol']
+    search_fields = ['id', 'order_text', 'asset__asset_symbol']
 
 #class FillAdmin(admin.ModelAdmin):
 #    inlines = [AssetInline]

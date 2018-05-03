@@ -4,6 +4,8 @@ See also [TODO](TODO.md)
 ## [ ] Version 1.2.5
 - [x] order save redirects to order details instead of order list
 - [x] order upload attachment available at any time, even if placed or filled
+- [x] order admin search box includes order ID
+
 - [ ] add button "confirm" to order details which sends the order email to backoffice
   - no email should be sent at "save"
   - unconfirmed orders should probably not show up in order list
