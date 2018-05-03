@@ -15,15 +15,19 @@ class OrderAdmin(admin.ModelAdmin):
         ('Date information', {'fields': ['pub_date']}),
     ]
     #inlines = [AssetInline]
-    list_display = ('pk', 'order_text', 'pub_date', 'was_published_recently', 'asset', 'order_side', 'order_qty_unsigned')
+    list_display = ('id', 'order_text', 'pub_date', 'was_published_recently', 'asset', 'order_side', 'order_qty_unsigned')
     list_filter = ['pub_date']
     search_fields = ['id', 'order_text', 'asset__asset_symbol']
 
 #class FillAdmin(admin.ModelAdmin):
 #    inlines = [AssetInline]
 
+class FillAdmin(admin.ModelAdmin):
+    search_fields = ['id']
+    list_display = ('id', 'asset', 'dedicated_to_order')
+
 admin.site.register(Order,OrderAdmin)
-admin.site.register(Fill)
+admin.site.register(Fill, FillAdmin)
 admin.site.register(Asset)
 admin.site.register(Account)
 admin.site.register(Placement)
