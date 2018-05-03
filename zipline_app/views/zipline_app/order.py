@@ -37,7 +37,7 @@ class OrderCreate(generic.CreateView):
     # django message levels
     # https://docs.djangoproject.com/en/1.10/ref/contrib/messages/#message-levels
     messages.add_message(self.request, messages.INFO, "Successfully created order: %s" % self.object)
-    return redirect_index_or_local(self,'zipline_app:orders-list')
+    return redirect_index_or_local(self, reverse_lazy('zipline_app:orders-detail', args=(self.object.pk,)))
 
   def get_initial(self):
     initial = super(OrderCreate, self).get_initial()

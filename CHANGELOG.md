@@ -1,8 +1,27 @@
 ## Changelog
 See also [TODO](TODO.md)
 
-## [ ] Version 1.2
-- [ ] github issues [milestone 1.2.0](https://github.com/shadiakiki1986/ffa-blotter/milestone/5)
+## [ ] Version 1.2.5
+- [x] order save redirects to order details instead of order list
+- [ ] add button "confirm" to order details which sends the order email to backoffice
+  - no email should be sent at "save"
+  - unconfirmed orders should probably not show up in order list
+- [ ] unconfirmed orders to be sent by email daily at 3 pm
+
+## Version 1.2.4
+...
+
+## Version 1.2.3
+...
+
+## Version 1.2.2
+...
+
+## Version 1.2.1
+...
+
+## [x] Version 1.2.0
+- [x] github issues [milestone 1.2.0](https://github.com/shadiakiki1986/ffa-blotter/milestone/5)
   - [x] add field to order: "unit"
     - It can be "share" or the asset's currency
     - closes [#55](https://github.com/shadiakiki1986/ffa-blotter/issues/55)
