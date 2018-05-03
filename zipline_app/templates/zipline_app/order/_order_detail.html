@@ -67,7 +67,12 @@
     {% empty %}
     None
     {% endfor %}
+
+    &nbsp;
+    {% include 'zipline_app/order/order_document_upload.html' %}
+
   </li>
+
 </ul>
 
 {% if domain %}
