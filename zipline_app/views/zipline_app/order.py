@@ -34,9 +34,6 @@ class OrderCreate(generic.CreateView):
     return super(OrderCreate, self).form_valid(form)
 
   def get_success_url(self):
-    # django message levels
-    # https://docs.djangoproject.com/en/1.10/ref/contrib/messages/#message-levels
-    messages.add_message(self.request, messages.INFO, "Successfully created order: %s" % self.object)
     return redirect_index_or_local(self, reverse_lazy('zipline_app:orders-detail', args=(self.object.pk,)))
 
   def get_initial(self):
@@ -185,3 +182,29 @@ class OrderDownloadView(generic.ListView):
     response = builder.fn2response(full_name)
     return response
 
+
+from django.http import HttpResponseRedirect
+class OrderConfirmView(RevisionMixin, generic.UpdateView):
+  model = Order
+  success_url = 'zipline_app:orders-list'
+
+  def get_object(self, *args, **kwargs):
+    """
+    only allow confirmation by same user
+    """
+    obj = super().get_object(*args, **kwargs)
+    if not (obj.user == self.request.user and len(obj.fills())==0):
+      raise PermissionDenied
+    return obj
+
+  def post(self, *args, **kwargs):
+    # order_id = self.kwargs['pk']
+    # order_inst = Order.objects.get(pk=order_id)
+    order_inst = self.get_object()
+    order_inst.is_confirmed=True
+    order_inst.save()
+
+    # django message levels
+    # https://docs.djangoproject.com/en/1.10/ref/contrib/messages/#message-levels
+    messages.add_message(self.request, messages.INFO, "Confirmed order# %s" % order_inst.pk)
+    return HttpResponseRedirect(reverse_lazy(self.success_url))

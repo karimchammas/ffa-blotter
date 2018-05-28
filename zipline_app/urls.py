@@ -74,6 +74,9 @@ urlpatterns = [
     # ex: /<root>/orders/download/
     url(r'^orders/download/$', order.OrderDownloadView.as_view(), name='orders-download'),
 
+    # ex: /<root>/orders/1/confirm/
+    url(r'^orders/(?P<pk>[0-9]+)/confirm/$', order.OrderConfirmView.as_view(), name='orders-confirm'),
+
     url(r'^orders/(?P<pk>[0-9]+)/upload-document/$', document.OrderDocumentUploadView.as_view(), name='orders-document-upload'),
     url(r'^orders/(?P<order_id>[0-9]+)/documents/(?P<doc_id>[0-9]+)/delete/$', document.delete_doc_view, name='orders-document-delete'),
     url(r'^documents/(?P<pk>[0-9]+)/$', document.DocumentDownloadView.as_view(), name='document-download'),

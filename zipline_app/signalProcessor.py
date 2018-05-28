@@ -35,7 +35,7 @@ class SignalProcessor:
 
     if sender.__name__=="Order":
       logger.debug("post_save order %s"%created)
-      if created:
+      if instance.is_confirmed:
         subject = "Funds order #%s - %s" % (instance.id, instance.asset.asset_name)
         context['order'] = instance
         email_ctx(

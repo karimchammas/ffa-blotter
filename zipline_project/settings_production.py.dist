@@ -5,6 +5,9 @@ SECRET_KEY = '8rk=0@$^cy6^)2j=@p^^o@4%4wa2%nt05efp0zp9p0)(jx8ais'
 DEBUG = True
 
 # Email displayed as "From: " in sent emails
+# Skip an entry completely to disable emails on its events,
+# e.g. to skip emails upon order creation,
+# comment out the complete "order" entry
 BLOTTER_EMAILS={
   "order": {
     "from": "from@email.com",
@@ -43,6 +46,6 @@ EMAIL_PORT=1234
 BASE_URL="http://hosted.django.com:1234"
 
 # Mayan EDMS credentials
-MAYAN_HOST           = "http://hosted.mayan.com:1234"
-MAYAN_ADMIN_USER     = "admin"
-MAYAN_ADMIN_PASSWORD = "pass"
+MAYAN_HOST           = "http://hosted.mayan.com:1234" # or None to skip
+MAYAN_ADMIN_USER     = "admin" # or None to skip
+MAYAN_ADMIN_PASSWORD = "pass" # or None to skip

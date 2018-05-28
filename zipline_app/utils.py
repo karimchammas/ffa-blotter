@@ -61,24 +61,33 @@ def email_ctx(ctx, template_txt, template_html, subject, logger):
   elif 'pending' in ctx: key = 'pending'
   else: raise Exception("Invalid context in email_ctx")
 
+  if key not in settings.BLOTTER_EMAILS:
+    logger.debug("No settings.BLOTTER_EMAILS['%s']"%key)
+    return
+
   # EmailBackend for sending email through multiple SMTP in Django
   # https://stackoverflow.com/a/23350936/4126114
   # Sending alternative content types
   # https://docs.djangoproject.com/en/1.11/topics/email/#sending-alternative-content-types
-  with get_connection(username=settings.BLOTTER_EMAILS[key]['user'], password=settings.BLOTTER_EMAILS[key]['password']) as connection: 
-    msg = EmailMultiAlternatives(
-      subject = settings.EMAIL_SUBJECT_PREFIX + subject,
-      body = message_plain,
-      from_email = settings.BLOTTER_EMAILS[key]['from'],
-      to = settings.BLOTTER_EMAILS[key]['to'],
-      bcc = settings.BLOTTER_EMAILS[key]['bcc'],
-      connection = connection,
-      reply_to = settings.BLOTTER_EMAILS[key]['reply-to']
-    )
-    msg.attach_alternative(message_html, "text/html")
-    res = msg.send()
-    if res==0:
-      logger.debug("Failed to send email")
+  try:
+    with get_connection(username=settings.BLOTTER_EMAILS[key]['user'], password=settings.BLOTTER_EMAILS[key]['password']) as connection: 
+      msg = EmailMultiAlternatives(
+        subject = settings.EMAIL_SUBJECT_PREFIX + subject,
+        body = message_plain,
+        from_email = settings.BLOTTER_EMAILS[key]['from'],
+        to = settings.BLOTTER_EMAILS[key]['to'],
+        bcc = settings.BLOTTER_EMAILS[key]['bcc'],
+        connection = connection,
+        reply_to = settings.BLOTTER_EMAILS[key]['reply-to']
+      )
+      msg.attach_alternative(message_html, "text/html")
+      res = msg.send()
+      if res==0:
+        logger.debug("Failed to send email")
+  except TimeoutError as error:
+    logger.debug("email timeout error")
+    logger.debug(str(error))
+
 
 #-----------------------
 # use jsondiff on django-reversions

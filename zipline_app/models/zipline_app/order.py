@@ -22,6 +22,9 @@ from django.contrib.auth.models import User
 
 from django.utils.encoding import force_text
 import reversion
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
+
 
 # types that are specific to FFA AM
 NONE = 'N'
@@ -160,6 +163,10 @@ class AbstractOrder(models.Model):
 from django.conf import settings
 @reversion.register()
 class Order(AbstractOrder):
+
+    #: Confirmed orders result in emails sent
+    is_confirmed = models.BooleanField(default=False)
+
     def order_qty_signed(self):
       return self.order_qty_unsigned * (+1 if self.order_side==BUY else -1)
 
@@ -199,6 +206,10 @@ class Order(AbstractOrder):
       return avg
 
     def clean(self):
+      if not self.is_confirmed:
+        if self.order_status in [FILLED, PLACED]:
+          raise ValidationError({"is_confirmed": _("Cannot set is_confirmed=False if already filled/placed")})
+
       # drop seconds from pub_date
       self.pub_date = chopSeconds(self.pub_date)
       # validity_date: replace hours/mins/seconds with 23:59:59
@@ -225,6 +236,9 @@ class Order(AbstractOrder):
       return self.asset.asset_currency
 
     def documents(self):
+      if settings.MAYAN_HOST is None:
+        return []
+
       mayanMan = MayanManager(
         host=settings.MAYAN_HOST,
         username=settings.MAYAN_ADMIN_USER,

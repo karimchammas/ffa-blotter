@@ -1,9 +1,22 @@
 {% load humanize %}
 
-{{pending|length}} pending order{{num_pending|pluralize}}
+{{pending_placement|length}} order{{num_pending_placement|pluralize}} pending placement, and {{pending_confirmation|length}} order{{num_pending_confirmation|pluralize}} pending confirmation
 
-{% for order in pending %}
+
+Pending placement:
+{% for order in pending_placement %}
 {{order.id}}: {{order.get_order_side_display}} {{order.order_qty_unsigned|intcomma}} {{order.asset.asset_name}} {% if order.order_text %}({{ order.order_text }}){% endif %}
+{% empty %}
+None
 {% endfor %}
+
+
+Pending confirmation:
+{% for order in pending_confirmation %}
+{{order.id}}: {{order.get_order_side_display}} {{order.order_qty_unsigned|intcomma}} {{order.asset.asset_name}} {% if order.order_text %}({{ order.order_text }}){% endif %}
+{% empty %}
+None
+{% endfor %}
+
 
 Published at {{domain}}{% url 'zipline_app:orders-list' %}

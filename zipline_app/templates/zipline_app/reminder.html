@@ -1,8 +1,9 @@
 {% load humanize %}
 
-{{pending|length}} pending order{{num_pending|pluralize}} in <a href="{{domain}}{% url 'zipline_app:orders-list' %}">blotter</a>
+{{pending_placement|length}} order{{num_pending_placement|pluralize}} pending placement and {{pending_confirmation|length}} order{{num_pending_confirmation|pluralize}} pending confirmation in <a href="{{domain}}{% url 'zipline_app:orders-list' %}">blotter</a>
 
-{% for order in pending %}
+<h2>Pending placement</h2>
+{% for order in pending_placement %}
 {% ifchanged order.pub_date.date %}
 <h3>{{order.pub_date.date|date:"Y-m-d"}}</h3>
 {% endifchanged %}
@@ -13,4 +14,22 @@
   {{order.asset.asset_name}}
   {% if order.order_text %}({{ order.order_text }}){% endif %}
 </div>
+{% empty %}
+<div>None</div>
 {% endfor %}
+
+
+
+<h2>Pending confirmation</h2>
+<ul>
+{% for order in pending_confirmation %}
+  <li>
+    <a href="{{domain}}{% url 'zipline_app:orders-detail' order.id %}">#{{order.id}}</a>:
+  {{order.get_order_side_display}}
+  {{order.order_qty_unsigned|intcomma}} x
+  {{order.asset.asset_name}}
+  </li>
+{% empty %}
+<li>None</li>
+{% endfor %}
+</ul>

@@ -165,3 +165,12 @@ else:
   EMAIL_USE_SSL       = False
 
 from .settings_production import *
+
+# the below allows for variables to be set to None and still get checked
+try:
+  BLOTTER_EMAILS
+  MAYAN_HOST
+  MAYAN_ADMIN_USER
+  MAYAN_ADMIN_PASSWORD
+except NameError as error:
+  raise Exception("Missing variable from settings_override.py: %s. Set to None if desired to skip functionality"%error)

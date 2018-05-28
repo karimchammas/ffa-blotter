@@ -23,15 +23,22 @@ class Command(BaseCommand):
     if options['debug']:
       logger.setLevel(logging.DEBUG)
 
-    pending = [o for o in Order.objects.all() if o.dedicated_fill() is None and not hasattr(o, 'placement')]
-    if len(pending)==0:
+    pending_placement = [o for o in Order.objects.all() if o.dedicated_fill() is None and not hasattr(o, 'placement')]
+    pending_confirmation = [o for o in Order.objects.filter(is_confirmed=False)]
+
+    if len(pending_placement)==0 and len(pending_confirmation)==0:
       logger.debug("No pending orders")
       self.closeLogger(h1, logger)
       return
 
-    logger.debug("Emailing about %s pending orders"%len(pending))
+    logger.debug("Emailing about pending orders")
     email_ctx(
-      { 'pending': pending, 'num_pending': len(pending) },
+      {
+        'pending_placement': pending_placement,
+        'num_pending_placement': len(pending_placement),
+        'pending_confirmation': pending_confirmation,
+        'num_pending_confirmation': len(pending_confirmation),
+      },
       'zipline_app/reminder.txt',
       'zipline_app/reminder.html',
       "Reminder of pending orders",

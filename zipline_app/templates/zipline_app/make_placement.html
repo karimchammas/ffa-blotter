@@ -1,11 +1,25 @@
+{% load bootstrap3 %}
+
 {% if record.filled %}
 {% else %}
 
   {% if record.placement %}
-  <span class="glyphicon glyphicon-check text-danger" title="Placed on {{record.placement.date|date:'Y-m-d H:i'}} by {{record.placement.user.username}}"></span>
+  <span class="glyphicon glyphicon-check text-danger" title="Placed on {{record.placement.date|date:'Y-m-d H:i'}} by {{record.placement.user.username}}">Placed</span>
   {% else %}
-<a href='{% url "zipline_app:placements-new" record.id %}'>
-  <span class="glyphicon glyphicon-check" title="Place order #{{record.id}}"></span>
-</a>
+    {% if record.is_confirmed %}
+      <a href='{% url "zipline_app:placements-new" record.id %}' class='btn btn-info btn-xs'>
+        <span class="glyphicon glyphicon-check" title="Place order #{{record.id}}"></span>
+        Place
+      </a>
+    {% else %}
+      {% if request.user == record.user %}
+        <form action="{% url 'zipline_app:orders-confirm' record.pk %}" method="post" class="form">
+          {% csrf_token %}
+          {% bootstrap_button content="Confirm" icon="check" button_type="submit" button_class="btn-warning" size="xs" %}
+        </form>
+      {% else %}
+      Not confirmed
+      {% endif %}
+    {% endif %}
   {% endif %}
 {% endif %}

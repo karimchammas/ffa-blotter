@@ -40,6 +40,15 @@
 
         <a href="{% url 'zipline_app:orders-update' order.id %}" class='btn btn-default'>Edit</a>
 
+        {% if not order.is_confirmed %}
+        <form action="{% url 'zipline_app:orders-confirm' order.id %}" method="post" class="form">
+          {% csrf_token %}
+          {% bootstrap_button content="Confirm" icon="check" button_type="submit" %}
+        </form>
+        {% else %}
+        Confirmed
+        {% endif %}
+
         {% endif %}
 
 {##########################################}
