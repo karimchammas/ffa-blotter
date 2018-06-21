@@ -59,7 +59,7 @@ def email_ctx(ctx, template_txt, template_html, subject, logger):
   if 'order' in ctx: key = 'order'
   elif 'fill' in ctx: key = 'fill'
   elif 'pending' in ctx: key = 'pending'
-  else: raise Exception("Invalid context in email_ctx")
+  else: raise Exception("context '%s' in email_ctx has no key 'order' or 'fill' or 'pending' "%ctx)
 
   if key not in settings.BLOTTER_EMAILS:
     logger.debug("No settings.BLOTTER_EMAILS['%s']"%key)

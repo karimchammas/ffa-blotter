@@ -34,6 +34,7 @@ class Command(BaseCommand):
     logger.debug("Emailing about pending orders")
     email_ctx(
       {
+        'pending': None,
         'pending_placement': pending_placement,
         'num_pending_placement': len(pending_placement),
         'pending_confirmation': pending_confirmation,
