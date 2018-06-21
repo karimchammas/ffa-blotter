@@ -1,7 +1,11 @@
 ## Changelog
 See also [TODO](TODO.md)
 
-## [x] Version 1.2.5
+## [ ] Version 1.2.6?
+- [x] fix issue in emailing reminder about pending orders
+
+
+## [x] Version 1.2.5 (2018-05)
 - [x] order save redirects to order details instead of order list
 - [x] order upload attachment available at any time, even if placed or filled
 - [x] order admin search box includes order ID
@@ -9,7 +13,6 @@ See also [TODO](TODO.md)
 - [x] add button "confirm" to order details which sends the order email to backoffice
   - no email should be sent at "save"
   - unconfirmed orders cannot be "placed" or "filled" in order list
-  - TODO test this
 - [x] unconfirmed orders to be sent by email daily at 3 pm
   - TODO test this
 
